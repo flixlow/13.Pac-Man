@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from errors import ParsingError
+from src.errors import ParsingError
 from pathlib import Path
 import json
 import sys
