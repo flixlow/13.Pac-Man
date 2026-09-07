@@ -14,12 +14,12 @@ class Level(BaseModel):
 class Config(BaseModel):
     highscore_filename: str
     levels: list[Level]
-    seeds: list[int]
     lives: int = Field(gt=0)
     pacgum: int = Field(gt=0)
     points_per_pacgum: int = Field(gt=0)
     points_per_super_pacgum: int = Field(gt=0)
     points_per_ghost: int = Field(gt=0)
+    seed: str
     level_max_time: int = Field(gt=0)
 
 
@@ -38,18 +38,15 @@ class Parser:
                         continue
                     lines.append(line)
                 content = json.loads("".join(lines))
-        except (OSError, json.JSONDecodeError) as e:
+        except OSError as e:
+            raise ParsingError(e.__class__.__name__)
+        except json.JSONDecodeError as e:
             raise ParsingError(
-                f"Error occurs while reading {self.file.as_posix()}."
-            ) from e
+                f"Error occurs while reading {self.file.as_posix()}. "
+                f"(line {e.lineno})"
+            )
         return Config(**content)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        raise ParsingError(
-            "It must take exactly one argument: a configuration file."
-        )
-    parser = Parser(sys.argv[1])
-    config = parser.open()
-    print(config.highscore_filename)
+    print(Parser(sys.argv[1]).open())

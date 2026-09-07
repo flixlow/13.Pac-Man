@@ -1,12 +1,24 @@
 import pygame
+import sys
+from pydantic import ValidationError
 
 from .drawer import Frame
+from .errors import ParsingError, PacmanError
+from .parsing import Parser
 # from .maze_drawer import MazeDrawer
 # from .generator import get_maze
 
 
 def main():
-    print("Hello from 13-pac-man!")
+
+    if len(sys.argv) != 2:
+        raise ParsingError(
+            "It must take exactly one argument: a configuration file."
+        )
+
+    parser = Parser(sys.argv[1])
+    config = parser.open()
+    print(config)
 
     pygame.init()
 
@@ -29,4 +41,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (PacmanError, ValidationError) as e:
+        print(f"[ERROR]: {e}")
