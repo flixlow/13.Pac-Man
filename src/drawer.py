@@ -1,9 +1,10 @@
 import pygame
 
 
-class Drawer:
-    def __init__(self, surface: pygame.Surface) -> None:
-        self.surface = surface
+class Frame:
+    def __init__(self, size: tuple[int, int]) -> None:
+        self.surface = pygame.Surface(size)
+        self.size = size
 
     def putpixel(self, a: tuple[int, int],
                  color: tuple[int, int, int] = (0, 0, 0)) -> None:
@@ -49,7 +50,6 @@ class Drawer:
         pygame.draw.line(screen, color, a, b, width)
 
     def draw_rect(self, a: tuple[int, int], b: tuple[int, int],
-                  filled: bool = True,
                   color: tuple[int, int, int] = (0, 0, 0)) -> None:
 
         (x1, y1), (x2, y2) = a, b
@@ -59,6 +59,9 @@ class Drawer:
         for y in range(y1, y2, sy):
             for x in range(x1, x2, sx):
                 self.putpixel((x, y), color)
+
+    def fill(self, color: tuple[int, int, int] = (0, 0, 0)) -> None:
+        self.draw_rect((0, 0), self.size)
 
     def put_image(self, a: tuple[int, int], image: pygame.Surface):
         self.surface.blit(image, a)
@@ -71,7 +74,7 @@ if __name__ == "__main__":
 
     screen = pygame.display.set_mode((800, 600))
 
-    drawer = Drawer(screen)
+    first_frame = Frame((500, 500))
 
     running = True
 
@@ -80,7 +83,8 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 running = False
 
-        drawer.draw_rect((100, 120), (200, 300), color=(255, 0, 255))
+        first_frame.draw_rect((100, 120), (200, 300), color=(255, 0, 255))
+        screen.blit(first_frame.surface, (0, 0))
         pygame.display.flip()
 
     pygame.quit()
