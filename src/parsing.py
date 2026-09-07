@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
-from src.errors import ParsingError
 from pathlib import Path
 import json
 import sys
+
+from errors import ParsingError
 
 
 class Level(BaseModel):
@@ -13,12 +14,12 @@ class Level(BaseModel):
 class Config(BaseModel):
     highscore_filename: str
     levels: list[Level]
-    seeds: list[int]
     lives: int = Field(gt=0)
     pacgum: int = Field(gt=0)
     points_per_pacgum: int = Field(gt=0)
     points_per_super_pacgum: int = Field(gt=0)
     points_per_ghost: int = Field(gt=0)
+    seed: str
     level_max_time: int = Field(gt=0)
 
 
@@ -41,6 +42,7 @@ class Parser:
             raise ParsingError(
                 f"Error occurs while reading {self.file.as_posix()}."
             ) from e
+        print(content)
         return Config(**content)
 
 
