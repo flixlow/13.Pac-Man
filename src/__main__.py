@@ -1,16 +1,16 @@
-import pygame
 import sys
+import pygame
 from pydantic import ValidationError
 
 from .drawer import Frame
 from .errors import ParsingError, PacmanError
 from .parsing import Parser
+from .scorer import Scorer
 # from .maze_drawer import MazeDrawer
 # from .generator import get_maze
 
 
 def main():
-
     if len(sys.argv) != 2:
         raise ParsingError(
             "It must take exactly one argument: a configuration file."
@@ -19,6 +19,10 @@ def main():
     parser = Parser(sys.argv[1])
     config = parser.open()
     print(config)
+
+    scorer = Scorer(config.highscore_filename)
+    scorer.save(input(), input())
+    print(scorer.highscore)
 
     pygame.init()
 

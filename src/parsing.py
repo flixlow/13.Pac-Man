@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import sys
 
-from errors import ParsingError
+from .errors import ParsingError
 
 
 class Level(BaseModel):
@@ -12,14 +12,14 @@ class Level(BaseModel):
 
 
 class Config(BaseModel):
-    highscore_filename: str
+    highscore_filename: str = Field(min_length=1)
     levels: list[Level]
     lives: int = Field(gt=0)
     pacgum: int = Field(gt=0)
     points_per_pacgum: int = Field(gt=0)
     points_per_super_pacgum: int = Field(gt=0)
     points_per_ghost: int = Field(gt=0)
-    seed: str
+    seed: str = Field(min_length=1)
     level_max_time: int = Field(gt=0)
 
 
@@ -32,19 +32,16 @@ class Parser:
     def open(self) -> Config:
         try:
             with open(self.file, encoding="utf-8") as f:
-                lines = []
-                for line in f:
-                    if line.lstrip().startswith(('#', "//")):
-                        continue
-                    lines.append(line)
+                lines = [ln for ln in f if not ln.lstrip().startswith('#')]
                 content = json.loads("".join(lines))
+            return Config(**content)
         except OSError as e:
-            raise ParsingError(e.__class__.__name__)
+            raise ParsingError(f"{self.file}: {e.__class__.__name__}")
         except json.JSONDecodeError as e:
             raise ParsingError(
-                f"Error occurs while reading {self.file.as_posix()}."
+                f"Error occurs while reading {self.file.as_posix()}"
+                f"(line {e.lineno})."
             ) from e
-        return Config(**content)
 
 
 if __name__ == "__main__":

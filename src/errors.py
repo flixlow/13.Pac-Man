@@ -4,3 +4,11 @@ class PacmanError(Exception):
 
 class ParsingError(PacmanError):
     pass
+
+
+class GenerationError(PacmanError):
+    pass
+
+
+class ScorerFileError(PacmanError):
+    pass
