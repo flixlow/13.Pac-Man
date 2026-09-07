@@ -1,19 +1,25 @@
+from pydantic import BaseModel, Field
 from errors import ParsingError
-import sys
 from pathlib import Path
+import json
+import sys
+
+
+class Level(BaseModel):
+    width: int = Field(gt=0)
+    height: int = Field(gt=0)
 
 
 class Config(BaseModel):
-    highscore_filename : highscore.json
-    level : array of multiple levels
-    width , height : for each level
-    lives : 3
-    pacgum : 42
-    points_per_pacgum : 10
-    points_per_super_pacgum : 50
-    points_per_ghost : 200
-    seed : 42
-    level_max_time : 90
+    highscore_filename: str
+    levels: list[Level]
+    seeds: list[int]
+    lives: int = Field(gt=0)
+    pacgum: int = Field(gt=0)
+    points_per_pacgum: int = Field(gt=0)
+    points_per_super_pacgum: int = Field(gt=0)
+    points_per_ghost: int = Field(gt=0)
+    level_max_time: int = Field(gt=0)
 
 
 class Parser:
@@ -21,7 +27,21 @@ class Parser:
         self.file: Path = Path(file_name)
         if self.file.suffix != ".json":
             raise ParsingError("The config file must be a json.")
-        
+
+    def open(self) -> Config:
+        try:
+            with open(self.file, encoding="utf-8") as f:
+                lines = []
+                for line in f:
+                    if line.lstrip().startswith(('#', "//")):
+                        continue
+                    lines.append(line)
+                content = json.loads("".join(lines))
+        except (OSError, json.JSONDecodeError) as e:
+            raise ParsingError(
+                f"Error occurs while reading {self.file.as_posix()}."
+            ) from e
+        return Config(**content)
 
 
 if __name__ == "__main__":
@@ -30,3 +50,5 @@ if __name__ == "__main__":
             "It must take exactly one argument: a configuration file."
         )
     parser = Parser(sys.argv[1])
+    config = parser.open()
+    print(config.highscore_filename)
