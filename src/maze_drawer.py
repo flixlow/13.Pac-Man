@@ -20,6 +20,7 @@ class Config(BaseModel):
 class MazeDrawer(Frame):
     def __init__(self, size: tuple[int, int], config: Config) -> None:
         self.surface = pygame.Surface(size)
+        self.size = size
         self.config = config
 
     def draw_maze(self) -> None:
