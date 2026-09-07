@@ -1,6 +1,7 @@
 import pygame
 
 from .drawer import Frame
+from .parsing import Config
 
 """
 class Config(BaseModel):
@@ -17,8 +18,9 @@ class Config(BaseModel):
 
 
 class MazeDrawer(Frame):
-    def __init__(self, surface: pygame.Surface, config: Config) -> None:
-        self.surface = surface
+    def __init__(self, size: tuple[int, int], config: Config) -> None:
+        self.surface = pygame.Surface(size)
+        self.size = size
         self.config = config
 
     def draw_maze(self) -> None:

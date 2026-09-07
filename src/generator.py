@@ -1,12 +1,11 @@
 from mazegenerator import MazeGenerator  # type: ignore
 
 
-def main() -> None:
+def get_maze(seed: str) -> list[int]:
     generator = MazeGenerator()
-    generator.generate()
-    print(generator.maze)
-    print(generator)
+    generator.generate(seed)
+    return generator.maze
 
 
 if __name__ == "__main__":
-    main()
+    print(get_maze(42))

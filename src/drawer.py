@@ -47,7 +47,7 @@ class Frame:
                   color: tuple[int, int, int] = (0, 0, 0),
                   ) -> None:
 
-        pygame.draw.line(screen, color, a, b, width)
+        pygame.draw.line(self.surface, color, a, b, width)
 
     def draw_rect(self, a: tuple[int, int], b: tuple[int, int],
                   color: tuple[int, int, int] = (0, 0, 0)) -> None:
@@ -61,30 +61,7 @@ class Frame:
                 self.putpixel((x, y), color)
 
     def fill(self, color: tuple[int, int, int] = (0, 0, 0)) -> None:
-        self.draw_rect((0, 0), self.size)
+        self.draw_rect((0, 0), self.size, color=color)
 
     def put_image(self, a: tuple[int, int], image: pygame.Surface):
         self.surface.blit(image, a)
-
-
-if __name__ == "__main__":
-    import pygame
-
-    pygame.init()
-
-    screen = pygame.display.set_mode((800, 600))
-
-    first_frame = Frame((500, 500))
-
-    running = True
-
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        first_frame.draw_rect((100, 120), (200, 300), color=(255, 0, 255))
-        screen.blit(first_frame.surface, (0, 0))
-        pygame.display.flip()
-
-    pygame.quit()
