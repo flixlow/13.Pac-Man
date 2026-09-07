@@ -1,6 +1,6 @@
 LINT_FLAG := --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
-install: Makefile
+install: Makefile mazegenerator-2.1.0-py3-none-any.whl
 	uv sync
 	@echo "\033[0;32m\n[OK] installation completed ✔\n\033[0m"
 
@@ -11,6 +11,8 @@ debug:
 	uv run -m pdb -m src
 
 clean:
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type d -name ".mypy_cache" -exec rm -rf {} +
 	rm -rf .venv
 
 lint:
