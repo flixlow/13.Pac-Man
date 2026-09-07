@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
-from src.errors import ParsingError
 from pathlib import Path
 import json
 import sys
+
+from src.errors import ParsingError
 
 
 class Level(BaseModel):
