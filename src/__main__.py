@@ -5,7 +5,7 @@ from pydantic import ValidationError
 from .errors import ParsingError, PacmanError
 from .parsing import Parser
 from .scorer import Scorer
-from .pacman_drawer import PacManDrawer
+from .pacman_drawer import PacManDrawer, Ghost
 # from .generator import get_maze
 
 
@@ -38,6 +38,9 @@ def main():
                     running = False
 
         first_frame.draw_maze()
+        first_frame.draw_pacgum((0, 0), False)
+        first_frame.draw_ghost((2, 6), Ghost.SECRET)
+        first_frame.draw_pacman((2, 8))
         screen.blit(first_frame.surface, (0, 0))
         pygame.display.flip()
 
