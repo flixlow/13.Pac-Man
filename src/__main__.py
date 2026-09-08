@@ -34,7 +34,7 @@ def main():
 
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or event.type == pygame.K_ESCAPE:
                 running = False
 
         first_frame.fill((0, 255, 0))

@@ -1,3 +1,6 @@
 {
-    "felix": "45000"
+    "felix": "45000",
+    "bcondemi": "5012",
+    "pablo": "10000",
+    "badge": "felix"
 }
