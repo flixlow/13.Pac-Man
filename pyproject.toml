@@ -1,7 +1,7 @@
 [project]
 name = "pac-man"
 version = "0.1.0"
-description = "Add your description here"
+description = "Pac-Man Game with pygame"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
