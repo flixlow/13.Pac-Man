@@ -12,7 +12,7 @@ class Frame:
         self.surface.set_at(a, color)
 
     def draw_circle(self, a: tuple[int, int], radius: int, filled: bool = True,
-                    color: tuple[int, int, int] = (0, 0, 0),
+                    color: tuple[int, int, int] = (255, 255, 255),
                     ) -> None:
         x = 0
         y = radius

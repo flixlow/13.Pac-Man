@@ -5,7 +5,7 @@ from pydantic import ValidationError
 from .errors import ParsingError, PacmanError
 from .parsing import Parser
 from .scorer import Scorer
-from .maze_drawer import MazeDrawer
+from .pacman_drawer import PacManDrawer
 # from .generator import get_maze
 
 
@@ -25,7 +25,7 @@ def main():
 
     screen = pygame.display.set_mode((2000, 2000))
 
-    first_frame = MazeDrawer((2000, 2000), config)
+    first_frame = PacManDrawer((2000, 2000), config)
 
     running = True
 
