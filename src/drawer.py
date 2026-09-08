@@ -3,6 +3,12 @@ import pygame
 
 class Frame:
     def __init__(self, size: tuple[int, int]) -> None:
+        """
+        Initialise the Frame
+
+        Args:
+            size (tuple[int, int]) dimensions of the frame
+        """
         self.surface = pygame.Surface(size)
         self.size = size
 
@@ -63,5 +69,5 @@ class Frame:
     def fill(self, color: tuple[int, int, int] = (0, 0, 0)) -> None:
         self.draw_rect((0, 0), self.size, color=color)
 
-    def put_image(self, a: tuple[int, int], image: pygame.Surface):
+    def put_image(self, a: tuple[int, int], image: pygame.Surface) -> None:
         self.surface.blit(image, a)
