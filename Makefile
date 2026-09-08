@@ -15,6 +15,7 @@ clean:
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
 	rm -rf highscore.json
 	rm -rf .venv
+	uv clean
 
 lint:
 	uv run -m flake8 src && uv run -m mypy $(LINT_FLAG) src
