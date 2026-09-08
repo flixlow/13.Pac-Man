@@ -11,8 +11,8 @@ from .errors import ParsingError
 
 
 class Level(BaseModel):
-    width: int = Field(gt=0)
-    height: int = Field(gt=0)
+    width: int = Field(gt=10)
+    height: int = Field(gt=10)
 
 
 class Config(BaseModel):
@@ -41,12 +41,10 @@ class Config(BaseModel):
         for level in self.levels:
             try:
                 generator = MazeGenerator((level.width, level.height), seed)
-                generator.generate()
                 mazes.append(generator.maze)
                 seed = self._get_new_seed(seed)
             except BaseException:
                 raise GenerationError("Error occurs during maze generation.")
-            print(mazes)
         return mazes
 
 
