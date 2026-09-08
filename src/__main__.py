@@ -2,11 +2,10 @@ import sys
 import pygame
 from pydantic import ValidationError
 
-from .drawer import Frame
 from .errors import ParsingError, PacmanError
 from .parsing import Parser
 from .scorer import Scorer
-# from .maze_drawer import MazeDrawer
+from .maze_drawer import MazeDrawer
 # from .generator import get_maze
 
 
@@ -24,9 +23,9 @@ def main():
 
     pygame.init()
 
-    screen = pygame.display.set_mode((1000, 1000))
+    screen = pygame.display.set_mode((2000, 2000))
 
-    first_frame = Frame((500, 500))
+    first_frame = MazeDrawer((2000, 2000), config)
 
     running = True
 
@@ -38,7 +37,7 @@ def main():
                 if event.type == pygame.K_ESCAPE:
                     running = False
 
-        first_frame.fill((0, 255, 0))
+        first_frame.draw_maze()
         screen.blit(first_frame.surface, (0, 0))
         pygame.display.flip()
 
