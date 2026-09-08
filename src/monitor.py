@@ -42,8 +42,8 @@ class Monitor:
 
         pygame.init()
         clock = pygame.time.Clock()
-        screen = pygame.display.set_mode((2000, 2000))
-        first_frame = PacManDrawer((2000, 2000), self.config)
+        screen = pygame.display.set_mode((1000, 1000), pygame.RESIZABLE)
+        first_frame = PacManDrawer((500, 500), self.config)
         first_frame.draw_maze()
 
         running = True
