@@ -1,8 +1,12 @@
+from mazegenerator import MazeGenerator  # type: ignore
 from pydantic import BaseModel, Field
 from pathlib import Path
+from typing import Any
+import hashlib
 import json
 import sys
 
+from .errors import GenerationError
 from .errors import ParsingError
 
 
@@ -21,6 +25,29 @@ class Config(BaseModel):
     points_per_ghost: int = Field(gt=0)
     seed: str = Field(min_length=1)
     level_max_time: int = Field(gt=0)
+    mazes: list[list[list[int]]] = Field(default=[])
+
+    def model_post_init(self, context: Any = None) -> None:
+        self.mazes: list[list[list[int]]] = self._generate_all_maze()
+
+    @staticmethod
+    def _get_new_seed(seed: str) -> str:
+        return hashlib.sha256(seed.encode()).hexdigest()
+
+    def _generate_all_maze(self) -> list[list[list[int]]]:
+        mazes = []
+        seed = self.seed
+
+        for level in self.levels:
+            try:
+                generator = MazeGenerator((level.width, level.height), seed)
+                generator.generate()
+                mazes.append(generator.maze)
+                seed = self._get_new_seed(seed)
+            except BaseException:
+                raise GenerationError("Error occurs during maze generation.")
+            print(mazes)
+        return mazes
 
 
 class Parser:

@@ -18,10 +18,8 @@ def main():
 
     parser = Parser(sys.argv[1])
     config = parser.open()
-    print(config)
 
     scorer = Scorer(config.highscore_filename)
-    scorer.save(input(), input())
     print(scorer.highscore)
 
     pygame.init()
@@ -34,8 +32,11 @@ def main():
 
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or event.type == pygame.K_ESCAPE:
+            if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.type == pygame.K_ESCAPE:
+                    running = False
 
         first_frame.fill((0, 255, 0))
         screen.blit(first_frame.surface, (0, 0))
