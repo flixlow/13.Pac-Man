@@ -5,7 +5,7 @@ from .errors import ParsingError, PacmanError
 from .monitor import Monitor
 
 
-def main():
+def main() -> None:
     if len(sys.argv) != 2:
         raise ParsingError(
             "It must take exactly one argument: a configuration file."

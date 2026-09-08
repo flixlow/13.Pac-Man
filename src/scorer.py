@@ -5,7 +5,7 @@ from .errors import ScorerFileError
 
 
 class Scorer:
-    def __init__(self, highscore_filename: str) -> None:
+    def __init__(self, highscore_filename: str) -> None | dict[str, int]:
         self.file: str = highscore_filename
         self.highscore: dict[str, int] = self._load()
 
