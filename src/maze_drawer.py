@@ -2,7 +2,6 @@ import pygame
 
 from .drawer import Frame
 from .parsing import Config
-from .maze import get_maze
 
 
 """
@@ -25,8 +24,7 @@ class MazeDrawer(Frame):
         self.size = size
         self.config = config
 
-        self.generator = get_maze(self.config)
-        self.maze = next(self.generator)
+        self.maze = self.config.mazes[0]
 
         self.maze_height, self.maze_width = (len(self.maze[0]), len(self.maze))
         self.wall_width = 3
