@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from pathlib import Path
 
 from .pacman_drawer import GhostColor
-from .utils import Parameters
+from .utils import Parameters, Direction
 
 
 class Entity(ABC):
@@ -18,6 +17,7 @@ class Player(Entity):
         velocity: int = Parameters.PLAYER_VELOCITY
     ) -> None:
         super().__init__(coords, velocity)
+        self.direction: Direction = Direction.START
 
 
 class Ghost(Entity):
