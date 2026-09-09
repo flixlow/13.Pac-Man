@@ -12,11 +12,12 @@ class MazeDrawer(Frame):
 
         self.maze = self.config.mazes[0]
 
-        self.maze_height, self.maze_width = (len(self.maze[0]), len(self.maze))
+        self.maze_height = len(self.maze)
+        self.maze_width = len(self.maze[0])
         self.wall_width = 3
-        self.cell_size = (
-            min(self.size) //
-            min(self.maze_height, self.maze_width)
+        self.cell_size = min(
+            self.size[0] // self.maze_width,
+            self.size[1] // self.maze_height,
         )
 
         self.offset_x = (self.size[0] - self.maze_width * self.cell_size) // 2
@@ -31,8 +32,8 @@ class MazeDrawer(Frame):
 
         self.fill((255, 180, 255))
 
-        for y in range(self.maze_width):
-            for x in range(self.maze_height):
+        for y in range(self.maze_height):
+            for x in range(self.maze_width):
                 self.draw_cell(
                     self.maze[y][x], (x, y)
                 )
@@ -40,8 +41,8 @@ class MazeDrawer(Frame):
     def draw_cell(self, value: int, cell: tuple[int, int]) -> None:
         x, y = cell
 
-        px = x * self.cell_size + self.offset_y
-        py = y * self.cell_size + self.offset_x
+        px = x * self.cell_size + self.offset_x
+        py = y * self.cell_size + self.offset_y
 
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
