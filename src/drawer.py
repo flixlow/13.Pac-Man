@@ -58,13 +58,14 @@ class Frame:
     def draw_rect(self, a: tuple[int, int], b: tuple[int, int],
                   color: tuple[int, int, int] = (0, 0, 0)) -> None:
 
-        (x1, y1), (x2, y2) = a, b
-        sx = 1 if x2 > x1 else -1
-        sy = 1 if y2 > y1 else -1
+        pygame.draw.rect(self.surface, color, (*a, b[0] - a[0], b[1] - a[1]))
+        # (x1, y1), (x2, y2) = a, b
+        # sx = 1 if x2 > x1 else -1
+        # sy = 1 if y2 > y1 else -1
 
-        for y in range(y1, y2, sy):
-            for x in range(x1, x2, sx):
-                self.putpixel((x, y), color)
+        # for y in range(y1, y2, sy):
+        #     for x in range(x1, x2, sx):
+        #         self.putpixel((x, y), color)
 
     def fill(self, color: tuple[int, int, int] = (0, 0, 0)) -> None:
         self.draw_rect((0, 0), self.size, color=color)
