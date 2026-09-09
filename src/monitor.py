@@ -80,26 +80,38 @@ class Monitor:
 
         return True
 
-    def is_there_a_wall_here(self, direction: Direction) -> bool:
-        x, y = self.player.coords
-        cell: int = self.config.mazes[self.maze_index][y][x]
+    def get_cell_walls(self, coords: tuple[int, int]) -> int:
+        x, y = coords
+        return self.config.mazes[self.maze_index][y][x]
 
+    def is_there_a_wall_here(self, direction: Direction) -> bool:
+        cell = self.get_cell_walls(self.player.coords)
         return bool(cell & direction.value)
 
     def display_entities(self) -> None:
         for ghost in self.ghosts:
             self.pacman_frame.draw_ghost(ghost.coords, ghost.color)
 
-        # self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
-        self.pacman_frame.draw_pacman(self.player.coords)
+        if not self.is_there_a_wall_here(self.player.direction):
+            cell = self.get_cell_walls(self.player.coords)
+
+            self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
+
+            self.player.moving()
+
+            self.pacman_frame.draw_pacman(self.player.coords)
 
     def main_loop(self) -> None:
         while self.running:
+
             self.running = self.check_events()
+
             self.display_entities()
 
             self.screen.blit(self.pacman_frame.surface, (0, 0))
+
             pygame.display.flip()
+
             self.clock.tick(60)
 
         pygame.quit()
