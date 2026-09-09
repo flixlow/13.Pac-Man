@@ -1,20 +1,12 @@
 import pygame
 from random import shuffle
 from typing import Callable
-from enum import Enum, auto
 
 from .scorer import Scorer
+from .utils import Direction
 from .parsing import Parser, Config
-from .pacman_drawer import PacManDrawer, GhostColor
+from .pacman_drawer import PacManDrawer
 from .entity import Ghost, Player, Blue, Red, Green, Orange
-
-
-class Direction(Enum):
-    START = auto()
-    NORTH = auto()
-    SOUTH = auto()
-    EAST = auto()
-    WEST = auto()
 
 
 class Monitor:

@@ -1,3 +1,7 @@
+
+from enum import Enum, auto
+
+
 class Paths:
     ASSETS = "assets/"
     GHOSTS = ASSETS + "ghosts/"
@@ -12,3 +16,19 @@ class Paths:
 class Parameters:
     PLAYER_VELOCITY = 60
     GHOST_VELOCITY = 60
+
+
+class GhostColor(Enum):
+    RED = auto()
+    BLUE = auto()
+    GREEN = auto()
+    ORANGE = auto()
+    SECRET = auto()
+
+
+class Direction(Enum):
+    START = auto()
+    NORTH = auto()
+    SOUTH = auto()
+    EAST = auto()
+    WEST = auto()

@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from pathlib import Path
 
 from .pacman_drawer import GhostColor
 from .utils import Parameters

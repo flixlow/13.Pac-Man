@@ -1,17 +1,8 @@
 import pygame
 
 from .maze_drawer import MazeDrawer
+from .utils import GhostColor
 from .parsing import Config
-
-from enum import Enum, auto
-
-
-class GhostColor(Enum):
-    RED = auto()
-    BLUE = auto()
-    GREEN = auto()
-    ORANGE = auto()
-    SECRET = auto()
 
 
 class PacManDrawer(MazeDrawer):
