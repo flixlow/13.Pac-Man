@@ -1,11 +1,19 @@
 import pygame
 from random import shuffle
 from typing import Callable
+from enum import Enum, auto
 
 from .scorer import Scorer
 from .parsing import Parser, Config
 from .pacman_drawer import PacManDrawer
 from .entity import Entity, Player, Blue, Red, Green, Orange
+
+
+class Direction(Enum):
+    NORTH = auto()
+    SOUTH = auto()
+    EAST = auto()
+    WEST = auto()
 
 
 class Monitor:
@@ -56,18 +64,37 @@ class Monitor:
                 if event.key == pygame.K_ESCAPE:
                     return False
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    self.player.coords
+                    self.player_movement(Direction.NORTH)
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    pass
+                    self.player_movement(Direction.SOUTH)
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    pass
+                    self.player_movement(Direction.EAST)
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    pass
+                    self.player_movement(Direction.WEST)
 
             if event.type == pygame.VIDEORESIZE:
                 self.pacman_frame.update_size(event.size)
 
         return True
+
+    def player_movement(self, direction: Direction) -> None:
+        x = self.player.coords[0]
+        y = self.player.coords[1]
+        cell: int = self.config.mazes[self.maze_index][x][y]
+
+        match direction:
+            case Direction.NORTH:
+                if not cell & 1:
+                    self.player.coords = (x, y - 1)
+            case Direction.WEST:
+                if not cell & 2:
+                    self.player.coords = (x + 1, y)
+            case Direction.SOUTH:
+                if not cell & 4:
+                    self.player.coords = (x, y + 1)
+            case Direction.EAST:
+                if not cell & 8:
+                    self.player.coords = (x - 1, y)
 
     def main_loop(self) -> None:
         while self.running:
