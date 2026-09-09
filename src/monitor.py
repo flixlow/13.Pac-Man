@@ -30,6 +30,8 @@ class Monitor:
             self.pygame_info.current_w // 2,
             self.pygame_info.current_h // 2
         )
+        self.header = self.screen_size[1]//5
+
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
             self.screen_size, pygame.RESIZABLE
@@ -37,7 +39,8 @@ class Monitor:
 
         self.running = True
 
-        self.pacman_frame = PacManDrawer((self.screen_size), self.config)
+        h, w = self.screen_size
+        self.pacman_frame = PacManDrawer((h, w - self.header), self.config)
         self.pacman_frame.draw_maze()
 
     def _init_entities(self) -> list[Entity]:
@@ -73,7 +76,8 @@ class Monitor:
                     self.player_movement(Direction.WEST)
 
             if event.type == pygame.VIDEORESIZE:
-                self.pacman_frame.update_size(event.size)
+                w, h = event.size
+                self.pacman_frame.update_size((w, h - h // 10))
                 self.pacman_frame.draw_maze()
 
         return True
@@ -103,7 +107,7 @@ class Monitor:
 
             self.pacman_frame.draw_ghost((2, 2), Ghost.SECRET)
             self.pacman_frame.draw_pacman((2, 3))
-            self.screen.blit(self.pacman_frame.surface, (0, 0))
+            self.screen.blit(self.pacman_frame.surface, (0, self.header))
             pygame.display.flip()
 
             self.clock.tick(60)
