@@ -5,3 +5,4 @@ draft:
 [ ] {'felix': '45000', 'bcondemi': '5012', 'pablo': '10000', 'badge': 'felix'} :
 highscore can take only alphanumeric
 [ ] flag : --own_function for draw rectangle
+

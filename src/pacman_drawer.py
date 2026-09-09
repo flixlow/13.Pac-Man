@@ -37,7 +37,7 @@ class PacManDrawer(MazeDrawer):
                 "assets/ghosts/secret_ghost.png").convert_alpha()
         }
 
-        self.ghosts_img = self.ghosts_img_copy
+        self.ghosts_img = self.ghosts_img_copy.copy()
 
         self.pacman_img_copy = pygame.image.load(
             "assets/pacman/pacman.png").convert_alpha()
