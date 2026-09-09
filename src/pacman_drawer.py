@@ -7,13 +7,7 @@ from .parsing import Config
 
 class PacManDrawer(MazeDrawer):
     def __init__(self, size: tuple[int, int], config: Config) -> None:
-        self.surface = pygame.Surface(size)
-
-        self.config = config
-
-        self.maze = self.config.mazes[0]
-        self.maze_height = len(self.maze)
-        self.maze_width = len(self.maze[0])
+        super().__init__(size, config)
 
         self.ghosts_img_copy = {
             GhostColor.RED: pygame.image.load(
@@ -32,9 +26,8 @@ class PacManDrawer(MazeDrawer):
 
         self.pacman_img_copy = pygame.image.load(
             "assets/pacman/pacman.png").convert_alpha()
-        self.update_size(size)
 
-        self.wall_color = (255, 255, 180)
+        PacManDrawer.update_size(self, size)
 
     def draw_pacgum(self, cell: tuple[int, int], super: bool) -> None:
         x, y = cell

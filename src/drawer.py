@@ -9,11 +9,13 @@ class Frame:
         Args:
             size (tuple[int, int]) dimensions of the frame
         """
-        self.surface = pygame.Surface(size)
         self.size = size
+
+        self.surface = pygame.Surface(size)
         self.title_font = pygame.font.Font(None, 36)
-        self.rendered_title = self.title.render(
-            "PAC-MAN", True, (255, 255, 255))
+        self.rendered_title = self.title_font.render(
+            "PAC-MAN", True, (255, 255, 255)
+        )
 
     def putpixel(self, a: tuple[int, int],
                  color: tuple[int, int, int] = (0, 0, 0)) -> None:
@@ -62,6 +64,7 @@ class Frame:
                   color: tuple[int, int, int] = (0, 0, 0)) -> None:
 
         pygame.draw.rect(self.surface, color, (*a, b[0] - a[0], b[1] - a[1]))
+
         # (x1, y1), (x2, y2) = a, b
         # sx = 1 if x2 > x1 else -1
         # sy = 1 if y2 > y1 else -1
