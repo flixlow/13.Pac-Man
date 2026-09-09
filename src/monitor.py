@@ -110,7 +110,8 @@ class Monitor:
 
             self.pacman_frame.draw_ghost((2, 2), Ghost.SECRET)
             self.pacman_frame.draw_pacman(self.player.coords)
-            self.screen.blit(self.pacman_frame.surface, (0, 0))
+            self.pacman_frame.put_title((self.screen_size[0]//2, 0))
+            self.screen.blit(self.pacman_frame.surface, (0, self.header))
             pygame.display.flip()
 
             self.clock.tick(60)
