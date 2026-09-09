@@ -33,7 +33,6 @@ class Monitor:
         return entities
 
     def check_events(self) -> bool:
-        print()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
