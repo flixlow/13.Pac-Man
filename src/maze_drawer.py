@@ -7,23 +7,14 @@ from .parsing import Config
 class MazeDrawer(Frame):
     def __init__(self, size: tuple[int, int], config: Config) -> None:
         self.surface = pygame.Surface(size)
-        self.size = size
-        self.config = config
-
-        self.maze = self.config.mazes[0]
 
         self.maze_height = len(self.maze)
         self.maze_width = len(self.maze[0])
-        self.wall_width = 3
-        self.cell_size = min(
-            self.size[0] // self.maze_width,
-            self.size[1] // self.maze_height,
-        )
-
-        self.offset_x = (self.size[0] - self.maze_width * self.cell_size) // 2
-        self.offset_y = (self.size[1] - self.maze_height * self.cell_size) // 2
+        self.update_size(size)
 
         self.wall_color = (255, 255, 180)
+
+        self.draw_maze()
 
     def draw_maze(self) -> None:
         """
@@ -83,5 +74,21 @@ class MazeDrawer(Frame):
                 (255, 255, 0)
             )
 
-    def draw_gum(self) -> None:
-        pass
+    def update_size(self, new_size: tuple[int, int]) -> None:
+        self.size = new_size
+
+        self.wall_width = 3
+
+        self.cell_size = min(
+            self.size[0] // self.maze_width,
+            self.size[1] // self.maze_height
+        )
+
+        maze_width = self.maze_width * self.cell_size
+        maze_height = self.maze_height * self.cell_size
+
+        self.offset_x = (self.size[0] - maze_width) // 2
+        self.offset_y = (self.size[1] - maze_height) // 2
+
+        self.surface = pygame.Surface(new_size)
+        self.draw_maze()

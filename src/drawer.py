@@ -71,6 +71,3 @@ class Frame:
 
     def put_image(self, a: tuple[int, int], image: pygame.Surface) -> None:
         self.surface.blit(image, a)
-
-    def update_size(self, new_size: tuple[int, int]) -> None:
-        self.size = new_size
