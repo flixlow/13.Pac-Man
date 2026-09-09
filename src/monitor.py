@@ -10,6 +10,7 @@ from .entity import Entity, Player, Blue, Red, Green, Orange
 
 
 class Direction(Enum):
+    START = auto()
     NORTH = auto()
     SOUTH = auto()
     EAST = auto()
@@ -54,7 +55,7 @@ class Monitor:
         for ghost_class, c in zip(ghosts, coords):
             entities.append(ghost_class(c))
 
-        self.player: Player = Player((w // 2, h // 2))
+        self.player: Player = Player(((w // 2 - 1), (h // 2 - 1)))
         entities.append(self.player)
 
         return entities
@@ -66,14 +67,14 @@ class Monitor:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                elif event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.player_movement(Direction.NORTH)
-                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     self.player_movement(Direction.SOUTH)
-                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    self.player_movement(Direction.EAST)
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.player_movement(Direction.WEST)
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    self.player_movement(Direction.EAST)
 
             if event.type == pygame.VIDEORESIZE:
                 w, h = event.size
@@ -85,19 +86,21 @@ class Monitor:
     def player_movement(self, direction: Direction) -> None:
         x = self.player.coords[0]
         y = self.player.coords[1]
-        cell: int = self.config.mazes[self.maze_index][x][y]
+        cell: int = self.config.mazes[self.maze_index][y][x]
+        self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
 
         match direction:
             case Direction.NORTH:
                 if not cell & 1:
+                    self.pacman_frame
                     self.player.coords = (x, y - 1)
-            case Direction.WEST:
+            case Direction.EAST:
                 if not cell & 2:
                     self.player.coords = (x + 1, y)
             case Direction.SOUTH:
                 if not cell & 4:
                     self.player.coords = (x, y + 1)
-            case Direction.EAST:
+            case Direction.WEST:
                 if not cell & 8:
                     self.player.coords = (x - 1, y)
 
@@ -106,8 +109,8 @@ class Monitor:
             self.running = self.check_events()
 
             self.pacman_frame.draw_ghost((2, 2), Ghost.SECRET)
-            self.pacman_frame.draw_pacman((2, 3))
-            self.screen.blit(self.pacman_frame.surface, (0, self.header))
+            self.pacman_frame.draw_pacman(self.player.coords)
+            self.screen.blit(self.pacman_frame.surface, (0, 0))
             pygame.display.flip()
 
             self.clock.tick(60)

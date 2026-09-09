@@ -29,7 +29,7 @@ class MazeDrawer(Frame):
                     self.maze[y][x], (x, y)
                 )
 
-    def draw_cell(self, value: int, cell: tuple[int, int]) -> None:
+    def draw_cell(self, value: int, cell: tuple[int, int], bg: bool = False) -> None:
         x, y = cell
 
         px = x * self.cell_size + self.offset_x
@@ -37,6 +37,13 @@ class MazeDrawer(Frame):
 
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
+
+        if bg:
+            self.draw_rect(
+                (x1, y1),
+                (x2, y2),
+                (255, 180, 255)
+            )
 
         if value == 15:
             self.draw_rect(
