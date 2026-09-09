@@ -10,6 +10,7 @@ from .entity import Entity, Player, Blue, Red, Green, Orange
 
 
 class Direction(Enum):
+    START = auto()
     NORTH = auto()
     SOUTH = auto()
     EAST = auto()
@@ -82,20 +83,22 @@ class Monitor:
         x = self.player.coords[0]
         y = self.player.coords[1]
         cell: int = self.config.mazes[self.maze_index][y][x]
+        self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
 
         match direction:
             case Direction.NORTH:
                 if not cell & 1:
+                    self.pacman_frame
                     self.player.coords = (x, y - 1)
-            case Direction.WEST:
+            case Direction.EAST:
                 if not cell & 2:
-                    self.player.coords = (x - 1, y)
+                    self.player.coords = (x + 1, y)
             case Direction.SOUTH:
                 if not cell & 4:
                     self.player.coords = (x, y + 1)
-            case Direction.EAST:
+            case Direction.WEST:
                 if not cell & 8:
-                    self.player.coords = (x + 1, y)
+                    self.player.coords = (x - 1, y)
 
     def main_loop(self) -> None:
         while self.running:
