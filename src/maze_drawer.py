@@ -91,4 +91,3 @@ class MazeDrawer(Frame):
         self.offset_y = (self.size[1] - maze_height) // 2
 
         self.surface = pygame.Surface(new_size)
-        self.draw_maze()

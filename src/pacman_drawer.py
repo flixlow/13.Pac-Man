@@ -23,9 +23,8 @@ class PacManDrawer(MazeDrawer):
         self.maze = self.config.mazes[0]
         self.maze_height = len(self.maze)
         self.maze_width = len(self.maze[0])
-        self.update_size(size)
 
-        self.ghosts_img = {
+        self.ghosts_img_copy = {
             Ghost.RED: pygame.image.load(
                 "assets/ghosts/red_ghost.png").convert_alpha(),
             Ghost.BLUE: pygame.image.load(
@@ -38,8 +37,11 @@ class PacManDrawer(MazeDrawer):
                 "assets/ghosts/secret_ghost.png").convert_alpha()
         }
 
-        self.pacman_img = pygame.image.load(
+        self.ghosts_img = self.ghosts_img_copy
+
+        self.pacman_img_copy = pygame.image.load(
             "assets/pacman/pacman.png").convert_alpha()
+        self.update_size(size)
 
         self.wall_color = (255, 255, 180)
 
@@ -76,3 +78,15 @@ class PacManDrawer(MazeDrawer):
         x1, y1 = px, py
 
         self.put_image((x1, y1), self.pacman_img)
+
+    def update_size(self, new_size):
+        super().update_size(new_size)
+
+        for image in self.ghosts_img:
+            self.ghosts_img[image] = pygame.transform.scale(
+                self.ghosts_img_copy[image], (self.cell_size, self.cell_size)
+            )
+
+        self.pacman_img = pygame.transform.scale(
+                self.pacman_img_copy, (self.cell_size, self.cell_size)
+            )
