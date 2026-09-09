@@ -5,8 +5,8 @@ from enum import Enum, auto
 
 from .scorer import Scorer
 from .parsing import Parser, Config
-from .pacman_drawer import PacManDrawer, Ghost
-from .entity import Entity, Player, Blue, Red, Green, Orange
+from .pacman_drawer import PacManDrawer, GhostColor
+from .entity import Ghost, Player, Blue, Red, Green, Orange
 
 
 class Direction(Enum):
@@ -23,7 +23,7 @@ class Monitor:
         self.config_file = config_file
         self.config: Config = Parser(self.config_file).open()
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
-        self.entities: list[Entity] = self._init_entities()
+        self.ghosts: list[Ghost] = self._init_entities()
 
         pygame.init()
         self.pygame_info = pygame.display.Info()
@@ -44,21 +44,20 @@ class Monitor:
         self.pacman_frame = PacManDrawer((h, w - self.header), self.config)
         self.pacman_frame.draw_maze()
 
-    def _init_entities(self) -> list[Entity]:
-        entities: list[Entity] = []
+    def _init_entities(self) -> list[Ghost]:
+        ghosts: list[Ghost] = []
         w = self.config.levels[self.maze_index].width
         h = self.config.levels[self.maze_index].height
-        ghosts: list[Callable] = [Blue, Red, Orange, Green]
-        coords: set[tuple[int, int]] = {(0, 0), (0, h), (w, 0), (w, h)}
+        ghost_classes: list[Callable] = [Blue, Red, Orange, Green]
+        coords = {(0, 0), (0, (h - 1)), ((w - 1), 0), ((w - 1), (h - 1))}
 
-        shuffle(ghosts)
-        for ghost_class, c in zip(ghosts, coords):
-            entities.append(ghost_class(c))
+        shuffle(ghost_classes)
+        for ghost_class, c in zip(ghost_classes, coords):
+            ghosts.append(ghost_class(c))
 
         self.player: Player = Player(((w // 2 - 1), (h // 2 - 1)))
-        entities.append(self.player)
 
-        return entities
+        return ghosts
 
     def check_events(self) -> bool:
         for event in pygame.event.get():
@@ -84,8 +83,7 @@ class Monitor:
         return True
 
     def player_movement(self, direction: Direction) -> None:
-        x = self.player.coords[0]
-        y = self.player.coords[1]
+        x, y = self.player.coords
         cell: int = self.config.mazes[self.maze_index][y][x]
         self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
 
@@ -104,15 +102,19 @@ class Monitor:
                 if not cell & 8:
                     self.player.coords = (x - 1, y)
 
+    def display_entities(self) -> None:
+        for ghost in self.ghosts:
+            self.pacman_frame.draw_ghost(ghost.coords, ghost.color)
+
+        self.pacman_frame.draw_pacman(self.player.coords)
+
     def main_loop(self) -> None:
         while self.running:
             self.running = self.check_events()
+            self.display_entities()
 
-            self.pacman_frame.draw_ghost((2, 2), Ghost.SECRET)
-            self.pacman_frame.draw_pacman(self.player.coords)
             self.screen.blit(self.pacman_frame.surface, (0, 0))
             pygame.display.flip()
-
             self.clock.tick(60)
 
         pygame.quit()
