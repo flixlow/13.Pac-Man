@@ -78,9 +78,9 @@ class Orange(Ghost):
 
 class Player(Entity):
     def __init__(
-            self,
-            coords: tuple[int, int],
-            asset_file: str = Paths.PACMAN,
-            velocity: int = Parameters.PLAYER_VELOCITY
-        ) -> None:
+        self,
+        coords: tuple[int, int],
+        asset_file: str = Paths.PACMAN,
+        velocity: int = Parameters.PLAYER_VELOCITY
+    ) -> None:
         super().__init__(asset_file, coords, velocity)

@@ -1,8 +1,9 @@
 import pygame
+from random import shuffle
 from typing import Callable
 
-from .parsing import Parser, Config
 from .scorer import Scorer
+from .parsing import Parser, Config
 from .pacman_drawer import PacManDrawer
 from .entity import Entity, Player, Blue, Red, Green, Orange
 
@@ -35,17 +36,20 @@ class Monitor:
         entities: list[Entity] = []
         w = self.config.levels[self.maze_index].width
         h = self.config.levels[self.maze_index].height
-        ghosts: set[Callable] = {Blue, Red, Orange, Green}
+        ghosts: list[Callable] = [Blue, Red, Orange, Green]
         coords: set[tuple[int, int]] = {(0, 0), (0, h), (w, 0), (w, h)}
-        center = (w // 2, h // 2)
 
-        entities.append(Player(center))
+        shuffle(ghosts)
         for ghost_class, c in zip(ghosts, coords):
             entities.append(ghost_class(c))
+
+        self.player: Player = Player((w // 2, h // 2))
+        entities.append(self.player)
 
         return entities
 
     def check_events(self) -> bool:
+        print()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -54,6 +58,14 @@ class Monitor:
                     return False
             if event.type == pygame.VIDEORESIZE:
                 width, height = event.size
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    self.player.coords
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    pass
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    pass
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    pass
 
         return True
 
