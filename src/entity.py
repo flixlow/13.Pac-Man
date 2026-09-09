@@ -26,7 +26,10 @@ class Ghost(Entity):
 
 class Blue(Ghost):
     def __init__(
-        self, asset_file: str, coords: tuple[int, int], velocity: int
+        self,
+        coords: tuple[int, int],
+        asset_file: str = Paths.BLUE,
+        velocity: int = Parameters.GHOST_VELOCITY
     ) -> None:
         super().__init__(asset_file, coords, velocity)
 
@@ -36,7 +39,10 @@ class Blue(Ghost):
 
 class Red(Ghost):
     def __init__(
-        self, asset_file: str, coords: tuple[int, int], velocity: int
+        self,
+        coords: tuple[int, int],
+        asset_file: str = Paths.RED,
+        velocity: int = Parameters.GHOST_VELOCITY
     ) -> None:
         super().__init__(asset_file, coords, velocity)
 
@@ -46,7 +52,10 @@ class Red(Ghost):
 
 class Green(Ghost):
     def __init__(
-        self, asset_file: str, coords: tuple[int, int], velocity: int
+        self,
+        coords: tuple[int, int],
+        asset_file: str = Paths.GREEN,
+        velocity: int = Parameters.GHOST_VELOCITY
     ) -> None:
         super().__init__(asset_file, coords, velocity)
 
@@ -56,7 +65,10 @@ class Green(Ghost):
 
 class Orange(Ghost):
     def __init__(
-        self, asset_file: str, coords: tuple[int, int], velocity: int
+        self,
+        coords: tuple[int, int],
+        asset_file: str = Paths.ORANGE,
+        velocity: int = Parameters.GHOST_VELOCITY
     ) -> None:
         super().__init__(asset_file, coords, velocity)
 
@@ -66,6 +78,9 @@ class Orange(Ghost):
 
 class Player(Entity):
     def __init__(
-            self, coords: tuple[int, int], asset_file: str = Paths.PACMAN
-            ) -> None:
-        super().__init__(asset_file, coords, Parameters.PLAYER_VELOCITY)
+            self,
+            coords: tuple[int, int],
+            asset_file: str = Paths.PACMAN,
+            velocity: int = Parameters.PLAYER_VELOCITY
+        ) -> None:
+        super().__init__(asset_file, coords, velocity)
