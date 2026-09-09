@@ -22,15 +22,21 @@ class PacManDrawer(MazeDrawer):
 
         self.maze = self.config.mazes[0]
 
-        self.maze_height, self.maze_width = (len(self.maze[0]), len(self.maze))
+        self.maze_height = len(self.maze)
+        self.maze_width = len(self.maze[0])
+
         self.wall_width = 3
-        self.cell_size = (
-            min(self.size) //
-            max(self.maze_height, self.maze_width)
+
+        self.cell_size = min(
+            self.size[0] // self.maze_width,
+            self.size[1] // self.maze_height
         )
 
-        self.offset_x = (self.size[0] - self.maze_width * self.cell_size) // 2
-        self.offset_y = (self.size[1] - self.maze_height * self.cell_size) // 2
+        maze_width = self.maze_width * self.cell_size
+        maze_height = self.maze_height * self.cell_size
+
+        self.offset_x = (self.size[0] - maze_width) // 2
+        self.offset_y = (self.size[1] - maze_height) // 2
 
         self.ghosts_img = {
             Ghost.RED: pygame.image.load(
@@ -60,7 +66,7 @@ class PacManDrawer(MazeDrawer):
         x2, y2 = px + self.cell_size, py + self.cell_size
 
         gum = (3, (255, 255, 210)) if not super else (6, (255, 255, 255))
-        self.draw_circle((x1 + x2 // 2, y1 + y2 // 2), gum[0], color=gum[1])
+        self.draw_circle(((x1 + x2) // 2, (y1 + y2) // 2), gum[0], color=gum[1])
 
     def draw_ghost(self, cell: tuple[int, int], ghost_type: Ghost) -> None:
         x, y = cell
