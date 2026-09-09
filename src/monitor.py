@@ -4,7 +4,7 @@ from typing import Callable
 
 from .scorer import Scorer
 from .parsing import Parser, Config
-from .pacman_drawer import PacManDrawer
+from .pacman_drawer import PacManDrawer, Ghost
 from .entity import Entity, Player, Blue, Red, Green, Orange
 
 
@@ -66,6 +66,7 @@ class Monitor:
 
             if event.type == pygame.VIDEORESIZE:
                 self.pacman_frame.update_size(event.size)
+                self.pacman_frame.draw_maze()
 
         return True
 
@@ -73,6 +74,8 @@ class Monitor:
         while self.running:
             self.running = self.check_events()
 
+            self.pacman_frame.draw_ghost((2, 2), Ghost.SECRET)
+            self.pacman_frame.draw_pacman((2, 3))
             self.screen.blit(self.pacman_frame.surface, (0, 0))
             pygame.display.flip()
 
