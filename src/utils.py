@@ -27,8 +27,8 @@ class GhostColor(Enum):
 
 
 class Direction(Enum):
-    START = auto()
-    NORTH = auto()
-    SOUTH = auto()
-    EAST = auto()
-    WEST = auto()
+    START = 0
+    NORTH = 1
+    SOUTH = 2
+    EAST = 4
+    WEST = 8

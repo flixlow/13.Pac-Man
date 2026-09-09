@@ -35,6 +35,16 @@ class Monitor:
         h, w = self.screen_size
         self.pacman_frame = PacManDrawer((h, w - self.header), self.config)
         self.pacman_frame.draw_maze()
+        self.key_directions: dict[int, Direction] = {
+            pygame.K_UP: Direction.NORTH,
+            pygame.K_w: Direction.NORTH,
+            pygame.K_RIGHT: Direction.EAST,
+            pygame.K_d: Direction.EAST,
+            pygame.K_DOWN: Direction.SOUTH,
+            pygame.K_s: Direction.SOUTH,
+            pygame.K_LEFT: Direction.WEST,
+            pygame.K_a: Direction.WEST,
+        }
 
     def _init_entities(self) -> list[Ghost]:
         ghosts: list[Ghost] = []
@@ -58,14 +68,10 @@ class Monitor:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
-                elif event.key == pygame.K_UP or event.key == pygame.K_w:
-                    self.player_movement(Direction.NORTH)
-                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    self.player_movement(Direction.SOUTH)
-                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    self.player_movement(Direction.WEST)
-                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    self.player_movement(Direction.EAST)
+                elif event.key in self.key_directions:
+                    new_direction = self.key_directions[event.key]
+                    if not self.is_there_a_wall_here(new_direction):
+                        self.player.direction = new_direction
 
             if event.type == pygame.VIDEORESIZE:
                 w, h = event.size
@@ -74,30 +80,17 @@ class Monitor:
 
         return True
 
-    def player_movement(self, direction: Direction) -> None:
+    def is_there_a_wall_here(self, direction: Direction) -> bool:
         x, y = self.player.coords
         cell: int = self.config.mazes[self.maze_index][y][x]
-        self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
 
-        match direction:
-            case Direction.NORTH:
-                if not cell & 1:
-                    self.pacman_frame
-                    self.player.coords = (x, y - 1)
-            case Direction.EAST:
-                if not cell & 2:
-                    self.player.coords = (x + 1, y)
-            case Direction.SOUTH:
-                if not cell & 4:
-                    self.player.coords = (x, y + 1)
-            case Direction.WEST:
-                if not cell & 8:
-                    self.player.coords = (x - 1, y)
+        return bool(cell & direction.value)
 
     def display_entities(self) -> None:
         for ghost in self.ghosts:
             self.pacman_frame.draw_ghost(ghost.coords, ghost.color)
 
+        # self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
         self.pacman_frame.draw_pacman(self.player.coords)
 
     def main_loop(self) -> None:
