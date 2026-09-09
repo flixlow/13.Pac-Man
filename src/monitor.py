@@ -16,6 +16,22 @@ class Monitor:
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.entities: list[Entity] = self._init_entities()
 
+        pygame.init()
+        self.pygame_info = pygame.display.Info()
+        self.screen_size = (
+            self.pygame_info.current_w // 2,
+            self.pygame_info.current_h // 2
+        )
+        self.clock = pygame.time.Clock()
+        self.screen = pygame.display.set_mode(
+            self.screen_size, pygame.RESIZABLE
+        )
+
+        self.running = True
+
+        self.pacman_frame = PacManDrawer((self.screen_size), self.config)
+        self.pacman_frame.draw_maze()
+
     def _init_entities(self) -> list[Entity]:
         entities: list[Entity] = []
         w = self.config.levels[self.maze_index].width
@@ -39,6 +55,8 @@ class Monitor:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
+            if event.type == pygame.VIDEORESIZE:
+                width, height = event.size
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.player.coords
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
@@ -51,21 +69,12 @@ class Monitor:
         return True
 
     def main_loop(self) -> None:
+        while self.running:
+            self.running = self.check_events()
 
-        pygame.init()
-        clock = pygame.time.Clock()
-        screen = pygame.display.set_mode((1000, 1000), pygame.RESIZABLE)
-        first_frame = PacManDrawer((500, 500), self.config)
-        first_frame.draw_maze()
-
-        running = True
-
-        while running:
-            running = self.check_events()
-
-            screen.blit(first_frame.surface, (0, 0))
-
+            self.screen.blit(self.pacman_frame.surface, (0, 0))
             pygame.display.flip()
-            clock.tick(60)
+
+            self.clock.tick(60)
 
         pygame.quit()
