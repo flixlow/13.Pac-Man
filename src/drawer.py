@@ -11,6 +11,9 @@ class Frame:
         """
         self.surface = pygame.Surface(size)
         self.size = size
+        self.title_font = pygame.font.Font(None, 36)
+        self.rendered_title = self.title.render(
+            "PAC-MAN", True, (255, 255, 255))
 
     def putpixel(self, a: tuple[int, int],
                  color: tuple[int, int, int] = (0, 0, 0)) -> None:
@@ -72,3 +75,9 @@ class Frame:
 
     def put_image(self, a: tuple[int, int], image: pygame.Surface) -> None:
         self.surface.blit(image, a)
+
+    def put_title(self, a: tuple[int, int]) -> None:
+        self.surface.blit(self.rendered_title, a)
+
+    def update_size(self, new_size: int) -> None:
+        self.size = new_size

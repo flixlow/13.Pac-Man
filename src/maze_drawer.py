@@ -82,7 +82,7 @@ class MazeDrawer(Frame):
             )
 
     def update_size(self, new_size: tuple[int, int]) -> None:
-        self.size = new_size
+        super().update_size(new_size)
 
         self.cell_size = min(
             self.size[0] // self.maze_width,
