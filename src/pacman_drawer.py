@@ -6,7 +6,7 @@ from .parsing import Config
 from enum import Enum, auto
 
 
-class Ghost(Enum):
+class GhostColor(Enum):
     RED = auto()
     BLUE = auto()
     GREEN = auto()
@@ -25,15 +25,15 @@ class PacManDrawer(MazeDrawer):
         self.maze_width = len(self.maze[0])
 
         self.ghosts_img_copy = {
-            Ghost.RED: pygame.image.load(
+            GhostColor.RED: pygame.image.load(
                 "assets/ghosts/red_ghost.png").convert_alpha(),
-            Ghost.BLUE: pygame.image.load(
+            GhostColor.BLUE: pygame.image.load(
                 "assets/ghosts/blue_ghost.png").convert_alpha(),
-            Ghost.ORANGE: pygame.image.load(
+            GhostColor.ORANGE: pygame.image.load(
                 "assets/ghosts/orange_ghost.png").convert_alpha(),
-            Ghost.GREEN: pygame.image.load(
+            GhostColor.GREEN: pygame.image.load(
                 "assets/ghosts/green_ghost.png").convert_alpha(),
-            Ghost.SECRET: pygame.image.load(
+            GhostColor.SECRET: pygame.image.load(
                 "assets/ghosts/secret_ghost.png").convert_alpha()
         }
 
@@ -59,7 +59,7 @@ class PacManDrawer(MazeDrawer):
             ((x1 + x2) // 2, (y1 + y2) // 2), gum[0], color=gum[1]
         )
 
-    def draw_ghost(self, cell: tuple[int, int], ghost_type: Ghost) -> None:
+    def draw_ghost(self, cell: tuple[int, int], color: GhostColor) -> None:
         x, y = cell
 
         px = x * self.cell_size + self.offset_x
@@ -67,7 +67,7 @@ class PacManDrawer(MazeDrawer):
 
         x1, y1 = px, py
 
-        self.put_image((x1, y1), self.ghosts_img[ghost_type])
+        self.put_image((x1, y1), self.ghosts_img[color])
 
     def draw_pacman(self, cell: tuple[int, int]) -> None:
         x, y = cell
