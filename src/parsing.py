@@ -23,7 +23,7 @@ class Config(BaseModel):
     points_per_pacgum: int = Field(gt=0)
     points_per_super_pacgum: int = Field(gt=0)
     points_per_ghost: int = Field(gt=0)
-    seed: str = Field(min_length=1)
+    seed: int
     level_max_time: int = Field(gt=0)
     mazes: list[list[list[int]]] = Field(default=[])
 
@@ -31,8 +31,9 @@ class Config(BaseModel):
         self.mazes: list[list[list[int]]] = self._generate_all_maze()
 
     @staticmethod
-    def _get_new_seed(seed: str) -> str:
-        return hashlib.sha256(seed.encode()).hexdigest()
+    def _get_new_seed(seed: int) -> int:
+        digest = hashlib.sha256(str(seed).encode()).digest()
+        return int.from_bytes(digest, byteorder="big")
 
     def _generate_all_maze(self) -> list[list[list[int]]]:
         mazes = []
@@ -40,11 +41,13 @@ class Config(BaseModel):
 
         for level in self.levels:
             try:
-                generator = MazeGenerator((level.width, level.height), seed)
+                generator = MazeGenerator(
+                    size=(level.width, level.height), seed=seed)
                 mazes.append(generator.maze)
                 seed = self._get_new_seed(seed)
             except BaseException:
                 raise GenerationError("Error occurs during maze generation.")
+
         return mazes
 
 
