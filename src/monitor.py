@@ -68,6 +68,12 @@ class Monitor:
 
         return True
 
+    def player_movement(self) -> None:
+        x = self.player.coords[0]
+        y = self.player.coords[1]
+        cell: int = self.config.mazes[self.maze_index][x][y]
+        
+
     def main_loop(self) -> None:
         while self.running:
             self.running = self.check_events()
