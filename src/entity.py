@@ -17,7 +17,19 @@ class Player(Entity):
         velocity: int = Parameters.PLAYER_VELOCITY
     ) -> None:
         super().__init__(coords, velocity)
-        self.direction: Direction = Direction.START
+        self.direction: Direction = Direction.SOUTH
+
+    def moving(self) -> None:
+        x, y = self.coords
+        match self.direction:
+            case Direction.NORTH:
+                self.coords = (x, y - 1)
+            case Direction.WEST:
+                self.coords = (x - 1, y)
+            case Direction.SOUTH:
+                self.coords = (x, y + 1)
+            case Direction.EAST:
+                self.coords = (x + 1, y)
 
 
 class Ghost(Entity):

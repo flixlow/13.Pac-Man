@@ -13,3 +13,5 @@ highscore can take only alphanumeric
 [ ] ajouter les pacgums
 [ ] ajouter les super pacgums
 [ ] deplacement des fantomes a implementer, random au debut puispathfinding
+
+i removed the start from enum direction, we should talk about it
