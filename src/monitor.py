@@ -55,8 +55,6 @@ class Monitor:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
-            if event.type == pygame.VIDEORESIZE:
-                width, height = event.size
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.player.coords
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
@@ -65,6 +63,9 @@ class Monitor:
                     pass
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     pass
+
+            if event.type == pygame.VIDEORESIZE:
+                self.pacman_frame.update_size(event.size)
 
         return True
 
