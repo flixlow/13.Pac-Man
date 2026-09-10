@@ -4,7 +4,7 @@ from typing import Callable
 
 from .scorer import Scorer
 from .utils import Direction
-from .parsing import Parser, Config
+from .parsing import parsing, Config
 from .pacman_drawer import PacManDrawer
 from .entity import Ghost, Player, Blue, Red, Green, Orange
 
@@ -13,7 +13,7 @@ class Monitor:
     def __init__(self, config_file: str) -> None:
         self.maze_index: int = 0
         self.config_file = config_file
-        self.config: Config = Parser(self.config_file).open()
+        self.config: Config = parsing(self.config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.ghosts: list[Ghost] = self._init_entities()
 
