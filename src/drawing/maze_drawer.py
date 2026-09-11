@@ -1,7 +1,7 @@
 import pygame
 
 from .drawer import Frame
-from .parsing import Config
+from ..parsing import Config
 
 
 class MazeDrawer(Frame):

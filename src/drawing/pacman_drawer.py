@@ -1,8 +1,8 @@
 import pygame
 
 from .maze_drawer import MazeDrawer
-from .utils import GhostColor
-from .parsing import Config
+from ..utils import GhostColor
+from ..parsing import Config
 
 
 class PacManDrawer(MazeDrawer):

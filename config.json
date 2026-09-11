@@ -1,5 +1,5 @@
 {
-  "highscore_filename": "highscore.txt",
+  "highscore_filename": "highscore.json",
     "levels": [
     {
       "width": 20,

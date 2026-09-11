@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .pacman_drawer import GhostColor
+from .drawing.pacman_drawer import GhostColor
 from .utils import Parameters, Direction
 
 
@@ -17,7 +17,19 @@ class Player(Entity):
         velocity: int = Parameters.PLAYER_VELOCITY
     ) -> None:
         super().__init__(coords, velocity)
-        self.direction: Direction = Direction.SOUTH
+        self.direction: Direction = Direction.START
+        self.movement_interval_ms: int = 1000 // self.velocity
+        self.player_move_elapsed_ms: int = 0
+
+    def can_it_move(self, elapsed_ms: int) -> bool:
+        self.player_move_elapsed_ms += elapsed_ms
+
+        if self.player_move_elapsed_ms < self.movement_interval_ms:
+            return False
+
+        self.player_move_elapsed_ms -= self.movement_interval_ms
+        return True
+
 
     def moving(self) -> None:
         x, y = self.coords
@@ -41,10 +53,15 @@ class Ghost(Entity):
     ) -> None:
         super().__init__(coords, velocity)
         self.color: GhostColor = color
+        self.sequence: list[tuple[int, int]] = []
 
     @abstractmethod
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         ...
+
+    def moving(self) -> None:
+        self.coords
 
 
 class Blue(Ghost):
@@ -55,7 +72,8 @@ class Blue(Ghost):
     ) -> None:
         super().__init__(coords, color)
 
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         return []
 
 
@@ -67,7 +85,8 @@ class Red(Ghost):
     ) -> None:
         super().__init__(coords, color)
 
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         return []
 
 
@@ -79,7 +98,8 @@ class Green(Ghost):
     ) -> None:
         super().__init__(coords, color)
 
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         return []
 
 
@@ -91,5 +111,6 @@ class Orange(Ghost):
     ) -> None:
         super().__init__(coords, color)
 
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         return []

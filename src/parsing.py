@@ -51,26 +51,23 @@ class Config(BaseModel):
         return mazes
 
 
-class Parser:
-    def __init__(self, file_name: str) -> None:
-        self.file: Path = Path(file_name)
-        if self.file.suffix != ".json":
-            raise ParsingError("The config file must be a json.")
-
-    def open(self) -> Config:
-        try:
-            with open(self.file, encoding="utf-8") as f:
-                lines = [ln for ln in f if not ln.lstrip().startswith('#')]
-                content = json.loads("".join(lines))
-            return Config(**content)
-        except OSError as e:
-            raise ParsingError(f"{self.file}: {e.__class__.__name__}")
-        except json.JSONDecodeError as e:
-            raise ParsingError(
-                f"Error occurs while reading {self.file.as_posix()}"
-                f"(line {e.lineno})."
-            ) from e
+def parsing(file_name: str) -> Config:
+    file: Path = Path(file_name)
+    if file.suffix != ".json":
+        raise ParsingError("The config file must be a json.")
+    try:
+        with open(file, encoding="utf-8") as f:
+            lines = [ln for ln in f if not ln.lstrip().startswith('#')]
+            content = json.loads("".join(lines))
+        return Config(**content)
+    except OSError as e:
+        raise ParsingError(f"{file_name}: {e.__class__.__name__}")
+    except json.JSONDecodeError as e:
+        raise ParsingError(
+            f"Error occurs while reading {file.as_posix()}"
+            f"(line {e.lineno})."
+        ) from e
 
 
 if __name__ == "__main__":
-    print(Parser(sys.argv[1]).open())
+    print(parsing(sys.argv[1]))

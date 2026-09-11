@@ -4,8 +4,8 @@ from typing import Callable
 
 from .scorer import Scorer
 from .utils import Direction
-from .parsing import Parser, Config
-from .pacman_drawer import PacManDrawer
+from .parsing import parsing, Config
+from .drawing.pacman_drawer import PacManDrawer
 from .entity import Ghost, Player, Blue, Red, Green, Orange
 
 
@@ -13,7 +13,7 @@ class Monitor:
     def __init__(self, config_file: str) -> None:
         self.maze_index: int = 0
         self.config_file = config_file
-        self.config: Config = Parser(self.config_file).open()
+        self.config: Config = parsing(self.config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.ghosts: list[Ghost] = self._init_entities()
 
@@ -61,6 +61,9 @@ class Monitor:
 
         return ghosts
 
+    def next_level(self) -> None:
+        self.maze_index += 1
+
     def check_events(self) -> bool:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -68,6 +71,9 @@ class Monitor:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
+                elif event.key == pygame.K_n:
+                    pass
+                    # self.next_level()
                 elif event.key in self.key_directions:
                     new_direction = self.key_directions[event.key]
                     if not self.is_there_a_wall_here(new_direction):
@@ -88,11 +94,21 @@ class Monitor:
         cell = self.get_cell_walls(self.player.coords)
         return bool(cell & direction.value)
 
-    def display_entities(self) -> None:
+    def display_ghosts(self) -> None:
         for ghost in self.ghosts:
+            if ghost.sequence == []:
+                ghost.sequence = ghost.generate_sequence(self.config.mazes[self.maze_index])
+            cell = self.get_cell_walls(ghost.coords)
+
+            self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
+
+            ghost.moving()
+
             self.pacman_frame.draw_ghost(ghost.coords, ghost.color)
 
-        if not self.is_there_a_wall_here(self.player.direction):
+    def display_player(self, elapsed_time: int) -> None:
+        if self.player.can_it_move(elapsed_time) and not \
+                self.is_there_a_wall_here(self.player.direction):
             cell = self.get_cell_walls(self.player.coords)
 
             self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
@@ -106,12 +122,14 @@ class Monitor:
 
             self.running = self.check_events()
 
-            self.display_entities()
+            elapsed_time = self.clock.tick(60)
+
+            self.display_player(elapsed_time)
+
+            self.display_ghosts()
 
             self.screen.blit(self.pacman_frame.surface, (0, 0))
 
             pygame.display.flip()
-
-            self.clock.tick(60)
 
         pygame.quit()

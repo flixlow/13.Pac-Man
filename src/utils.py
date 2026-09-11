@@ -14,7 +14,7 @@ class Paths:
 
 
 class Parameters:
-    PLAYER_VELOCITY = 60
+    PLAYER_VELOCITY = 5
     GHOST_VELOCITY = 60
 
 
@@ -27,6 +27,7 @@ class GhostColor(Enum):
 
 
 class Direction(Enum):
+    START = 0
     NORTH = 1
     EAST = 2
     SOUTH = 4
