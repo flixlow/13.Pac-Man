@@ -5,7 +5,7 @@ from typing import Callable
 from .scorer import Scorer
 from .utils import Direction
 from .parsing import parsing, Config
-from .pacman_drawer import PacManDrawer
+from .drawing.pacman_drawer import PacManDrawer
 from .entity import Ghost, Player, Blue, Red, Green, Orange
 
 

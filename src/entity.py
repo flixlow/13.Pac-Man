@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .pacman_drawer import GhostColor
+from .drawing.pacman_drawer import GhostColor
 from .utils import Parameters, Direction
 
 
