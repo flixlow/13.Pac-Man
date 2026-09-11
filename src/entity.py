@@ -41,10 +41,15 @@ class Ghost(Entity):
     ) -> None:
         super().__init__(coords, velocity)
         self.color: GhostColor = color
+        self.sequence: list[tuple[int, int]] = []
 
     @abstractmethod
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         ...
+
+    def moving(self) -> None:
+        self.coords
 
 
 class Blue(Ghost):
@@ -55,7 +60,8 @@ class Blue(Ghost):
     ) -> None:
         super().__init__(coords, color)
 
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         return []
 
 
@@ -67,7 +73,8 @@ class Red(Ghost):
     ) -> None:
         super().__init__(coords, color)
 
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         return []
 
 
@@ -79,7 +86,8 @@ class Green(Ghost):
     ) -> None:
         super().__init__(coords, color)
 
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         return []
 
 
@@ -91,5 +99,6 @@ class Orange(Ghost):
     ) -> None:
         super().__init__(coords, color)
 
-    def moving(self) -> list[tuple[int]]:
+    def generate_sequence(
+            self, maze: list[list[int]]) -> list[tuple[int, int]]:
         return []

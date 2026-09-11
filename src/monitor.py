@@ -61,6 +61,9 @@ class Monitor:
 
         return ghosts
 
+    def next_level(self) -> None:
+        self.maze_index += 1
+
     def check_events(self) -> bool:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -68,6 +71,9 @@ class Monitor:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
+                elif event.key == pygame.K_n:
+                    pass
+                    # self.next_level()
                 elif event.key in self.key_directions:
                     new_direction = self.key_directions[event.key]
                     if not self.is_there_a_wall_here(new_direction):
@@ -88,10 +94,19 @@ class Monitor:
         cell = self.get_cell_walls(self.player.coords)
         return bool(cell & direction.value)
 
-    def display_entities(self) -> None:
+    def display_ghosts(self) -> None:
         for ghost in self.ghosts:
+            if ghost.sequence == []:
+                ghost.sequence = ghost.generate_sequence(self.config.mazes[self.maze_index])
+            cell = self.get_cell_walls(ghost.coords)
+
+            self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
+
+            ghost.moving()
+
             self.pacman_frame.draw_ghost(ghost.coords, ghost.color)
 
+    def display_player(self) -> None:
         if not self.is_there_a_wall_here(self.player.direction):
             cell = self.get_cell_walls(self.player.coords)
 
@@ -106,7 +121,8 @@ class Monitor:
 
             self.running = self.check_events()
 
-            self.display_entities()
+            # self.display_ghosts()
+            self.display_player()
 
             self.screen.blit(self.pacman_frame.surface, (0, 0))
 
