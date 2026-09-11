@@ -18,6 +18,18 @@ class Player(Entity):
     ) -> None:
         super().__init__(coords, velocity)
         self.direction: Direction = Direction.START
+        self.movement_interval_ms: int = 1000 // self.velocity
+        self.player_move_elapsed_ms: int = 0
+
+    def can_it_move(self, elapsed_ms: int) -> bool:
+        self.player_move_elapsed_ms += elapsed_ms
+
+        if self.player_move_elapsed_ms < self.movement_interval_ms:
+            return False
+
+        self.player_move_elapsed_ms -= self.movement_interval_ms
+        return True
+
 
     def moving(self) -> None:
         x, y = self.coords

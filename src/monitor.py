@@ -106,8 +106,9 @@ class Monitor:
 
             self.pacman_frame.draw_ghost(ghost.coords, ghost.color)
 
-    def display_player(self) -> None:
-        if not self.is_there_a_wall_here(self.player.direction):
+    def display_player(self, elapsed_time: int) -> None:
+        if self.player.can_it_move(elapsed_time) and not \
+                self.is_there_a_wall_here(self.player.direction):
             cell = self.get_cell_walls(self.player.coords)
 
             self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
@@ -121,13 +122,14 @@ class Monitor:
 
             self.running = self.check_events()
 
-            # self.display_ghosts()
-            self.display_player()
+            elapsed_time = self.clock.tick(60)
+
+            self.display_player(elapsed_time)
+
+            self.display_ghosts()
 
             self.screen.blit(self.pacman_frame.surface, (0, 0))
 
             pygame.display.flip()
-
-            self.clock.tick(60)
 
         pygame.quit()
