@@ -32,3 +32,9 @@ class Direction(Enum):
     EAST = 2
     SOUTH = 4
     WEST = 8
+
+
+# class Pacgum:
+    # def __init__(self, coords: tuple[int, int], super: bool = False) -> None:
+        # self.coords: tuple[int, int] = coords
+        # self.super: bool = super

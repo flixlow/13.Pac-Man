@@ -15,5 +15,5 @@ highscore can take only alphanumeric
 [ ] deplacement des fantomes a implementer, random au debut puispathfinding
 
 i removed the start from enum direction, we should talk about it
-[ ] implent velocity in simulation
+[x] implent velocity in simulation
 [ ] generate sequences of coords for movement
