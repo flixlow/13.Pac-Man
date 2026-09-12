@@ -59,7 +59,21 @@ class Monitor:
 
         self.player: Player = Player(((w // 2 - 1), (h // 2 - 1)))
 
+        self.pacgums: set[tuple[int, int]] = set()
+        for x in range(w):
+            for y in range(h):
+                self.pacgums.add((x, y))
+
         return ghosts
+
+    def display_pacgums(self) -> None:
+        x = self.config.levels[self.maze_index].width - 1
+        y = self.config.levels[self.maze_index].height - 1
+        super_pacgums = [(0, 0), (0, y), (x, 0), (x, y)]
+
+        for pacgum in self.pacgums:
+            is_super = True if pacgum in super_pacgums else False
+            self.pacman_frame.draw_pacgum(pacgum, is_super)
 
     def next_level(self) -> None:
         self.maze_index += 1
@@ -100,7 +114,7 @@ class Monitor:
                 ghost.sequence = ghost.generate_sequence(self.config.mazes[self.maze_index])
             cell = self.get_cell_walls(ghost.coords)
 
-            self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
+            self.pacman_frame.draw_cell(cell, ghost.coords, bg=True)
 
             ghost.moving()
 
@@ -117,16 +131,20 @@ class Monitor:
 
             self.pacman_frame.draw_pacman(self.player.coords)
 
+            self.pacgums.discard(self.player.coords)            
+
     def main_loop(self) -> None:
+
         while self.running:
+            elapsed_time = self.clock.tick(60)
 
             self.running = self.check_events()
-
-            elapsed_time = self.clock.tick(60)
 
             self.display_player(elapsed_time)
 
             self.display_ghosts()
+
+            self.display_pacgums()
 
             self.screen.blit(self.pacman_frame.surface, (0, 0))
 
