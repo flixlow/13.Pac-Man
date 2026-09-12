@@ -1,4 +1,4 @@
-from mazegenerator import MazeGenerator
+from mazegenerator import MazeGenerator  # type: ignore
 from pydantic import BaseModel, Field
 from pathlib import Path
 from typing import Any

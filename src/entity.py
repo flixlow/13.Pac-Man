@@ -22,6 +22,14 @@ class Entity(ABC):
     def moving(self) -> None:
         ...
 
+    def get_cell_walls(self, coords: tuple[int, int]) -> int:
+        x, y = coords
+        return self.maze[y][x]
+
+    def is_wall_here(self) -> bool:
+        cell = self.get_cell_walls(self.coords)
+        return bool(cell & self.direction.value)
+
     def can_it_move(self, elapsed_ms: int) -> bool:
         self.player_move_elapsed_ms += elapsed_ms
 
@@ -35,14 +43,6 @@ class Entity(ABC):
 class Player(Entity):
     default_velocity: int = Parameters.PLAYER_VELOCITY
     direction: Direction = Direction.START
-
-    def get_cell_walls(self, coords: tuple[int, int]) -> int:
-        x, y = coords
-        return self.maze[y][x]
-
-    def is_wall_here(self) -> bool:
-        cell = self.get_cell_walls(self.coords)
-        return bool(cell & self.direction.value)
 
     def can_it_move(self, elapsed_ms: int) -> bool:
         return super().can_it_move(elapsed_ms) and not self.is_wall_here()
@@ -74,7 +74,7 @@ class Ghost(Entity):
 
     @abstractmethod
     def generate_sequence(
-            self, maze: list[list[int]]) -> list[tuple[int, int]]:
+            self) -> list[tuple[int, int]]:
         ...
 
     def moving(self) -> None:
@@ -84,30 +84,29 @@ class Ghost(Entity):
 class Blue(Ghost):
     default_color = GhostColor.BLUE
 
-    def generate_sequence(
-            self, maze: list[list[int]]) -> list[tuple[int, int]]:
+    def generate_sequence(self) -> list[tuple[int, int]]:
+        sequence: list[tuple[int, int]] = []
+        for _ in range(10):
+            pass
         return []
 
 
 class Red(Ghost):
     default_color = GhostColor.RED
 
-    def generate_sequence(
-            self, maze: list[list[int]]) -> list[tuple[int, int]]:
+    def generate_sequence(self) -> list[tuple[int, int]]:
         return []
 
 
 class Green(Ghost):
     default_color = GhostColor.GREEN
 
-    def generate_sequence(
-            self, maze: list[list[int]]) -> list[tuple[int, int]]:
+    def generate_sequence(self) -> list[tuple[int, int]]:
         return []
 
 
 class Orange(Ghost):
     default_color = GhostColor.ORANGE
 
-    def generate_sequence(
-            self, maze: list[list[int]]) -> list[tuple[int, int]]:
+    def generate_sequence(self) -> list[tuple[int, int]]:
         return []
