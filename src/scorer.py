@@ -14,7 +14,7 @@ class Scorer:
             if not Path(self.file).exists():
                 return {}
             with open(self.file, encoding="utf-8") as f:
-                return json.loads(f.read())
+                return dict(json.loads(f.read()))  # not sure about that cast
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
         except json.JSONDecodeError as e:

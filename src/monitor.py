@@ -56,7 +56,7 @@ class Monitor:
 
         shuffle(ghost_classes)
         for ghost_class, c in zip(ghost_classes, coords):
-            entities.append(ghost_class(c))
+            entities.append(ghost_class(c, self.config.mazes[self.maze_index]))
 
         maze = self.config.mazes[self.maze_index]
         player = Player(((w // 2 - 1), (h // 2 - 1)), maze)

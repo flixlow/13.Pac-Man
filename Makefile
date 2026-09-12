@@ -21,6 +21,6 @@ lint:
 	uv run -m flake8 src && uv run -m mypy $(LINT_FLAG) src
 
 lint-strict:
-	uv run -m flake8 src && uv run -m mypy --strict
+	uv run -m flake8 src && uv run -m mypy --strict src
 
 .PHONY: install run debug clean lint lint-strict
