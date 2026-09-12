@@ -8,7 +8,7 @@ run:
 	uv run -m src config.json
 
 debug:
-	uv run -m pdb -m src
+	uv run -m pdb -m src config.json
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
