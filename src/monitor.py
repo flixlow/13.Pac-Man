@@ -6,18 +6,19 @@ from .scorer import Scorer
 from .utils import Direction
 from .parsing import parsing, Config
 from .drawing.pacman_drawer import PacManDrawer
-from .entity import Ghost, Player, Blue, Red, Green, Orange
+from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
 
 
 class Monitor:
     def __init__(self, config_file: str) -> None:
+        pygame.init()
+
         self.maze_index: int = 0
         self.config_file = config_file
         self.config: Config = parsing(self.config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
-        self.ghosts: list[Ghost] = self._init_entities()
+        self.entities: list[Entity] = self._init_entities()
 
-        pygame.init()
         self.pygame_info = pygame.display.Info()
         self.screen_size = (
             self.pygame_info.current_w // 2,
@@ -32,8 +33,8 @@ class Monitor:
 
         self.running = True
 
-        h, w = self.screen_size
-        self.pacman_frame = PacManDrawer((h, w - self.header), self.config)
+        w, h = self.screen_size
+        self.pacman_frame = PacManDrawer((w, h - self.header), self.config)
         self.pacman_frame.draw_maze()
         self.key_directions: dict[int, Direction] = {
             pygame.K_UP: Direction.NORTH,
@@ -46,8 +47,8 @@ class Monitor:
             pygame.K_a: Direction.WEST,
         }
 
-    def _init_entities(self) -> list[Ghost]:
-        ghosts: list[Ghost] = []
+    def _init_entities(self) -> list[Entity]:
+        entities: list[Entity] = []
         w = self.config.levels[self.maze_index].width
         h = self.config.levels[self.maze_index].height
         ghost_classes: list[Callable] = [Blue, Red, Orange, Green]
@@ -55,25 +56,22 @@ class Monitor:
 
         shuffle(ghost_classes)
         for ghost_class, c in zip(ghost_classes, coords):
-            ghosts.append(ghost_class(c))
+            entities.append(ghost_class(c))
 
-        self.player: Player = Player(((w // 2 - 1), (h // 2 - 1)))
+        maze = self.config.mazes[self.maze_index]
+        player = Player(((w // 2 - 1), (h // 2 - 1)), maze)
+        self.player: Player = player
+
+        entities.append(player)
 
         self.pacgums: set[tuple[int, int]] = set()
         for x in range(w):
             for y in range(h):
+                if self.config.mazes[self.maze_index][y][x] == 15:
+                    continue
                 self.pacgums.add((x, y))
 
-        return ghosts
-
-    def display_pacgums(self) -> None:
-        x = self.config.levels[self.maze_index].width - 1
-        y = self.config.levels[self.maze_index].height - 1
-        super_pacgums = [(0, 0), (0, y), (x, 0), (x, y)]
-
-        for pacgum in self.pacgums:
-            is_super = True if pacgum in super_pacgums else False
-            self.pacman_frame.draw_pacgum(pacgum, is_super)
+        return entities
 
     def next_level(self) -> None:
         self.maze_index += 1
@@ -108,43 +106,41 @@ class Monitor:
         cell = self.get_cell_walls(self.player.coords)
         return bool(cell & direction.value)
 
-    def display_ghosts(self) -> None:
-        for ghost in self.ghosts:
-            if ghost.sequence == []:
-                ghost.sequence = ghost.generate_sequence(self.config.mazes[self.maze_index])
-            cell = self.get_cell_walls(ghost.coords)
+    def display_pacgums(self) -> None:
+        x = self.config.levels[self.maze_index].width - 1
+        y = self.config.levels[self.maze_index].height - 1
+        super_pacgums = [(0, 0), (0, y), (x, 0), (x, y)]
 
-            self.pacman_frame.draw_cell(cell, ghost.coords, bg=True)
+        for pacgum in self.pacgums:
+            is_super = True if pacgum in super_pacgums else False
+            self.pacman_frame.draw_pacgum(pacgum, is_super)
 
-            ghost.moving()
+    def display_entities(self, elapsed_time: int) -> None:
+        for entity in self.entities:
+            if entity.can_it_move(elapsed_time):
 
-            self.pacman_frame.draw_ghost(ghost.coords, ghost.color)
+                cell = self.get_cell_walls(entity.coords)
 
-    def display_player(self, elapsed_time: int) -> None:
-        if self.player.can_it_move(elapsed_time) and not \
-                self.is_there_a_wall_here(self.player.direction):
-            cell = self.get_cell_walls(self.player.coords)
+                self.pacman_frame.draw_cell(cell, entity.coords, bg=True)
 
-            self.pacman_frame.draw_cell(cell, self.player.coords, bg=True)
+                entity.moving()
 
-            self.player.moving()
+                if isinstance(entity, Ghost):
+                    self.pacman_frame.draw_ghost(entity.coords, entity.color)
+                else:
+                    self.pacman_frame.draw_pacman(entity.coords)
 
-            self.pacman_frame.draw_pacman(self.player.coords)
-
-            self.pacgums.discard(self.player.coords)            
+                self.pacgums.discard(entity.coords)
 
     def main_loop(self) -> None:
+        self.display_pacgums()
 
         while self.running:
             elapsed_time = self.clock.tick(60)
 
             self.running = self.check_events()
 
-            self.display_player(elapsed_time)
-
-            self.display_ghosts()
-
-            self.display_pacgums()
+            self.display_entities(elapsed_time)
 
             self.screen.blit(self.pacman_frame.surface, (0, 0))
 
