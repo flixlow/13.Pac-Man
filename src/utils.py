@@ -36,5 +36,5 @@ class Direction(Enum):
 
 # class Pacgum:
     # def __init__(self, coords: tuple[int, int], super: bool = False) -> None:
-        # self.coords: tuple[int, int] = coords
-        # self.super: bool = super
+    # self.coords: tuple[int, int] = coords
+    # self.super: bool = super

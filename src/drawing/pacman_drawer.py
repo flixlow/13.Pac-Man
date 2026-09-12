@@ -63,7 +63,7 @@ class PacManDrawer(MazeDrawer):
 
         self.put_image((x1, y1), self.pacman_img)
 
-    def update_size(self, new_size):
+    def update_size(self, new_size: tuple[int, int]) -> None:
         super().update_size(new_size)
 
         for image in self.ghosts_img:
