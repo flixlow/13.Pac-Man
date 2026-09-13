@@ -80,7 +80,7 @@ class Ghost(Entity):
     def moving(self) -> None:
         if self.sequence == []:
             self.generate_sequence()
-        else:
+        if self.sequence != []:
             self.coords = self.sequence.pop(0)
 
 
@@ -104,15 +104,20 @@ class Blue(Ghost):
         return coords
 
     def generate_sequence(self) -> None:
-        last_coords = self.coords
+        current_coords = self.coords
+        last_coords : None | tuple[int, int] = None
 
-        for _ in range(10):
-            available_coords = self.get_available_coords(last_coords)
-            if len(available_coords) > 1 and self.coords in available_coords:
-                available_coords.remove((self.coords))
+        for _ in range(30):
+            available_coords = self.get_available_coords(current_coords)
+            if last_coords and len(available_coords) > 1 :
+                if last_coords in available_coords:
+                    available_coords.remove(last_coords)
+
+            last_coords = current_coords
             next_coords = choice(available_coords)
-            last_coords = next_coords
-            self.sequence.append(last_coords)
+
+            self.sequence.append(next_coords)
+            current_coords = next_coords
 
 
 class Red(Ghost):
