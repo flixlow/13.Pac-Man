@@ -116,12 +116,21 @@ class Monitor:
             self.pacman_frame.draw_pacgum(pacgum, is_super)
 
     def display_entities(self, elapsed_time: int) -> None:
+        x = self.config.levels[self.maze_index].width - 1
+        y = self.config.levels[self.maze_index].height - 1
+        super_pacgums = [(0, 0), (0, y), (x, 0), (x, y)]
+
         for entity in self.entities:
             if entity.can_it_move(elapsed_time):
 
                 cell = self.get_cell_walls(entity.coords)
 
-                self.pacman_frame.draw_cell(cell, entity.coords, bg=True)
+                if isinstance(entity, Ghost) and entity.coords in self.pacgums:
+                    self.pacman_frame.draw_cell(cell, entity.coords, bg=True)
+                    flag = bool(entity.coords in super_pacgums)
+                    self.pacman_frame.draw_pacgum(entity.coords, flag)
+                else:
+                    self.pacman_frame.draw_cell(cell, entity.coords, bg=True)
 
                 entity.moving()
 
@@ -130,7 +139,8 @@ class Monitor:
                 else:
                     self.pacman_frame.draw_pacman(entity.coords)
 
-                self.pacgums.discard(entity.coords)
+                if isinstance(entity, Player):
+                    self.pacgums.discard(entity.coords)
 
     def main_loop(self) -> None:
         self.display_pacgums()

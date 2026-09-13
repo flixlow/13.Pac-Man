@@ -14,6 +14,5 @@ highscore can take only alphanumeric
 [x] ajouter les super pacgums
 [ ] deplacement des fantomes a implementer, random au debut puispathfinding
 
-i removed the start from enum direction, we should talk about it
 [x] implent velocity in simulation
 [ ] generate sequences of coords for movement
