@@ -43,21 +43,21 @@ class PacManDrawer(MazeDrawer):
             ((x1 + x2) // 2, (y1 + y2) // 2), gum[0], color=gum[1]
         )
 
-    def draw_ghost(self, cell: tuple[int, int], color: GhostColor) -> None:
+    def draw_ghost(self, cell: tuple[float, float], color: GhostColor) -> None:
         x, y = cell
 
-        px = x * self.cell_size + self.offset_x
-        py = y * self.cell_size + self.offset_y
+        px = int(x * self.cell_size + self.offset_x)
+        py = int(y * self.cell_size + self.offset_y)
 
         x1, y1 = px, py
 
         self.put_image((x1, y1), self.ghosts_img[color])
 
-    def draw_pacman(self, cell: tuple[int, int]) -> None:
+    def draw_pacman(self, cell: tuple[float, float]) -> None:
         x, y = cell
 
-        px = x * self.cell_size + self.offset_x
-        py = y * self.cell_size + self.offset_y
+        px = int(x * self.cell_size + self.offset_x)
+        py = int(y * self.cell_size + self.offset_y)
 
         x1, y1 = px, py
 
