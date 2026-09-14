@@ -33,17 +33,20 @@ class Menu:
             if i >= 10:
                 return None
             self.scorers_rendered.append(
-                self.font_name.render(
+                (value, self.font_name.render(
                     f"{i + 1}: {key} - " + f"{value}",
-                    True, (255, 255, 255))
+                    True, (255, 255, 255)))
             )
+
+        self.scorers_rendered = sorted(self.scorers_rendered, reverse=True)
 
     def print_leaderboard(self) -> None:
         h = 0
         for i in range(len(self.scorers_rendered)):
-            hv = self.scorers_rendered[i].get_height()
+            score, scorer = self.scorers_rendered[i]
+            hv = scorer.get_height()
             self.frame.surface.blit(
-                self.scorers_rendered[i],
+                scorer,
                 (0, h)
             )
             h += hv

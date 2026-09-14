@@ -1,5 +1,3 @@
-import pygame
-
 from .basic_drawer import Drawer
 from ..parsing import Config
 
