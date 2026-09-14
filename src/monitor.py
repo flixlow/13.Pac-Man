@@ -6,6 +6,7 @@ from .scorer import Scorer
 from .utils import Direction
 from .parsing import parsing, Config
 from .drawing.pacman_drawer import PacManDrawer
+from .drawing.basic_drawer import Drawer
 from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
 
 
@@ -24,7 +25,10 @@ class Monitor:
             self.pygame_info.current_w // 2,
             self.pygame_info.current_h // 2
         )
-        self.header = self.screen_size[1]//5
+        w, h = self.screen_size
+        self.header = h // 5
+        self.header_img = Drawer((w, h // 5))
+        self.header_img.fill((255, 255, 255))
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
@@ -95,8 +99,14 @@ class Monitor:
 
             if event.type == pygame.VIDEORESIZE:
                 w, h = event.size
-                self.pacman_frame.update_size((w, h - h // 10))
+                self.screen_size = (w, h)
+                self.header = h // 5
+
+                self.pacman_frame.update_size((w, h - self.header))
                 self.pacman_frame.draw_maze()
+
+                self.header_img.update_size((w, self.header))
+                self.header_img.fill((120, 80, 255))
 
         return True
 
@@ -118,31 +128,23 @@ class Monitor:
             self.pacman_frame.draw_pacgum(pacgum, is_super)
 
     def display_entities(self, elapsed_time: int) -> None:
-        x = self.config.levels[self.maze_index].width - 1
-        y = self.config.levels[self.maze_index].height - 1
-        super_pacgums = [(0, 0), (0, y), (x, 0), (x, y)]
+        self.pacman_frame.draw_maze()
+        self.display_pacgums()
 
         for entity in self.entities:
             if entity.can_it_move(elapsed_time):
-
-                cell = self.get_cell_walls(entity.coords)
-
-                if isinstance(entity, Ghost) and entity.coords in self.pacgums:
-                    self.pacman_frame.draw_cell(cell, entity.coords, bg=True)
-                    flag = bool(entity.coords in super_pacgums)
-                    self.pacman_frame.draw_pacgum(entity.coords, flag)
-                else:
-                    self.pacman_frame.draw_cell(cell, entity.coords, bg=True)
-
                 entity.moving()
 
-                if isinstance(entity, Ghost):
-                    self.pacman_frame.draw_ghost(entity.coords, entity.color)
-                else:
-                    self.pacman_frame.draw_pacman(entity.coords)
+            entity.update_animation(elapsed_time)
+            if isinstance(entity, Ghost):
+                self.pacman_frame.draw_ghost(
+                    entity.render_coords(), entity.color
+                )
+            else:
+                self.pacman_frame.draw_pacman(entity.render_coords())
 
-                if isinstance(entity, Player):
-                    self.pacgums.discard(entity.coords)
+            if isinstance(entity, Player):
+                self.pacgums.discard(entity.coords)
 
     def main_loop(self) -> None:
         self.display_pacgums()
@@ -154,7 +156,12 @@ class Monitor:
 
             self.display_entities(elapsed_time)
 
-            self.screen.blit(self.pacman_frame.surface, (0, 0))
+            width, _ = self.header_img.rendered_title.get_size()
+            self.header_img.put_title(
+                (self.screen_size[0] // 2 - width // 2, self.header // 2)
+            )
+            self.screen.blit(self.header_img.surface, (0, 0))
+            self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
             pygame.display.flip()
 

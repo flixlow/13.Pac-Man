@@ -14,44 +14,13 @@ class Drawer:
         self.surface = pygame.Surface(size)
         self.title_font = pygame.font.Font(None, 36)
         self.rendered_title = self.title_font.render(
-            "PAC-MAN", True, (255, 255, 255)
+            "PAC-MAN", True, (0, 0, 0)
         )
 
     def putpixel(self, a: tuple[int, int],
                  color: tuple[int, int, int] = (0, 0, 0)) -> None:
 
         self.surface.set_at(a, color)
-
-    def draw_circle(self, a: tuple[int, int], radius: int, filled: bool = True,
-                    color: tuple[int, int, int] = (255, 255, 255),
-                    ) -> None:
-        x = 0
-        y = radius
-        d = 3 - 2 * radius
-        cx, cy = a
-        if not filled:
-            while x <= y:
-                self.putpixel((cx + x, cy + y), color)
-                self.putpixel((cx - x, cy + y), color)
-                self.putpixel((cx + x, cy - y), color)
-                self.putpixel((cx - x, cy - y), color)
-                self.putpixel((cx + y, cy + x), color)
-                self.putpixel((cx - y, cy + x), color)
-                self.putpixel((cx + y, cy - x), color)
-                self.putpixel((cx - y, cy - x), color)
-
-                if d < 0:
-                    d = d + 4 * x + 6
-                else:
-                    d = d + 4 * (x - y) + 10
-                    y -= 1
-
-                x += 1
-        else:
-            for y in range(-radius, radius + 1):
-                for x in range(-radius, radius + 1):
-                    if x * x + y * y <= radius * radius:
-                        self.putpixel((cx + x, cy + y), color)
 
     def draw_line(self, a: tuple[int, int], b: tuple[int, int],
                   width: int = 1,
@@ -84,3 +53,4 @@ class Drawer:
 
     def update_size(self, new_size: tuple[int, int]) -> None:
         self.size = new_size
+        self.surface = pygame.Surface(new_size)

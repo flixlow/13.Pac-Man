@@ -18,6 +18,8 @@ class Entity(ABC):
         self.velocity: int = velocity or type(self).default_velocity
         self.movement_interval_ms: int = 1000 // self.velocity
         self.player_move_elapsed_ms: int = 0
+        self.previous_coords: tuple[int, int] = coords
+        self.animation_elapsed_ms: int = self.movement_interval_ms
 
     @abstractmethod
     def moving(self) -> None:
@@ -36,6 +38,21 @@ class Entity(ABC):
         self.player_move_elapsed_ms -= self.movement_interval_ms
         return True
 
+    def update_animation(self, elapsed_ms: int) -> None:
+        self.animation_elapsed_ms = min(
+            self.animation_elapsed_ms + elapsed_ms,
+            self.movement_interval_ms,
+        )
+
+    def render_coords(self) -> tuple[float, float]:
+        progress = self.animation_elapsed_ms / self.movement_interval_ms
+        start_x, start_y = self.previous_coords
+        end_x, end_y = self.coords
+        return (
+            start_x + (end_x - start_x) * progress,
+            start_y + (end_y - start_y) * progress,
+        )
+
 
 class Player(Entity):
     default_velocity: int = Parameters.PLAYER_VELOCITY
@@ -46,11 +63,15 @@ class Player(Entity):
         return bool(cell & self.direction.value)
 
     def can_it_move(self, elapsed_ms: int) -> bool:
-        flag = not self.is_wall_here(self.coords)
-        return flag and super().can_it_move(elapsed_ms)
+        return (
+            super().can_it_move(elapsed_ms)
+            and not self.is_wall_here(self.coords)
+        )
 
     def moving(self) -> None:
         x, y = self.coords
+        self.previous_coords = self.coords
+        self.animation_elapsed_ms = 0
         match self.direction:
             case Direction.NORTH:
                 self.coords = (x, y - 1)
@@ -78,6 +99,16 @@ class Ghost(Entity):
     def generate_sequence(self) -> None:
         ...
 
+    def moving(self) -> None:
+        if self.sequence == []:
+            self.generate_sequence()
+        if self.sequence != []:
+            self.coords = self.sequence.pop(0)
+
+
+class Blue(Ghost):
+    default_color = GhostColor.BLUE
+
     def get_available_coords(
             self, last_coords: tuple[int, int]) -> list[tuple[int, int]]:
         coords: list[tuple[int, int]] = []
@@ -100,10 +131,6 @@ class Ghost(Entity):
             self.generate_sequence()
         if self.sequence != []:
             self.coords = self.sequence.pop(0)
-
-
-class Blue(Ghost):
-    default_color = GhostColor.BLUE
 
     def generate_sequence(self) -> None:
         current_coords = self.coords

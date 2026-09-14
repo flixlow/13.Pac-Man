@@ -38,26 +38,30 @@ class PacManDrawer(MazeDrawer):
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
 
-        gum = (3, (255, 255, 210)) if not super else (6, (255, 255, 255))
-        self.draw_circle(
-            ((x1 + x2) // 2, (y1 + y2) // 2), gum[0], color=gum[1]
+        gum = (6, (255, 255, 210)) if not super else (12, (255, 60, 180))
+        xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
+
+        self.draw_rect(
+            (xc - gum[0] // 2, yc - gum[0] // 2),
+            (xc + gum[0] // 2, yc + gum[0] // 2),
+            gum[1]
         )
 
-    def draw_ghost(self, cell: tuple[int, int], color: GhostColor) -> None:
+    def draw_ghost(self, cell: tuple[float, float], color: GhostColor) -> None:
         x, y = cell
 
-        px = x * self.cell_size + self.offset_x
-        py = y * self.cell_size + self.offset_y
+        px = int(x * self.cell_size + self.offset_x)
+        py = int(y * self.cell_size + self.offset_y)
 
         x1, y1 = px, py
 
         self.put_image((x1, y1), self.ghosts_img[color])
 
-    def draw_pacman(self, cell: tuple[int, int]) -> None:
+    def draw_pacman(self, cell: tuple[float, float]) -> None:
         x, y = cell
 
-        px = x * self.cell_size + self.offset_x
-        py = y * self.cell_size + self.offset_y
+        px = int(x * self.cell_size + self.offset_x)
+        py = int(y * self.cell_size + self.offset_y)
 
         x1, y1 = px, py
 
