@@ -26,10 +26,6 @@ class Entity(ABC):
     def moving(self) -> None:
         ...
 
-    def get_cell_walls(self, coords: tuple[int, int]) -> int:
-        x, y = coords
-        return self.maze.get_cell_walls(*coords)
-
     def can_it_move(self, elapsed_ms: int) -> bool:
         self.player_move_elapsed_ms += elapsed_ms
 
@@ -60,7 +56,7 @@ class Player(Entity):
     direction: Direction = Direction.START
 
     def is_wall_here(self, coords: tuple[int, int]) -> bool:
-        cell = self.get_cell_walls(coords)
+        cell = self.maze.get_cell_walls(*coords)
         return bool(cell & self.direction.value)
 
     def can_it_move(self, elapsed_ms: int) -> bool:
@@ -115,7 +111,7 @@ class Blue(Ghost):
         coords: list[tuple[int, int]] = []
         x, y = last_coords
 
-        cell = self.get_cell_walls(last_coords)
+        cell = self.maze.get_cell_walls(*last_coords)
         if not cell & Direction.NORTH.value:
             coords.append((x, y - 1))
         if not cell & Direction.EAST.value:
