@@ -6,6 +6,7 @@ from .scorer import Scorer
 from .utils import Direction
 from .parsing import parsing, Config
 from .drawing.pacman_drawer import PacManDrawer
+from .drawing.basic_drawer import Drawer
 from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
 
 
@@ -24,7 +25,10 @@ class Monitor:
             self.pygame_info.current_w // 2,
             self.pygame_info.current_h // 2
         )
-        self.header = self.screen_size[1]//5
+        w, h = self.screen_size
+        self.header = h // 5
+        self.header_img = Drawer((w, h // 5))
+        self.header_img.fill((255, 255, 255))
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
@@ -93,8 +97,14 @@ class Monitor:
 
             if event.type == pygame.VIDEORESIZE:
                 w, h = event.size
-                self.pacman_frame.update_size((w, h - h // 10))
+                self.screen_size = (w, h)
+                self.header = h // 5
+
+                self.pacman_frame.update_size((w, h - self.header))
                 self.pacman_frame.draw_maze()
+
+                self.header_img.update_size((w, self.header))
+                self.header_img.fill((120, 80, 255))
 
         return True
 
@@ -144,7 +154,12 @@ class Monitor:
 
             self.display_entities(elapsed_time)
 
-            self.screen.blit(self.pacman_frame.surface, (0, 0))
+            width, _ = self.header_img.rendered_title.get_size()
+            self.header_img.put_title(
+                (self.screen_size[0] // 2 - width // 2, self.header // 2)
+            )
+            self.screen.blit(self.header_img.surface, (0, 0))
+            self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
             pygame.display.flip()
 

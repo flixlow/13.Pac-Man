@@ -33,8 +33,6 @@ class MazeDrawer(Drawer):
         self.offset_x = (self.size[0] - maze_width_px) // 2
         self.offset_y = (self.size[1] - maze_height_px) // 2
 
-        self.surface = pygame.Surface(new_size)
-
     def draw_maze(self) -> None:
         """
         Render the full maze grid, including start and end cells.

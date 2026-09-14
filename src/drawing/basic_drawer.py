@@ -14,7 +14,7 @@ class Drawer:
         self.surface = pygame.Surface(size)
         self.title_font = pygame.font.Font(None, 36)
         self.rendered_title = self.title_font.render(
-            "PAC-MAN", True, (255, 255, 255)
+            "PAC-MAN", True, (0, 0, 0)
         )
 
     def putpixel(self, a: tuple[int, int],
@@ -84,3 +84,5 @@ class Drawer:
 
     def update_size(self, new_size: tuple[int, int]) -> None:
         self.size = new_size
+        self.surface = pygame.Surface(new_size)
+
