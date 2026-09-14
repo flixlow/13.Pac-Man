@@ -2,12 +2,12 @@ import pygame
 
 from .maze_drawer import MazeDrawer
 from ..utils import GhostColor
-from ..parsing import Config
+from ..maze import MazeLevel
 
 
 class PacManDrawer(MazeDrawer):
-    def __init__(self, size: tuple[int, int], config: Config) -> None:
-        super().__init__(size, config)
+    def __init__(self, size: tuple[int, int], maze: MazeLevel) -> None:
+        super().__init__(size, maze)
 
         self.ghosts_img_copy = {
             GhostColor.RED: pygame.image.load(

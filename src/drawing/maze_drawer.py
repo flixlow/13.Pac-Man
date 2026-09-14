@@ -1,18 +1,15 @@
-import pygame
 
 from .basic_drawer import Drawer
-from ..parsing import Config
+from ..maze import MazeLevel
 
 
 class MazeDrawer(Drawer):
-    def __init__(self, size: tuple[int, int], config: Config) -> None:
+    def __init__(self, size: tuple[int, int], maze: MazeLevel) -> None:
         super().__init__(size)
 
-        self.config = config
-
-        self.maze = self.config.mazes[0]
-        self.maze_height = len(self.maze)
-        self.maze_width = len(self.maze[0])
+        self.maze = maze.maze
+        self.maze_height = maze.h
+        self.maze_width = maze.w
 
         MazeDrawer.update_size(self, size)
 
