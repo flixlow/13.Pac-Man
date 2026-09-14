@@ -3,10 +3,11 @@ from random import shuffle
 from typing import Callable
 
 from .scorer import Scorer
-from .utils import Direction
+from .utils import Direction, State
 from .parsing import parsing, Config
 from .drawing.pacman_drawer import PacManDrawer
 from .drawing.basic_drawer import Drawer
+from .main_menu import Menu
 from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
 
 
@@ -14,21 +15,25 @@ class Monitor:
     def __init__(self, config_file: str) -> None:
         pygame.init()
 
-        self.maze_index: int = 0
-        self.config_file = config_file
-        self.config: Config = parsing(self.config_file)
-        self.scorer: Scorer = Scorer(self.config.highscore_filename)
-        self.entities: list[Entity] = self._init_entities()
-
         self.pygame_info = pygame.display.Info()
         self.screen_size = (
             self.pygame_info.current_w // 2,
             self.pygame_info.current_h // 2
         )
         w, h = self.screen_size
+
         self.header = h // 5
         self.header_img = Drawer((w, h // 5))
         self.header_img.fill((255, 255, 255))
+
+        self.maze_index: int = 0
+        self.config_file = config_file
+        self.config: Config = parsing(self.config_file)
+        self.scorer: Scorer = Scorer(self.config.highscore_filename)
+        self.menu = Menu((w, h - self.header))
+        self.entities: list[Entity] = self._init_entities()
+
+        self.state = State.MAIN_MENU
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
@@ -37,7 +42,6 @@ class Monitor:
 
         self.running = True
 
-        w, h = self.screen_size
         self.pacman_frame = PacManDrawer((w, h - self.header), self.config)
         self.pacman_frame.draw_maze()
         self.key_directions: dict[int, Direction] = {
@@ -87,6 +91,9 @@ class Monitor:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
+                if event.key == pygame.K_SPACE:
+                    if self.state is State.MAIN_MENU:
+                        self.state = State.PACMAN
                 elif event.key == pygame.K_n:
                     pass
                     # self.next_level()
@@ -100,9 +107,15 @@ class Monitor:
                 self.screen_size = (w, h)
                 self.header = h // 5
 
-                self.pacman_frame.update_size((w, h - self.header))
-                self.pacman_frame.draw_maze()
+                if self.state is State.PACMAN:
+                    self.pacman_frame.update_size((w, h - self.header))
+                    self.pacman_frame.draw_maze()
 
+                if self.state is State.MAIN_MENU:
+                    self.menu.frame.update_size((w, h - self.header))
+                    self.menu.draw_menu()
+
+                # always need to be updated
                 self.header_img.update_size((w, self.header))
                 self.header_img.fill((255, 120, 120))
 
@@ -159,8 +172,14 @@ class Monitor:
                     self.screen_size[0] // 2 - self.header_img.w_text // 2,
                     self.header_img.h_text // 2)
             )
+            # always blit.
             self.screen.blit(self.header_img.surface, (0, 0))
-            self.screen.blit(self.pacman_frame.surface, (0, self.header))
+
+            if self.state is State.PACMAN:
+                self.screen.blit(self.pacman_frame.surface, (0, self.header))
+
+            if self.state is State.MAIN_MENU:
+                self.screen.blit(self.menu.frame.surface, (0, self.header))
 
             pygame.display.flip()
 

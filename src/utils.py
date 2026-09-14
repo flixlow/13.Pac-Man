@@ -34,6 +34,11 @@ class Direction(Enum):
     WEST = 8
 
 
+class State(Enum):
+    MAIN_MENU = auto()
+    PACMAN = auto()
+    SCORE = auto()
+
 # class Pacgum:
     # def __init__(self, coords: tuple[int, int], super: bool = False) -> None:
     # self.coords: tuple[int, int] = coords
