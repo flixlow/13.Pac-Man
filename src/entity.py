@@ -46,7 +46,10 @@ class Player(Entity):
         return bool(cell & self.direction.value)
 
     def can_it_move(self, elapsed_ms: int) -> bool:
-        return super().can_it_move(elapsed_ms) and not self.is_wall_here(self.coords)
+        return (
+            super().can_it_move(elapsed_ms)
+            and not self.is_wall_here(self.coords)
+        )
 
     def moving(self) -> None:
         x, y = self.coords
@@ -87,7 +90,8 @@ class Ghost(Entity):
 class Blue(Ghost):
     default_color = GhostColor.BLUE
 
-    def get_available_coords(self, last_coords: tuple[int, int]) -> list[tuple[int, int]]:
+    def get_available_coords(
+            self, last_coords: tuple[int, int]) -> list[tuple[int, int]]:
         coords: list[tuple[int, int]] = []
         x, y = last_coords
 
@@ -105,11 +109,11 @@ class Blue(Ghost):
 
     def generate_sequence(self) -> None:
         current_coords = self.coords
-        last_coords : None | tuple[int, int] = None
+        last_coords: None | tuple[int, int] = None
 
         for _ in range(30):
             available_coords = self.get_available_coords(current_coords)
-            if last_coords and len(available_coords) > 1 :
+            if last_coords and len(available_coords) > 1:
                 if last_coords in available_coords:
                     available_coords.remove(last_coords)
 
