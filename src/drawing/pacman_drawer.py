@@ -38,9 +38,13 @@ class PacManDrawer(MazeDrawer):
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
 
-        gum = (3, (255, 255, 210)) if not super else (6, (255, 255, 255))
-        self.draw_circle(
-            ((x1 + x2) // 2, (y1 + y2) // 2), gum[0], color=gum[1]
+        gum = (6, (255, 255, 210)) if not super else (12, (255, 60, 180))
+        xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
+
+        self.draw_rect(
+            (xc - gum[0] // 2, yc - gum[0] // 2),
+            (xc + gum[0] // 2, yc + gum[0] // 2),
+            gum[1]
         )
 
     def draw_ghost(self, cell: tuple[float, float], color: GhostColor) -> None:
