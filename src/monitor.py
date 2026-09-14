@@ -104,7 +104,7 @@ class Monitor:
                 self.pacman_frame.draw_maze()
 
                 self.header_img.update_size((w, self.header))
-                self.header_img.fill((120, 80, 255))
+                self.header_img.fill((255, 120, 120))
 
         return True
 
@@ -154,9 +154,10 @@ class Monitor:
 
             self.display_entities(elapsed_time)
 
-            width, _ = self.header_img.rendered_title.get_size()
             self.header_img.put_title(
-                (self.screen_size[0] // 2 - width // 2, self.header // 2)
+                (
+                    self.screen_size[0] // 2 - self.header_img.w_text // 2,
+                    self.header_img.h_text // 2)
             )
             self.screen.blit(self.header_img.surface, (0, 0))
             self.screen.blit(self.pacman_frame.surface, (0, self.header))
