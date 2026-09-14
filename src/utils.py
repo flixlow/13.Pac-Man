@@ -34,6 +34,11 @@ class Direction(Enum):
     WEST = 8
 
 
+class PlayerState:
+    lives: int = 3
+    score: int = 0
+    name: str = ""
+
 class State(Enum):
     MAIN_MENU = auto()
     PACMAN = auto()
