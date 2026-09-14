@@ -1,10 +1,10 @@
 import pygame
 
-from .drawer import Frame
+from .basic_drawer import Drawer
 from ..parsing import Config
 
 
-class MazeDrawer(Frame):
+class MazeDrawer(Drawer):
     def __init__(self, size: tuple[int, int], config: Config) -> None:
         super().__init__(size)
 

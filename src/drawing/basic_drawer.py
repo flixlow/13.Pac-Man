@@ -1,7 +1,7 @@
 import pygame
 
 
-class Frame:
+class Drawer:
     def __init__(self, size: tuple[int, int]) -> None:
         """
         Initialise the Frame
