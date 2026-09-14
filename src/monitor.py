@@ -47,12 +47,7 @@ class Monitor:
         self.header_img = Drawer((w, h // 5))
         self.header_img.fill((255, 255, 255))
 
-        self.maze_index: int = 0
-        self.config_file = config_file
-        self.config: Config = parsing(self.config_file)
-        self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.menu = Menu((w, h - self.header))
-        self.entities: list[Entity] = self._init_entities()
 
         self.state = State.MAIN_MENU
 
