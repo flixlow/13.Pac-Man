@@ -16,6 +16,6 @@ highscore can take only alphanumeric
 
 [x] implent velocity in simulation
 [x] generate sequences of coords for movement
-[ ] stocker les changements de direction
+[ ] stocker les changements de direction queue
 [ ] pathfinding a implementer
 [ ] animation

@@ -37,9 +37,9 @@ class Monitor:
         self.level: MazeLevel = next(self.level_interator)
 
         self._init_entities()
-
         self._init_pygame()
 
+        self.pause: bool = False
         self.running: bool = True
 
     def _init_ghosts(self) -> None:
@@ -113,11 +113,14 @@ class Monitor:
                 if event.key == pygame.K_SPACE:
                     if self.state is State.MAIN_MENU:
                         self.state = State.PACMAN
+                    # if self.state is State.PAUSE :
+                    # if self.player_state.lives > 0:
+                        # self.state = State.PACMAN
                 elif event.key == pygame.K_n:
                     self.next_level()
                 elif event.key in KEY_DIRECTIONS:
                     new_direction = KEY_DIRECTIONS[event.key]
-                    if not self.is_there_a_wall_here(new_direction):
+                    if not self.player.is_wall_here(new_direction):
                         self.player.direction = new_direction
 
             if event.type == pygame.VIDEORESIZE:
@@ -139,18 +142,13 @@ class Monitor:
 
         return True
 
-    def is_there_a_wall_here(self, direction: Direction) -> bool:
-        cell = self.level.get_cell_walls(*self.player.coords)
-        return bool(cell & direction.value)
-
     def display_pacgums(self) -> None:
-        x = self.level.w - 1
-        y = self.level.h - 1
-        super_pacgums = [(0, 0), (0, y), (x, 0), (x, y)]
-
         for pacgum in self.pacgums:
-            is_super = True if pacgum in super_pacgums else False
+            is_super = True if pacgum in self.level.corners else False
             self.pacman_frame.draw_pacgum(pacgum, is_super)
+
+    def enter_your_name(self) -> None:
+        pass
 
     def display_entities(self, elapsed_time: int) -> None:
         self.pacman_frame.draw_maze()
@@ -161,6 +159,7 @@ class Monitor:
                 entity.moving()
 
             entity.update_animation(elapsed_time)
+
             if isinstance(entity, Ghost):
                 self.pacman_frame.draw_ghost(
                     entity.render_coords(), entity.color
@@ -168,6 +167,18 @@ class Monitor:
             else:
                 self.pacman_frame.draw_pacman(entity.render_coords())
                 self.pacgums.discard(entity.coords)
+                # if self.pacgums == set():
+                #     self.state = State.PAUSE
+
+    def check_hitbox(self) -> None:
+        for entity in self.entities:
+            if isinstance(entity, Ghost):
+                if entity.coords == self.player.coords:
+                    self.player_state.lives -= 1
+                    self.state = State.PAUSE
+                elif self.player_state.lives <= 0:
+                    self.enter_your_name()
+                    self.state = State.PAUSE
 
     def main_loop(self) -> None:
         self.display_pacgums()
@@ -176,6 +187,8 @@ class Monitor:
             elapsed_time = self.clock.tick(60)
 
             self.running = self.check_events()
+
+            # self.check_hitbox()
 
             self.display_entities(elapsed_time)
 

@@ -14,7 +14,7 @@ class Paths:
 
 
 class Parameters:
-    PLAYER_VELOCITY = 3
+    PLAYER_VELOCITY = 10
     GHOST_VELOCITY = 3
 
 
@@ -39,9 +39,11 @@ class PlayerState:
     score: int = 0
     name: str = ""
 
+
 class State(Enum):
     MAIN_MENU = auto()
     PACMAN = auto()
+    PAUSE = auto()
     SCORE = auto()
 
 # class Pacgum:
