@@ -26,10 +26,6 @@ class Entity(ABC):
     def moving(self) -> None:
         ...
 
-    def get_cell_walls(self, coords: tuple[int, int]) -> int:
-        x, y = coords
-        return self.maze.get_cell_walls(*coords)
-
     def can_it_move(self, elapsed_ms: int) -> bool:
         self.player_move_elapsed_ms += elapsed_ms
 
@@ -59,14 +55,14 @@ class Player(Entity):
     default_velocity: int = Parameters.PLAYER_VELOCITY
     direction: Direction = Direction.START
 
-    def is_wall_here(self, coords: tuple[int, int]) -> bool:
-        cell = self.get_cell_walls(coords)
-        return bool(cell & self.direction.value)
+    def is_wall_here(self, direction: Direction) -> bool:
+        cell = self.maze.get_cell_walls(*self.coords)
+        return bool(cell & direction.value)
 
     def can_it_move(self, elapsed_ms: int) -> bool:
         return (
             super().can_it_move(elapsed_ms)
-            and not self.is_wall_here(self.coords)
+            and not self.is_wall_here(self.direction)
         )
 
     def moving(self) -> None:
@@ -110,35 +106,12 @@ class Ghost(Entity):
 class Blue(Ghost):
     default_color = GhostColor.BLUE
 
-    def get_available_coords(
-            self, last_coords: tuple[int, int]) -> list[tuple[int, int]]:
-        coords: list[tuple[int, int]] = []
-        x, y = last_coords
-
-        cell = self.get_cell_walls(last_coords)
-        if not cell & Direction.NORTH.value:
-            coords.append((x, y - 1))
-        if not cell & Direction.EAST.value:
-            coords.append((x + 1, y))
-        if not cell & Direction.SOUTH.value:
-            coords.append((x, y + 1))
-        if not cell & Direction.WEST.value:
-            coords.append((x - 1, y))
-
-        return coords
-
-    def moving(self) -> None:
-        if self.sequence == []:
-            self.generate_sequence()
-        if self.sequence != []:
-            self.coords = self.sequence.pop(0)
-
     def generate_sequence(self) -> None:
         current_coords = self.coords
         last_coords: None | tuple[int, int] = None
 
         for _ in range(30):
-            available_coords = self.get_available_coords(current_coords)
+            available_coords = self.maze.get_available_coords(current_coords)
             if last_coords and len(available_coords) > 1:
                 if last_coords in available_coords:
                     available_coords.remove(last_coords)

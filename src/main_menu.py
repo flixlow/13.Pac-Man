@@ -12,7 +12,7 @@ class Menu:
         # leaderboard
         self.scorer = Scorer("score.json")
         self.score = self.scorer._load()
-        self.scorers_rendered = []
+        self.scorers_rendered: list[tuple[int, pygame.Surface]] = []
 
         # init render
         self.draw_menu()
