@@ -12,7 +12,10 @@ highscore can take only alphanumeric
 [ ] ajouter les vies
 [x] ajouter les pacgums
 [x] ajouter les super pacgums
-[ ] deplacement des fantomes a implementer, random au debut puispathfinding
+[x] deplacement des fantomes a implementer, random au debut puispathfinding
 
 [x] implent velocity in simulation
-[ ] generate sequences of coords for movement
+[x] generate sequences of coords for movement
+[ ] stocker les changements de direction
+[ ] pathfinding a implementer
+[ ] animation

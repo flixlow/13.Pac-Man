@@ -47,6 +47,8 @@ class Monitor:
             pygame.K_a: Direction.WEST,
         }
 
+        self.lives: int = 3
+
     def _init_entities(self) -> list[Entity]:
         entities: list[Entity] = []
         w = self.config.levels[self.maze_index].width
