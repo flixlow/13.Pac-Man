@@ -4,10 +4,11 @@ from typing import Callable
 
 from .scorer import Scorer
 from .maze import MazeLevel
-from .utils import Direction, PlayerState
+from .utils import Direction, PlayerState, State
 from .parsing import parsing, Config
 from .drawing.pacman_drawer import PacManDrawer
 from .drawing.basic_drawer import Drawer
+from .main_menu import Menu
 from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
 
 
@@ -45,6 +46,15 @@ class Monitor:
         self.header: int = h // 5
         self.header_img = Drawer((w, h // 5))
         self.header_img.fill((255, 255, 255))
+
+        self.maze_index: int = 0
+        self.config_file = config_file
+        self.config: Config = parsing(self.config_file)
+        self.scorer: Scorer = Scorer(self.config.highscore_filename)
+        self.menu = Menu((w, h - self.header))
+        self.entities: list[Entity] = self._init_entities()
+
+        self.state = State.MAIN_MENU
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
@@ -94,6 +104,9 @@ class Monitor:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
+                if event.key == pygame.K_SPACE:
+                    if self.state is State.MAIN_MENU:
+                        self.state = State.PACMAN
                 elif event.key == pygame.K_n:
                     pass
                     # self.next_level()
@@ -107,11 +120,17 @@ class Monitor:
                 self.screen_size = (w, h)
                 self.header = h // 5
 
-                self.pacman_frame.update_size((w, h - self.header))
-                self.pacman_frame.draw_maze()
+                if self.state is State.PACMAN:
+                    self.pacman_frame.update_size((w, h - self.header))
+                    self.pacman_frame.draw_maze()
 
+                if self.state is State.MAIN_MENU:
+                    self.menu.frame.update_size((w, h - self.header))
+                    self.menu.draw_menu()
+
+                # always need to be updated
                 self.header_img.update_size((w, self.header))
-                self.header_img.fill((120, 80, 255))
+                self.header_img.fill((255, 120, 120))
 
         return True
 
@@ -157,12 +176,19 @@ class Monitor:
 
             self.display_entities(elapsed_time)
 
-            width, _ = self.header_img.rendered_title.get_size()
             self.header_img.put_title(
-                (self.screen_size[0] // 2 - width // 2, self.header // 2)
+                (
+                    self.screen_size[0] // 2 - self.header_img.w_text // 2,
+                    self.header_img.h_text // 2)
             )
+            # always blit.
             self.screen.blit(self.header_img.surface, (0, 0))
-            self.screen.blit(self.pacman_frame.surface, (0, self.header))
+
+            if self.state is State.PACMAN:
+                self.screen.blit(self.pacman_frame.surface, (0, self.header))
+
+            if self.state is State.MAIN_MENU:
+                self.screen.blit(self.menu.frame.surface, (0, self.header))
 
             pygame.display.flip()
 

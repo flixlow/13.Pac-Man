@@ -1,4 +1,3 @@
-
 from .basic_drawer import Drawer
 from ..maze import MazeLevel
 
