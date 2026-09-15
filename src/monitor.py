@@ -1,5 +1,5 @@
 import pygame
-from typing import Iterator
+from typing import Iterator, Any
 
 from .scorer import Scorer
 from .maze import MazeLevel
@@ -32,11 +32,11 @@ class Monitor:
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[MazeLevel] = self.config.generate_all_maze()
 
-        self.player_state: PlayerState = PlayerState()
-
         self.level_interator: Iterator = iter(self.mazes)
         self.level: MazeLevel = next(self.level_interator)
+
         self.pacman: Game = Game(self.config, self.level)
+        self.player_state: PlayerState = PlayerState()
 
         self._init_pygame()
 
@@ -67,14 +67,14 @@ class Monitor:
     def next_level(self) -> None:
         try:
             self.level = next(self.level_interator)
-            self._init_entities()
+            self.pacman = Game(self.config, self.level)
             w, h = self.screen_size
             self.pacman_frame = PacManDrawer((w, h - self.header), self.level)
             self.pacman_frame.draw_maze()
         except StopIteration:
             pass
 
-    def check_exit(self, event: pygame.event) -> None:
+    def check_exit(self, event: Any) -> None:
         if event.type == pygame.QUIT:
             self.running = False
 
@@ -82,23 +82,24 @@ class Monitor:
             if event.key == pygame.K_ESCAPE:
                 self.running = False
 
-    def check_keydown(self, event: pygame.event) -> None:
+    def check_keydown(self, event: Any) -> None:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 if self.state is State.MAIN_MENU:
                     self.state = State.PACMAN
-                # if self.state is State.PAUSE:
-                #     if self.player_state.lives > 0:
-                #         self.state = State.PACMAN
+
+                if self.state is State.PAUSE:
+                    if self.player_state.lives > 0:
+                        self.state = State.PACMAN
 
             elif event.key == pygame.K_n:
                 if self.state == State.PACMAN:
                     self.next_level()
 
-            elif event.key in KEY_DIRECTIONS:
+            elif self.state != State.PAUSE and event.key in KEY_DIRECTIONS:
                 self.pacman.change_direction(KEY_DIRECTIONS[event.key])
 
-    def check_resize(self, event: pygame.event) -> None:
+    def check_resize(self, event: Any) -> None:
         if event.type == pygame.VIDEORESIZE:
             w, h = event.size
             self.screen_size = (w, h)
@@ -150,7 +151,9 @@ class Monitor:
 
             self.check_events()
 
-            self.pacman.moving_entities(elapsed_time)
+            if not self.pacman.moving_entities(elapsed_time):
+                self.player_state.lives -= 1
+                self.state == State.PAUSE
 
             self.pacman_frame.draw_maze()
             self.display_pacgums()

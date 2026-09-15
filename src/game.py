@@ -3,7 +3,7 @@ from random import shuffle
 from typing import Callable
 
 from .maze import MazeLevel
-from .utils import Direction, State
+from .utils import Direction
 from .parsing import Config
 from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
 
@@ -12,14 +12,21 @@ class Game:
     def __init__(self, config: Config, level: MazeLevel) -> None:
         self.config: Config = config
         self.level: MazeLevel = level
-        self._init_entities()
+        self.ghosts: list[Ghost] = []
+        self.entities: list[Entity] = []
+
+        self._init_ghosts()
+        self._init_player()
+        self._init_pacgums()
 
     def _init_ghosts(self) -> None:
         ghost_classes: list[Callable] = [Blue, Red, Orange, Green]
 
         shuffle(ghost_classes)
-        for ghost_class, c in zip(ghost_classes, self.level.corners):
-            self.entities.append(ghost_class(c, self.level))
+        for ghost_class, coords in zip(ghost_classes, self.level.corners):
+            new_ghost = ghost_class(coords, self.level)
+            self.ghosts.append(new_ghost)
+            self.entities.append(new_ghost)
 
     def _init_player(self) -> None:
         start_pos = ((self.level.w // 2 - 1), (self.level.h // 2 - 1))
@@ -36,12 +43,8 @@ class Game:
                     continue
                 self.pacgums.add((x, y))
 
-    def _init_entities(self) -> None:
-        self.entities: list[Entity] = []
-
-        self._init_ghosts()
-        self._init_player()
-        self._init_pacgums()
+    def get_ghosts_coords(self) -> set[tuple[int, int]]:
+        return {ghost.coords for ghost in self.ghosts}
 
     def change_direction(self, direction: Direction) -> None:
         if not self.player.is_wall_here(direction):
@@ -49,19 +52,19 @@ class Game:
         else:
             self.player.next_direction = direction
 
-    def moving_entities(self, elapsed_time: int) -> None:
+    def moving_entities(self, elapsed_time: int) -> bool:
+
         for entity in self.entities:
             if entity.can_it_move(elapsed_time):
                 entity.moving()
-            if isinstance(entity, Player):
-                self.pacgums.discard(entity.coords)
+
+        self.pacgums.discard(self.player.coords)
+
+        if self.player.coords in self.get_ghosts_coords():
+            return False
+        return True
 
     def check_hitbox(self) -> None:
         for entity in self.entities:
             if isinstance(entity, Ghost):
-                if entity.coords == self.player.coords:
-                    self.player_state.lives -= 1
-                    self.state = State.PAUSE
-                elif self.player_state.lives <= 0:
-                    self.enter_your_name()
-                    self.state = State.PAUSE
+                pass
