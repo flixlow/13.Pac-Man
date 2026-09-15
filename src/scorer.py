@@ -6,16 +6,16 @@ from .errors import ScorerFileError
 
 
 class Scorer:
-    def __init__(self, highscore_filename: str) -> None:
-        self.file: str = highscore_filename
-        self.highscore: dict[str, int] = self._load()
+    def __init__(self, score_filename: str) -> None:
+        self.file: str = score_filename
+        self.scores: dict[str, int] = self._load()
 
     def _load(self) -> dict[str, int]:
         try:
             if not Path(self.file).exists():
                 return {}
             with open(self.file, encoding="utf-8") as f:
-                return dict(json.loads(f.read()))  # not sure about that cast
+                return json.load(f)
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
         except json.JSONDecodeError as e:
@@ -24,14 +24,18 @@ class Scorer:
                 f"(line {e.lineno})."
             )
 
-    def save(self, player_state: PlayerState) -> None:
-        self.highscore[player_state.name] = player_state.score
+    def sort_scores(self) -> None:
+        self.scores = dict(
+            sorted(self.scores.items(), key=lambda x: x[1], reverse=True)
+        )
 
-        self.highscore = dict(sorted(
-            self.highscore.items(), key=lambda x: [1], reverse=True)[:10])
+    def save(self, player_state: PlayerState) -> None:
+        last = self.scores.get(player_state.name, -1)
+
+        self.scores[player_state.name] = max(player_state.score, last)
 
         try:
             with open(self.file, 'w') as f:
-                f.write(json.dumps(self.highscore, indent=4))
+                f.write(json.dumps(self.scores, indent=4))
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")

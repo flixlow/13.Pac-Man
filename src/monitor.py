@@ -3,7 +3,7 @@ from typing import Iterator, Any
 
 from .scorer import Scorer
 from .maze import MazeLevel
-from .utils import Direction, PlayerState, State
+from .utils import PlayerState, State, KEY_DIRECTION
 from .parsing import parsing, Config
 from .drawing.pacman_drawer import PacManDrawer
 from .drawing.basic_drawer import Drawer, print_life
@@ -12,37 +12,18 @@ from .entity import Ghost
 from .game import Game
 
 
-KEY_DIRECTIONS: dict[int, Direction] = {
-        pygame.K_UP: Direction.NORTH,
-        pygame.K_w: Direction.NORTH,
-        pygame.K_RIGHT: Direction.EAST,
-        pygame.K_d: Direction.EAST,
-        pygame.K_DOWN: Direction.SOUTH,
-        pygame.K_s: Direction.SOUTH,
-        pygame.K_LEFT: Direction.WEST,
-        pygame.K_a: Direction.WEST,
-    }
-
-
 class Monitor:
     def __init__(self, config_file: str) -> None:
-        pygame.init()
-
         self.config: Config = parsing(config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[MazeLevel] = self.config.generate_all_maze()
-
-        self.level_interator: Iterator = iter(self.mazes)
-        self.level: MazeLevel = next(self.level_interator)
-
-        self.pacman: Game = Game(self.config, self.level)
-        self.player_state: PlayerState = PlayerState()
+        self.new_game()
 
         self._init_pygame()
-
         self.running: bool = True
 
     def _init_pygame(self) -> None:
+        pygame.init()
         self.pygame_info = pygame.display.Info()
         self.screen_size = (
             self.pygame_info.current_w // 2,
@@ -53,7 +34,7 @@ class Monitor:
         self.header_img = Drawer((w, h // 5))
         self.header_img.fill((255, 255, 255))
 
-        self.menu = Menu((w, h - self.header))
+        self.menu = Menu((w, h - self.header), self.scorer)
         self.state = State.MAIN_MENU
 
         self.clock = pygame.time.Clock()
@@ -63,6 +44,12 @@ class Monitor:
 
         self.pacman_frame = PacManDrawer((w, h - self.header), self.level)
         self.pacman_frame.draw_maze()
+
+    def new_game(self) -> None:
+        self.level_interator: Iterator = iter(self.mazes)
+        self.level: MazeLevel = next(self.level_interator)
+        self.pacman: Game = Game(self.config, self.level)
+        self.player_state: PlayerState = PlayerState()
 
     def next_level(self) -> None:
         try:
@@ -96,8 +83,8 @@ class Monitor:
                 if self.state == State.PACMAN:
                     self.next_level()
 
-            elif self.state != State.PAUSE and event.key in KEY_DIRECTIONS:
-                self.pacman.change_direction(KEY_DIRECTIONS[event.key])
+            elif self.state != State.PAUSE and event.key in KEY_DIRECTION:
+                self.pacman.change_direction(KEY_DIRECTION[event.key])
 
     def check_resize(self, event: Any) -> None:
         if event.type == pygame.VIDEORESIZE:
@@ -114,7 +101,6 @@ class Monitor:
             if self.state is State.MAIN_MENU:
                 self.menu.draw_menu()
 
-            # always need to be updated
             self.header_img.update_size((w, self.header))
             self.header_img.fill((255, 120, 120))
 
@@ -163,15 +149,17 @@ class Monitor:
             self.display_pacgums()
             self.display_entities(elapsed_time)
 
-            if alive is False and counter_ending_animation == 0:
-                self.player_state.lives -= 1
-                if self.player_state.lives < 1:
-                    self.enter_your_name()
-
             if counter_ending_animation >= elapsed_time:
+                self.player_state.lives -= 1
                 counter_ending_animation = 0
                 alive = True
-                self.state = State.PAUSE
+                if self.player_state.lives < 1:
+                    self.enter_your_name()
+                    self.new_game()
+                    self.menu.draw_menu()
+                    self.state = State.MAIN_MENU
+                else:
+                    self.state = State.PAUSE
 
             self.header_img.put_title(
                 (

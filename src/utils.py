@@ -1,5 +1,6 @@
 
 from enum import Enum, auto
+import pygame
 
 
 class Paths:
@@ -46,7 +47,14 @@ class State(Enum):
     PAUSE = auto()
     SCORE = auto()
 
-# class Pacgum:
-    # def __init__(self, coords: tuple[int, int], super: bool = False) -> None:
-    # self.coords: tuple[int, int] = coords
-    # self.super: bool = super
+
+KEY_DIRECTION: dict[int, Direction] = {
+        pygame.K_UP: Direction.NORTH,
+        pygame.K_w: Direction.NORTH,
+        pygame.K_RIGHT: Direction.EAST,
+        pygame.K_d: Direction.EAST,
+        pygame.K_DOWN: Direction.SOUTH,
+        pygame.K_s: Direction.SOUTH,
+        pygame.K_LEFT: Direction.WEST,
+        pygame.K_a: Direction.WEST,
+    }
