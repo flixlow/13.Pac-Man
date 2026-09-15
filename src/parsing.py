@@ -11,8 +11,8 @@ from .maze import MazeLevel
 
 
 class LevelSize(BaseModel):
-    width: int = Field(gt=10)
-    height: int = Field(gt=10)
+    width: int = Field(gt=6)
+    height: int = Field(gt=6)
 
 
 class Config(BaseModel):
