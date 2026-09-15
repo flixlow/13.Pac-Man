@@ -54,6 +54,7 @@ class Entity(ABC):
 class Player(Entity):
     default_velocity: int = Parameters.PLAYER_VELOCITY
     direction: Direction = Direction.START
+    next_direction: Direction = Direction.START
 
     def is_wall_here(self, direction: Direction) -> bool:
         cell = self.maze.get_cell_walls(*self.coords)
@@ -99,6 +100,10 @@ class Ghost(Entity):
     def moving(self) -> None:
         if self.sequence == []:
             self.generate_sequence()
+
+        self.previous_coords = self.coords
+        self.animation_elapsed_ms = 0
+
         if self.sequence != []:
             self.coords = self.sequence.pop(0)
 

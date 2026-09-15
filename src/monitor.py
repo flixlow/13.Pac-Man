@@ -1,6 +1,5 @@
 import pygame
-from random import shuffle
-from typing import Callable, Iterator
+from typing import Iterator
 
 from .scorer import Scorer
 from .maze import MazeLevel
@@ -9,7 +8,8 @@ from .parsing import parsing, Config
 from .drawing.pacman_drawer import PacManDrawer
 from .drawing.basic_drawer import Drawer
 from .main_menu import Menu
-from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
+from .entity import Ghost
+from .game import Game
 
 
 KEY_DIRECTIONS: dict[int, Direction] = {
@@ -30,46 +30,17 @@ class Monitor:
 
         self.config: Config = parsing(config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
+        self.mazes: list[MazeLevel] = self.config.generate_all_maze()
+
         self.player_state: PlayerState = PlayerState()
 
-        self.mazes: list[MazeLevel] = self.config.generate_all_maze()
         self.level_interator: Iterator = iter(self.mazes)
         self.level: MazeLevel = next(self.level_interator)
+        self.pacman: Game = Game(self.config, self.level)
 
-        self._init_entities()
         self._init_pygame()
 
-        self.pause: bool = False
         self.running: bool = True
-
-    def _init_ghosts(self) -> None:
-        ghost_classes: list[Callable] = [Blue, Red, Orange, Green]
-
-        shuffle(ghost_classes)
-        for ghost_class, c in zip(ghost_classes, self.level.corners):
-            self.entities.append(ghost_class(c, self.level))
-
-    def _init_player(self) -> None:
-        start_pos = ((self.level.w // 2 - 1), (self.level.h // 2 - 1))
-        self.player = Player(start_pos, self.level)
-
-        self.entities.append(self.player)
-
-    def _init_pacgums(self) -> None:
-        self.pacgums: set[tuple[int, int]] = set()
-
-        for x in range(self.level.w):
-            for y in range(self.level.h):
-                if self.level.maze[y][x] == 15:
-                    continue
-                self.pacgums.add((x, y))
-
-    def _init_entities(self) -> None:
-        self.entities: list[Entity] = []
-
-        self._init_ghosts()
-        self._init_player()
-        self._init_pacgums()
 
     def _init_pygame(self) -> None:
         self.pygame_info = pygame.display.Info()
@@ -103,61 +74,67 @@ class Monitor:
         except StopIteration:
             pass
 
-    def check_events(self) -> bool:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    return False
-                if event.key == pygame.K_SPACE:
-                    if self.state is State.MAIN_MENU:
-                        self.state = State.PACMAN
-                    # if self.state is State.PAUSE :
-                    # if self.player_state.lives > 0:
-                        # self.state = State.PACMAN
-                elif event.key == pygame.K_n:
-                    self.next_level()
-                elif event.key in KEY_DIRECTIONS:
-                    new_direction = KEY_DIRECTIONS[event.key]
-                    if not self.player.is_wall_here(new_direction):
-                        self.player.direction = new_direction
+    def check_exit(self, event: pygame.event) -> None:
+        if event.type == pygame.QUIT:
+            self.running = False
 
-            if event.type == pygame.VIDEORESIZE:
-                w, h = event.size
-                self.screen_size = (w, h)
-                self.header = h // 5
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.running = False
 
-                if self.state is State.PACMAN:
-                    self.pacman_frame.update_size((w, h - self.header))
-                    self.pacman_frame.draw_maze()
-
+    def check_keydown(self, event: pygame.event) -> None:
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
                 if self.state is State.MAIN_MENU:
-                    self.menu.frame.update_size((w, h - self.header))
-                    self.menu.draw_menu()
+                    self.state = State.PACMAN
+                # if self.state is State.PAUSE:
+                #     if self.player_state.lives > 0:
+                #         self.state = State.PACMAN
 
-                # always need to be updated
-                self.header_img.update_size((w, self.header))
-                self.header_img.fill((255, 120, 120))
+            elif event.key == pygame.K_n:
+                if self.state == State.PACMAN:
+                    self.next_level()
 
-        return True
+            elif event.key in KEY_DIRECTIONS:
+                self.pacman.change_direction(KEY_DIRECTIONS[event.key])
 
-    def display_pacgums(self) -> None:
-        for pacgum in self.pacgums:
-            is_super = True if pacgum in self.level.corners else False
-            self.pacman_frame.draw_pacgum(pacgum, is_super)
+    def check_resize(self, event: pygame.event) -> None:
+        if event.type == pygame.VIDEORESIZE:
+            w, h = event.size
+            self.screen_size = (w, h)
+            self.header = h // 5
+
+            self.pacman_frame.update_size((w, h - self.header))
+            self.menu.frame.update_size((w, h - self.header))
+
+            if self.state is State.PACMAN:
+                self.pacman_frame.draw_maze()
+
+            if self.state is State.MAIN_MENU:
+                self.menu.draw_menu()
+
+            # always need to be updated
+            self.header_img.update_size((w, self.header))
+            self.header_img.fill((255, 120, 120))
+
+    def check_events(self) -> None:
+        for event in pygame.event.get():
+            self.check_exit(event)
+
+            self.check_keydown(event)
+
+            self.check_resize(event)
 
     def enter_your_name(self) -> None:
         pass
 
+    def display_pacgums(self) -> None:
+        for pacgum in self.pacman.pacgums:
+            is_super = True if pacgum in self.level.corners else False
+            self.pacman_frame.draw_pacgum(pacgum, is_super)
+
     def display_entities(self, elapsed_time: int) -> None:
-        self.pacman_frame.draw_maze()
-        self.display_pacgums()
-
-        for entity in self.entities:
-            if entity.can_it_move(elapsed_time):
-                entity.moving()
-
+        for entity in self.pacman.entities:
             entity.update_animation(elapsed_time)
 
             if isinstance(entity, Ghost):
@@ -166,30 +143,17 @@ class Monitor:
                 )
             else:
                 self.pacman_frame.draw_pacman(entity.render_coords())
-                self.pacgums.discard(entity.coords)
-                # if self.pacgums == set():
-                #     self.state = State.PAUSE
-
-    def check_hitbox(self) -> None:
-        for entity in self.entities:
-            if isinstance(entity, Ghost):
-                if entity.coords == self.player.coords:
-                    self.player_state.lives -= 1
-                    self.state = State.PAUSE
-                elif self.player_state.lives <= 0:
-                    self.enter_your_name()
-                    self.state = State.PAUSE
 
     def main_loop(self) -> None:
-        self.display_pacgums()
-
         while self.running:
             elapsed_time = self.clock.tick(60)
 
-            self.running = self.check_events()
+            self.check_events()
 
-            # self.check_hitbox()
+            self.pacman.moving_entities(elapsed_time)
 
+            self.pacman_frame.draw_maze()
+            self.display_pacgums()
             self.display_entities(elapsed_time)
 
             self.header_img.put_title(
