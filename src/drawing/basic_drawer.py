@@ -64,3 +64,10 @@ class Drawer:
         self.w_text, self.h_text = self.rendered_title.get_size()
 
         self.surface = pygame.Surface(new_size)
+
+
+def print_life(frame: Drawer, a: tuple[int, int], life: int):
+    TEST = 50
+
+    for i in range(life):
+        frame.draw_rect((a[0] + i * TEST, a[1]), (a[0] + (i + 1) * TEST, a[1] + TEST), (255, 255//3*i, 0))

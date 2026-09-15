@@ -39,7 +39,8 @@ class Menu:
             if len(key) > 15:
                 key = key[:15] + "..."
 
-            user = self.font_name.render(f"{i + 1}: {key}   ",
+
+            user = self.font_name.render(f"{i + 1} {key}   ",
                 True, (255, 255, 255))
 
             score = self.font_name.render(f"{value}",
