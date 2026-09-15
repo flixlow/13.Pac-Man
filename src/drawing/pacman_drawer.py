@@ -38,7 +38,7 @@ class PacManDrawer(MazeDrawer):
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
 
-        gum = (6, (255, 255, 210)) if not super else (12, (255, 60, 180))
+        gum = (5, (255, 255, 210)) if not super else (7, (255, 60, 180))
         xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
 
         self.draw_rect(
