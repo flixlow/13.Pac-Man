@@ -40,7 +40,7 @@ class Menu:
                 key = key[:15] + "..."
 
             user = self.font_name.render(f"{i + 1}: {key}   ",
-                True, (255, 255, 255))
+                True, (200, 200, 200))
 
             score = self.font_name.render(f"{value}",
                 True, (255, 255, 255))

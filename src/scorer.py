@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from .utils import PlayerState
 from .errors import ScorerFileError
 
 
@@ -23,8 +24,8 @@ class Scorer:
                 f"(line {e.lineno})."
             )
 
-    def save(self, name: str, score: int) -> None:
-        self.highscore[name] = score
+    def save(self, player_state: PlayerState) -> None:
+        self.highscore[player_state.name] = player_state.score
 
         self.highscore = dict(sorted(
             self.highscore.items(), key=lambda x: [1], reverse=True)[:10])

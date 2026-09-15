@@ -85,7 +85,6 @@ class Monitor:
     def check_keydown(self, event: Any) -> None:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                print(self.state)
                 if self.state is State.MAIN_MENU:
                     self.state = State.PACMAN
 
@@ -128,7 +127,8 @@ class Monitor:
             self.check_resize(event)
 
     def enter_your_name(self) -> None:
-        pass
+        self.player_state.name = str(input("Enter your name :"))
+        self.scorer.save(self.player_state)
 
     def display_pacgums(self) -> None:
         for pacgum in self.pacman.pacgums:
@@ -140,35 +140,37 @@ class Monitor:
             entity.update_animation(elapsed_time)
 
             if isinstance(entity, Ghost):
-                self.pacman_frame.draw_ghost(
-                    entity.render_coords(), entity.color
-                )
+                params = (entity.render_coords(), entity.color)
+                self.pacman_frame.draw_ghost(*params)
             else:
                 self.pacman_frame.draw_pacman(entity.render_coords())
 
     def main_loop(self) -> None:
-        t = 0
-        flag = True
+        counter_ending_animation: int = 0
+        alive = True
         while self.running:
             elapsed_time = self.clock.tick(60)
 
-            if not flag:
-                t += 1
+            if not alive:
+                counter_ending_animation += 1
 
             self.check_events()
 
-            if flag and self.state == State.PACMAN:
-                flag = self.pacman.moving_entities(elapsed_time)
+            if alive and self.state is State.PACMAN:
+                alive = self.pacman.moving_entities(elapsed_time)
 
             self.pacman_frame.draw_maze()
             self.display_pacgums()
             self.display_entities(elapsed_time)
-            if flag is False:
-                self.player_state.lives -= 1
 
-            if t >= elapsed_time:
-                t = 0
-                flag = True
+            if alive is False and counter_ending_animation == 0:
+                self.player_state.lives -= 1
+                if self.player_state.lives < 1:
+                    self.enter_your_name()
+
+            if counter_ending_animation >= elapsed_time:
+                counter_ending_animation = 0
+                alive = True
                 self.state = State.PAUSE
 
             self.header_img.put_title(
