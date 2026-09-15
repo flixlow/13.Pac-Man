@@ -85,12 +85,13 @@ class Monitor:
     def check_keydown(self, event: Any) -> None:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
+                print(self.state)
                 if self.state is State.MAIN_MENU:
                     self.state = State.PACMAN
 
                 if self.state is State.PAUSE:
-                    if self.player_state.lives > 0:
-                        self.state = State.PACMAN
+                    self.pacman._init_entities()
+                    self.state = State.PACMAN
 
             elif event.key == pygame.K_n:
                 if self.state == State.PACMAN:
@@ -146,18 +147,29 @@ class Monitor:
                 self.pacman_frame.draw_pacman(entity.render_coords())
 
     def main_loop(self) -> None:
+        t = 0
+        flag = True
         while self.running:
             elapsed_time = self.clock.tick(60)
 
+            if not flag:
+                t += 1
+
             self.check_events()
 
-            if not self.pacman.moving_entities(elapsed_time):
-                self.player_state.lives -= 1
-                self.state == State.PAUSE
+            if flag and self.state == State.PACMAN:
+                flag = self.pacman.moving_entities(elapsed_time)
 
             self.pacman_frame.draw_maze()
             self.display_pacgums()
             self.display_entities(elapsed_time)
+            if flag is False:
+                self.player_state.lives -= 1
+
+            if t >= elapsed_time:
+                t = 0
+                flag = True
+                self.state = State.PAUSE
 
             self.header_img.put_title(
                 (

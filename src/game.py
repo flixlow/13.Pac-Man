@@ -12,11 +12,8 @@ class Game:
     def __init__(self, config: Config, level: MazeLevel) -> None:
         self.config: Config = config
         self.level: MazeLevel = level
-        self.ghosts: list[Ghost] = []
-        self.entities: list[Entity] = []
 
-        self._init_ghosts()
-        self._init_player()
+        self._init_entities()
         self._init_pacgums()
 
     def _init_ghosts(self) -> None:
@@ -33,6 +30,13 @@ class Game:
         self.player = Player(start_pos, self.level)
 
         self.entities.append(self.player)
+
+    def _init_entities(self) -> None:
+        self.ghosts: list[Ghost] = []
+        self.entities: list[Entity] = []
+
+        self._init_ghosts()
+        self._init_player()
 
     def _init_pacgums(self) -> None:
         self.pacgums: set[tuple[int, int]] = set()
@@ -53,15 +57,14 @@ class Game:
             self.player.next_direction = direction
 
     def moving_entities(self, elapsed_time: int) -> bool:
-
         for entity in self.entities:
             if entity.can_it_move(elapsed_time):
                 entity.moving()
 
-        self.pacgums.discard(self.player.coords)
-
         if self.player.coords in self.get_ghosts_coords():
             return False
+
+        self.pacgums.discard(self.player.coords)
         return True
 
     def check_hitbox(self) -> None:
