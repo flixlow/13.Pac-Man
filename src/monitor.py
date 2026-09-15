@@ -6,7 +6,7 @@ from .maze import MazeLevel
 from .utils import Direction, PlayerState, State
 from .parsing import parsing, Config
 from .drawing.pacman_drawer import PacManDrawer
-from .drawing.basic_drawer import Drawer
+from .drawing.basic_drawer import Drawer, print_life
 from .main_menu import Menu
 from .entity import Ghost
 from .game import Game
@@ -179,6 +179,7 @@ class Monitor:
                     self.header_img.h_text // 2)
             )
             # always blit.
+            print_life(self.header_img, (0, 0), self.player_state.lives)
             self.screen.blit(self.header_img.surface, (0, 0))
 
             if self.state is State.PACMAN:
