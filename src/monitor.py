@@ -92,8 +92,7 @@ class Monitor:
             self.pacman_frame.update_size((w, h - self.header))
             self.menu.frame.update_size((w, h - self.header))
 
-            if self.state is State.PACMAN:
-                self.pacman_frame.draw_maze()
+            self.pacman_frame.draw_maze()
 
             if self.state is State.MAIN_MENU:
                 self.menu.draw_menu()
@@ -145,6 +144,7 @@ class Monitor:
         # ======
 
         if self.state is State.PACMAN:
+            self.pacman_frame.draw_maze()
             self.display_pacgums()
             self.display_entities(elapsed_time)
             self.screen.blit(self.pacman_frame.surface, (0, self.header))
@@ -186,12 +186,7 @@ class Monitor:
                     and self.state is State.PACMAN:
                 self.pacman.moving_entities(elapsed_time)
 
-            pos = self.pacman.player.previous_coords
-            self.pacman_frame.draw_cell(
-                self.pacman.level.get_cell_walls(*pos),
-                pos, bg=True
-            )
-
+            #  DISPLAY
             self.ending_animation(elapsed_time)
             self.display(elapsed_time)
 
