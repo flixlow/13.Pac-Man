@@ -56,10 +56,10 @@ class Level:
         return {ghost.coords for ghost in self.ghosts}
 
     def change_direction(self, direction: Direction) -> None:
-        if not self.player.is_wall_here(direction):
-            self.player.direction = direction
-        else:
-            self.player.next_direction = direction
+        # if not self.player.is_wall_here(direction):
+        self.player.next_direction = direction
+        # else:
+        #     self.player.next_direction = direction
 
     def is_pacgum_here(self) -> None:
         if self.player.coords in self.pacgums:

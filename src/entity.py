@@ -17,10 +17,10 @@ class Entity(ABC):
         self.coords: tuple[int, int] = coords
         self.maze: Maze = maze
         self.velocity: int = velocity or type(self).default_velocity
-        self.movement_interval_ms: int = 1000 // self.velocity
+        self.movement_interval_ms: int = max(1, 1000 // self.velocity)
         self.player_move_elapsed_ms: int = 0
         self.previous_coords: tuple[int, int] = coords
-        self.animation_elapsed_ms: int = self.movement_interval_ms
+        self.animation_elapsed_ms: int = 0
 
     @abstractmethod
     def moving(self) -> None:
@@ -42,7 +42,10 @@ class Entity(ABC):
         )
 
     def render_coords(self) -> tuple[float, float]:
-        progress = self.animation_elapsed_ms / self.movement_interval_ms
+        progress = min(
+            self.animation_elapsed_ms / self.movement_interval_ms,
+            1.0,
+        )
         start_x, start_y = self.previous_coords
         end_x, end_y = self.coords
         return (
@@ -62,11 +65,12 @@ class Player(Entity):
 
     def can_it_move(self, elapsed_ms: int) -> bool:
         if super().can_it_move(elapsed_ms):
-            if not self.is_wall_here(self.direction):
-                return True
-            elif not self.is_wall_here(self.next_direction):
+            if self.next_direction is not Direction.START\
+                    and not self.is_wall_here(self.next_direction):
                 self.direction = self.next_direction
                 self.next_direction = Direction.START
+                return True
+            elif not self.is_wall_here(self.direction):
                 return True
         return False
 

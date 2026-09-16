@@ -19,6 +19,12 @@ class Parameters:
     GHOST_VELOCITY = 3
 
 
+class PlayerState:
+    lives: int = 3
+    score: int = 0
+    name: str = ""
+
+
 class GhostColor(Enum):
     RED = auto()
     BLUE = auto()
@@ -33,12 +39,6 @@ class Direction(Enum):
     EAST = 2
     SOUTH = 4
     WEST = 8
-
-
-class PlayerState:
-    lives: int = 3
-    score: int = 0
-    name: str = ""
 
 
 class State(Enum):
