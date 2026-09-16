@@ -44,6 +44,7 @@ class MazeDrawer(Drawer):
 
     def draw_cell(self, value: int,
                   cell: tuple[int, int], bg: bool = False) -> None:
+
         x, y = cell
 
         px = x * self.cell_size + self.offset_x

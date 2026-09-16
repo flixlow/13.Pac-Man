@@ -157,7 +157,7 @@ class Monitor:
 
             self.counter_ending_animation = 0
 
-    def blit_all(self) -> None:
+    def blit_all(self, elapsed_time: int) -> None:
         self.header_img.put_title(
             (
                 self.screen_size[0] // 2 - self.header_img.w_text // 2,
@@ -168,6 +168,8 @@ class Monitor:
         self.screen.blit(self.header_img.surface, (0, 0))
 
         if self.state is State.PACMAN:
+            self.display_pacgums()
+            self.display_entities(elapsed_time)
             self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
         if self.state is State.MAIN_MENU:
@@ -185,11 +187,13 @@ class Monitor:
                     and self.state is State.PACMAN:
                 self.pacman.moving_entities(elapsed_time)
 
-            self.pacman_frame.draw_maze()
-            self.display_pacgums()
-            self.display_entities(elapsed_time)
+            pos = self.pacman.player.previous_coords
+            self.pacman_frame.draw_cell(
+                self.pacman.level.get_cell_walls(*pos),
+                pos, bg=True
+            )
 
             self.ending_animation(elapsed_time)
-            self.blit_all()
+            self.blit_all(elapsed_time)
 
         pygame.quit()

@@ -22,7 +22,7 @@ class Level:
         self._init_pacgums()
 
     def _init_ghosts(self) -> None:
-        ghost_classes: list[Callable] = [Green, Red, Orange, Green]
+        ghost_classes: list[Callable] = [Green, Red, Orange, Blue]
 
         shuffle(ghost_classes)
         for ghost_class, coords in zip(ghost_classes, self.level.corners):
