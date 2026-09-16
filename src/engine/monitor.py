@@ -1,14 +1,13 @@
 import pygame
 from typing import Any
 
-from .scorer import Scorer
+from ..scorer import Scorer
 from .maze import Maze
-from .utils import State, KEY_DIRECTION
-from .parsing import parsing, Config
-from .drawing.pacman_drawer import PacManDrawer
-from .drawing.basic_drawer import Drawer, print_life, print_title
-from .main_menu import Menu
-from .entity import Ghost
+from ..utils import State, KEY_DIRECTION
+from ..parsing import parsing, Config
+from ..drawing.pacman_drawer import PacManDrawer
+from ..drawing.basic_drawer import Drawer, print_life, print_title
+from ..main_menu import Menu
 from .game import PacmanGame
 
 
@@ -97,21 +96,10 @@ class Monitor:
 
             self.update_size(event)
 
-    def save_level_score(self) -> None:
-        self.player_state.score += self.pacman.score
-
-    def enter_your_name(self) -> None:
-        self.player_state.name = "secret pablo ghost"
-        self.scorer.save(self.player_state)
-        self.scorer.sort_scores()
-
-    def display_press_n_for_next_level(self) -> None:
-        pass
-
     def display(self, elapsed_time: int) -> None:
 
         # HEADER
-        print_life(self.header_img, (0, 0), self.player_state.lives)
+        print_life(self.header_img, (0, 0), self.game.player_state.lives)
         self.screen.blit(self.header_img.surface, (0, 0))
 
         print_title(self.header_img)
@@ -121,15 +109,16 @@ class Monitor:
             self.pacman_frame.draw_maze()
 
             super = set(
-                pg for pg in self.pacman.pacgums
-                if pg in self.level.corners
+                pg for pg in self.game.level.pacgums
+                if pg in self.game.level.maze.corners
             )
             self.pacman_frame.draw_multiple_pacgums(
                 super, super=True)
             self.pacman_frame.draw_multiple_pacgums(
-                self.pacman.pacgums - super)
+                self.game.level.pacgums - super)
 
-            self.pacman_frame.display_entities(elapsed_time, self.pacman.entities)
+            self.pacman_frame.display_entities(
+                elapsed_time, self.game.level.entities)
             self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
         if self.state is State.MAIN_MENU:

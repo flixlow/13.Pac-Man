@@ -1,5 +1,5 @@
 from .basic_drawer import Drawer
-from ..maze import Maze
+from ..engine.maze import Maze
 
 
 class MazeDrawer(Drawer):

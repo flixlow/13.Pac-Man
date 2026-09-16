@@ -2,7 +2,7 @@ import sys
 from pydantic import ValidationError
 
 from .errors import ParsingError, PacmanError
-from .monitor import Monitor
+from .engine.monitor import Monitor
 
 
 def main() -> None:

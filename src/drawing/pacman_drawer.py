@@ -2,7 +2,7 @@ import pygame
 
 from .maze_drawer import MazeDrawer
 from ..utils import GhostColor, Parameters
-from ..maze import Maze
+from ..engine.maze import Maze
 from ..entity import Ghost, Entity
 
 

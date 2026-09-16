@@ -2,8 +2,8 @@
 from typing import Iterator
 
 from .maze import Maze
-from .utils import PlayerState, State
-from .parsing import Config
+from ..utils import PlayerState, State
+from ..parsing import Config
 from .level import Level
 
 

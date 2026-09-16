@@ -7,7 +7,7 @@ import json
 import sys
 
 from .errors import GenerationError, ParsingError
-from .maze import Maze
+from .engine.maze import Maze
 
 
 class LevelSize(BaseModel):

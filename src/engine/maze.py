@@ -1,7 +1,7 @@
 
 from pydantic import BaseModel
 
-from .utils import Direction
+from ..utils import Direction
 
 
 class Maze(BaseModel):

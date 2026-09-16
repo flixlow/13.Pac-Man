@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from random import choice
 
 from .utils import Parameters, Direction, GhostColor
-from .maze import Maze
+from .engine.maze import Maze
 
 
 class Entity(ABC):
@@ -33,7 +33,6 @@ class Entity(ABC):
 
         self.player_move_elapsed_ms -= self.movement_interval_ms
         return True
-
 
 
 class Player(Entity):
