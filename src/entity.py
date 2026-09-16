@@ -61,14 +61,14 @@ class Player(Entity):
         return bool(cell & direction.value)
 
     def can_it_move(self, elapsed_ms: int) -> bool:
-        if super().can_it_move(elapsed_ms) is False:
-            return False
-        if not self.is_wall_here(self.direction):
-            return True
-        if not self.is_wall_here(self.next_direction):
-            self.direction = self.next_direction
-            self.next_direction = Direction.START
-            return True
+        if super().can_it_move(elapsed_ms):
+            if not self.is_wall_here(self.direction):
+                return True
+            elif not self.is_wall_here(self.next_direction):
+                self.direction = self.next_direction
+                self.next_direction = Direction.START
+                return True
+        return False
 
     def moving(self) -> None:
         x, y = self.coords

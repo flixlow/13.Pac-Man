@@ -113,7 +113,7 @@ class Monitor:
         self.player_state.score += self.pacman.score
 
     def enter_your_name(self) -> None:
-        self.player_state.name = str(input("Enter your name :"))
+        self.player_state.name = "secret pablo ghost"
         self.scorer.save(self.player_state)
         self.scorer.sort_scores()
 
@@ -136,6 +136,8 @@ class Monitor:
                 self.pacman_frame.draw_pacman(entity.render_coords())
 
     def ending_animation(self, elapsed_time: int) -> None:
+        if self.pacman.dead or self.pacman.game_end:
+            self.counter_ending_animation += 1
         if self.counter_ending_animation >= elapsed_time:
             self.state = State.PAUSE
             if self.pacman.game_end:
@@ -177,13 +179,10 @@ class Monitor:
         while self.running:
             elapsed_time: int = self.clock.tick(60)
 
-            flag = self.pacman.dead or self.pacman.game_end
-            if flag:
-                self.counter_ending_animation += 1
-
             self.check_events()
 
-            if not flag and self.state is State.PACMAN:
+            if not (self.pacman.dead or self.pacman.game_end)\
+                    and self.state is State.PACMAN:
                 self.pacman.moving_entities(elapsed_time)
 
             self.pacman_frame.draw_maze()

@@ -2,8 +2,8 @@
   "highscore_filename": "highscores.json",
     "levels": [
     {
-      "width": 7,
-      "height": 7
+      "width": 14,
+      "height": 14
     },
     {
       "width": 25,
