@@ -72,4 +72,8 @@ def print_life(frame: Drawer, a: tuple[int, int], life: int):
     frame.fill((255, 255, 255))
 
     for i in range(life):
-        frame.draw_rect((a[0] + i * TEST, a[1]), (a[0] + (i + 1) * TEST, a[1] + TEST), (255, 255//3*i, 0))
+        frame.draw_rect(
+            (a[0] + i * TEST, a[1]),
+            (a[0] + (i + 1) * TEST, a[1] + TEST),
+            (255, 255//3*i, 0)
+        )

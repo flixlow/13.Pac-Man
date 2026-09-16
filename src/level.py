@@ -15,7 +15,7 @@ class Level:
 
         self.crazy_mode: bool = False
         self.score: int = 0
-        self.alive: bool = True
+        self.dead: bool = False
         self.game_end: bool = False
 
         self._init_entities()
@@ -78,7 +78,7 @@ class Level:
                 entity.moving()
 
         if self.player.coords in self.get_ghosts_coords():
-            self.alive = False
+            self.dead = False
 
         self.is_pacgum_here()
 

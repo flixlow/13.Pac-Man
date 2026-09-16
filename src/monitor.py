@@ -144,7 +144,7 @@ class Monitor:
                 self.next_level()
             else:
                 self.player_state.lives -= 1
-                self.pacman.alive = True
+                self.pacman.dead = True
 
             if self.player_state.lives < 1:
                 self.save_level_score()
@@ -177,7 +177,7 @@ class Monitor:
         while self.running:
             elapsed_time: int = self.clock.tick(60)
 
-            flag = not self.pacman.alive or self.pacman.game_end
+            flag = self.pacman.dead or self.pacman.game_end
             if flag:
                 self.counter_ending_animation += 1
 
