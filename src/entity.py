@@ -35,7 +35,6 @@ class Entity(ABC):
         return True
 
 
-
 class Player(Entity):
     direction: Direction = Direction.START
     next_direction: Direction = Direction.START

@@ -59,15 +59,18 @@ class PacManDrawer(MazeDrawer):
         for cell in cells:
             self.draw_pacgum(cell, super=super)
 
-    def display_entities(self, elapsed_time: int, entities: list[Entity]) -> None:
+    def display_entities(self,
+                         elapsed_time: int, entities: list[Entity]) -> None:
         for entity in entities:
             self.update_animation(elapsed_time)
 
             if isinstance(entity, Ghost):
-                params = (PacManDrawer.render_coords(elapsed_time, entity), entity.color)
+                params = (PacManDrawer.render_coords(
+                    elapsed_time, entity), entity.color)
                 self.draw_ghost(*params)
             else:
-                self.draw_pacman(PacManDrawer.render_coords(elapsed_time, entity))
+                self.draw_pacman(PacManDrawer.render_coords(
+                    elapsed_time, entity))
 
     def update_animation(self, elapsed_ms: int) -> None:
         self.animation_elapsed_ms = min(

@@ -59,6 +59,3 @@ KEY_DIRECTION: dict[int, Direction] = {
         pygame.K_LEFT: Direction.WEST,
         pygame.K_a: Direction.WEST,
     }
-
-
-

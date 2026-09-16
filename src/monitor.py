@@ -8,7 +8,6 @@ from .parsing import parsing, Config
 from .drawing.pacman_drawer import PacManDrawer
 from .drawing.basic_drawer import Drawer, print_life, print_title
 from .main_menu import Menu
-from .entity import Ghost
 from .level import Level
 
 
@@ -140,7 +139,8 @@ class Monitor:
             self.pacman_frame.draw_multiple_pacgums(
                 self.pacman.pacgums - super)
 
-            self.pacman_frame.display_entities(elapsed_time, self.pacman.entities)
+            self.pacman_frame.display_entities(
+                elapsed_time, self.pacman.entities)
             self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
         if self.state is State.MAIN_MENU:
