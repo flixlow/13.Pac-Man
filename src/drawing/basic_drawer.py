@@ -10,14 +10,8 @@ class Drawer:
             size (tuple[int, int]) dimensions of the frame
         """
         self.size = size
-        _, h = size
 
         self.surface = pygame.Surface(size)
-        self.title_font = pygame.font.Font(None, h // 2)
-        self.rendered_title = self.title_font.render(
-            "PAC-MAN", True, (0, 0, 0)
-        )
-        self.w_text, self.h_text = self.rendered_title.get_size()
 
     def putpixel(self, a: tuple[int, int],
                  color: tuple[int, int, int] = (0, 0, 0)) -> None:
@@ -50,18 +44,8 @@ class Drawer:
     def put_image(self, a: tuple[int, int], image: pygame.Surface) -> None:
         self.surface.blit(image, a)
 
-    def put_title(self, a: tuple[int, int]) -> None:
-        self.surface.blit(self.rendered_title, a)
-
     def update_size(self, new_size: tuple[int, int]) -> None:
-        w, h = new_size
         self.size = new_size
-
-        self.title_font = pygame.font.Font(None, h // 2)
-        self.rendered_title = self.title_font.render(
-            "PAC-MAN", True, (0, 0, 0)
-        )
-        self.w_text, self.h_text = self.rendered_title.get_size()
 
         self.surface = pygame.Surface(new_size)
 
@@ -79,3 +63,16 @@ def print_life(frame: Drawer, a: tuple[int, int], life: int):
             (a[0] + (i + 1) * TEST, a[1] + TEST),
             (255, 255//3*i, 0)
         )
+
+
+def print_title(frame: Drawer):
+    w, h = frame.size
+    title_font = pygame.font.Font(None, h // 2)
+    rendered_title = title_font.render(
+        "PAC-MAN", True, (0, 0, 0)
+    )
+    w_text, h_text = rendered_title.get_size()
+    frame.surface.blit(
+        rendered_title,
+        (w // 2 - w_text // 2, h // 2 - h_text // 2),
+    )
