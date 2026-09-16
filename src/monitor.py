@@ -119,21 +119,6 @@ class Monitor:
     def display_press_n_for_next_level(self) -> None:
         pass
 
-    def display_pacgums(self) -> None:
-        for pacgum in self.pacman.pacgums:
-            is_super = True if pacgum in self.level.corners else False
-            self.pacman_frame.draw_pacgum(pacgum, is_super)
-
-    def display_entities(self, elapsed_time: int) -> None:
-        for entity in self.pacman.entities:
-            entity.update_animation(elapsed_time)
-
-            if isinstance(entity, Ghost):
-                params = (entity.render_coords(), entity.color)
-                self.pacman_frame.draw_ghost(*params)
-            else:
-                self.pacman_frame.draw_pacman(entity.render_coords())
-
     def display(self, elapsed_time: int) -> None:
 
         # HEADER
@@ -145,8 +130,17 @@ class Monitor:
 
         if self.state is State.PACMAN:
             self.pacman_frame.draw_maze()
-            self.display_pacgums()
-            self.display_entities(elapsed_time)
+
+            super = set(
+                pg for pg in self.pacman.pacgums
+                if pg in self.level.corners
+            )
+            self.pacman_frame.draw_multiple_pacgums(
+                super, super=True)
+            self.pacman_frame.draw_multiple_pacgums(
+                self.pacman.pacgums - super)
+
+            self.pacman_frame.display_entities(elapsed_time, self.pacman.entities)
             self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
         if self.state is State.MAIN_MENU:

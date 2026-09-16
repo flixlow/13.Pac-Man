@@ -1,8 +1,9 @@
 import pygame
 
 from .maze_drawer import MazeDrawer
-from ..utils import GhostColor
+from ..utils import GhostColor, Parameters
 from ..maze import Maze
+from ..entity import Ghost, Entity
 
 
 class PacManDrawer(MazeDrawer):
@@ -21,6 +22,11 @@ class PacManDrawer(MazeDrawer):
             GhostColor.SECRET: pygame.image.load(
                 "assets/ghosts/secret_ghost.png").convert_alpha()
         }
+
+        self.velocity = Parameters.PLAYER_VELOCITY
+        self.movement_interval_ms: int = max(1, 1000 // self.velocity)
+        self.player_move_elapsed_ms: int = 0
+        self.animation_elapsed_ms: int = 0
 
         self.ghosts_img = self.ghosts_img_copy.copy()
 
@@ -45,6 +51,28 @@ class PacManDrawer(MazeDrawer):
             (xc - gum[0] // 2, yc - gum[0] // 2),
             (xc + gum[0] // 2, yc + gum[0] // 2),
             gum[1]
+        )
+
+    def draw_multiple_pacgums(
+            self, cells: set[tuple[int, int]],
+            super: bool = False) -> None:
+        for cell in cells:
+            self.draw_pacgum(cell, super=super)
+
+    def display_entities(self, elapsed_time: int, entities: list[Entity]) -> None:
+        for entity in entities:
+            self.update_animation(elapsed_time)
+
+            if isinstance(entity, Ghost):
+                params = (PacManDrawer.render_coords(elapsed_time, entity), entity.color)
+                self.draw_ghost(*params)
+            else:
+                self.draw_pacman(PacManDrawer.render_coords(elapsed_time, entity))
+
+    def update_animation(self, elapsed_ms: int) -> None:
+        self.animation_elapsed_ms = min(
+            self.animation_elapsed_ms + elapsed_ms,
+            self.movement_interval_ms,
         )
 
     def draw_ghost(self, cell: tuple[float, float], color: GhostColor) -> None:
@@ -78,3 +106,17 @@ class PacManDrawer(MazeDrawer):
         self.pacman_img = pygame.transform.scale(
                 self.pacman_img_copy, (self.cell_size, self.cell_size)
             )
+
+    @staticmethod
+    def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
+
+        progress = min(
+            elapsed / entity.movement_interval_ms,
+            1.0,
+        )
+        start_x, start_y = entity.previous_coords
+        end_x, end_y = entity.coords
+        return (
+            start_x + (end_x - start_x) * progress,
+            start_y + (end_y - start_y) * progress,
+        )
