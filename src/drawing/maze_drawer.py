@@ -1,9 +1,9 @@
 from .basic_drawer import Drawer
-from ..maze import MazeLevel
+from ..maze import Maze
 
 
 class MazeDrawer(Drawer):
-    def __init__(self, size: tuple[int, int], maze: MazeLevel) -> None:
+    def __init__(self, size: tuple[int, int], maze: Maze) -> None:
         super().__init__(size)
 
         self.maze = maze.maze

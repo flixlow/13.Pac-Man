@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from random import choice
 
 from .utils import Parameters, Direction, GhostColor
-from .maze import MazeLevel
+from .maze import Maze
 
 
 class Entity(ABC):
@@ -11,11 +11,11 @@ class Entity(ABC):
     def __init__(
         self,
         coords: tuple[int, int],
-        maze: MazeLevel,
+        maze: Maze,
         velocity: int | None = None,
     ) -> None:
         self.coords: tuple[int, int] = coords
-        self.maze: MazeLevel = maze
+        self.maze: Maze = maze
         self.velocity: int = velocity or type(self).default_velocity
         self.movement_interval_ms: int = 1000 // self.velocity
         self.player_move_elapsed_ms: int = 0
@@ -61,10 +61,14 @@ class Player(Entity):
         return bool(cell & direction.value)
 
     def can_it_move(self, elapsed_ms: int) -> bool:
-        return (
-            super().can_it_move(elapsed_ms)
-            and not self.is_wall_here(self.direction)
-        )
+        if super().can_it_move(elapsed_ms) is False:
+            return False
+        if not self.is_wall_here(self.direction):
+            return True
+        if not self.is_wall_here(self.next_direction):
+            self.direction = self.next_direction
+            self.next_direction = Direction.START
+            return True
 
     def moving(self) -> None:
         x, y = self.coords
@@ -86,7 +90,7 @@ class Ghost(Entity):
     default_color: GhostColor = GhostColor.SECRET
 
     def __init__(
-        self, coords: tuple[int, int], maze: MazeLevel,
+        self, coords: tuple[int, int], maze: Maze,
         color: GhostColor | None = None, velocity: int | None = None
     ) -> None:
         super().__init__(coords, maze, velocity)

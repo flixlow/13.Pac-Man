@@ -15,7 +15,7 @@ class Paths:
 
 
 class Parameters:
-    PLAYER_VELOCITY = 5
+    PLAYER_VELOCITY = 3
     GHOST_VELOCITY = 3
 
 
@@ -46,6 +46,7 @@ class State(Enum):
     PACMAN = auto()
     PAUSE = auto()
     SCORE = auto()
+    NEXT = auto()
 
 
 KEY_DIRECTION: dict[int, Direction] = {

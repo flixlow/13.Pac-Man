@@ -2,22 +2,27 @@
 from random import shuffle
 from typing import Callable
 
-from .maze import MazeLevel
+from .maze import Maze
 from .utils import Direction
 from .parsing import Config
 from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
 
 
-class Game:
-    def __init__(self, config: Config, level: MazeLevel) -> None:
+class Level:
+    def __init__(self, config: Config, level: Maze) -> None:
         self.config: Config = config
-        self.level: MazeLevel = level
+        self.level: Maze = level
+
+        self.crazy_mode: bool = False
+        self.score: int = 0
+        self.alive: bool = True
+        self.game_end: bool = False
 
         self._init_entities()
         self._init_pacgums()
 
     def _init_ghosts(self) -> None:
-        ghost_classes: list[Callable] = [Blue, Red, Orange, Green]
+        ghost_classes: list[Callable] = [Blue]  #, Red, Orange, Green]
 
         shuffle(ghost_classes)
         for ghost_class, coords in zip(ghost_classes, self.level.corners):
@@ -56,16 +61,26 @@ class Game:
         else:
             self.player.next_direction = direction
 
-    def moving_entities(self, elapsed_time: int) -> bool:
+    def is_pacgum_here(self) -> None:
+        if self.player.coords in self.pacgums:
+            if self.player.coords in self.level.corners:
+                self.crazy_mode = True
+                self.score += 200
+            else:
+                self.score += 20
+            self.pacgums.remove(self.player.coords)
+        if not self.pacgums:
+            self.game_end = True
+
+    def moving_entities(self, elapsed_time: int) -> None:
         for entity in self.entities:
             if entity.can_it_move(elapsed_time):
                 entity.moving()
 
         if self.player.coords in self.get_ghosts_coords():
-            return False
+            self.alive = False
 
-        self.pacgums.discard(self.player.coords)
-        return True
+        self.is_pacgum_here()
 
     def check_hitbox(self) -> None:
         for entity in self.entities:
