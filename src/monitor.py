@@ -9,7 +9,7 @@ from .drawing.pacman_drawer import PacManDrawer
 from .drawing.basic_drawer import Drawer, print_life
 from .main_menu import Menu
 from .entity import Ghost
-from .game import Level
+from .level import Level
 
 
 class Monitor:
@@ -144,7 +144,7 @@ class Monitor:
                 self.next_level()
             else:
                 self.player_state.lives -= 1
-                self.pacman.dead = True
+                self.pacman.dead = False
 
             if self.player_state.lives < 1:
                 self.save_level_score()

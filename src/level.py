@@ -78,7 +78,7 @@ class Level:
                 entity.moving()
 
         if self.player.coords in self.get_ghosts_coords():
-            self.dead = False
+            self.dead = True
 
         self.is_pacgum_here()
 
