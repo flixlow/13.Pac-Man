@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from .utils import Direction
 
 
-class MazeLevel(BaseModel):
+class Maze(BaseModel):
     maze: list[list[int]]
     corners: list[tuple[int, int]]
     seed: int

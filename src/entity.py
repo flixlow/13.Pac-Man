@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from random import choice
 
 from .utils import Parameters, Direction, GhostColor
-from .maze import MazeLevel
+from .maze import Maze
 
 
 class Entity(ABC):
@@ -11,11 +11,11 @@ class Entity(ABC):
     def __init__(
         self,
         coords: tuple[int, int],
-        maze: MazeLevel,
+        maze: Maze,
         velocity: int | None = None,
     ) -> None:
         self.coords: tuple[int, int] = coords
-        self.maze: MazeLevel = maze
+        self.maze: Maze = maze
         self.velocity: int = velocity or type(self).default_velocity
         self.movement_interval_ms: int = 1000 // self.velocity
         self.player_move_elapsed_ms: int = 0
@@ -90,7 +90,7 @@ class Ghost(Entity):
     default_color: GhostColor = GhostColor.SECRET
 
     def __init__(
-        self, coords: tuple[int, int], maze: MazeLevel,
+        self, coords: tuple[int, int], maze: Maze,
         color: GhostColor | None = None, velocity: int | None = None
     ) -> None:
         super().__init__(coords, maze, velocity)

@@ -7,7 +7,7 @@ import json
 import sys
 
 from .errors import GenerationError, ParsingError
-from .maze import MazeLevel
+from .maze import Maze
 
 
 class LevelSize(BaseModel):
@@ -38,14 +38,14 @@ class Config(BaseModel):
         shuffle(corners)
         return corners
 
-    def generate_all_maze(self) -> list[MazeLevel]:
+    def generate_all_maze(self) -> list[Maze]:
         mazes = []
         seed = self.seed
 
         for lvl in self.levels:
             try:
                 g = MazeGenerator(size=(lvl.width, lvl.height), seed=seed)
-                maze = MazeLevel(
+                maze = Maze(
                     maze=g.maze, seed=seed, w=lvl.width, h=lvl.height,
                     corners=self._get_corners(lvl.width - 1, lvl.height - 1)
                 )
