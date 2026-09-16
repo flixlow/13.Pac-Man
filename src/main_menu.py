@@ -11,7 +11,6 @@ class Menu:
         self.frame.fill((0, 125, 175))
 
         self.scorer: Scorer = scorer
-        self.scorer.sort_scores()
 
         self.scorers_rendered: list[tuple[int, Surface, Surface]] = []
 

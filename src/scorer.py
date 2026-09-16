@@ -24,11 +24,6 @@ class Scorer:
                 f"(line {e.lineno})."
             )
 
-    def sort_scores(self) -> None:
-        self.scores = dict(
-            sorted(self.scores.items(), key=lambda x: x[1], reverse=True)
-        )
-
     def save(self, player_state: PlayerState) -> None:
         last = self.scores.get(player_state.name, -1)
 
@@ -39,3 +34,7 @@ class Scorer:
                 f.write(json.dumps(self.scores, indent=4))
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
+
+        self.scores = dict(
+            sorted(self.scores.items(), key=lambda x: x[1], reverse=True)
+        )
