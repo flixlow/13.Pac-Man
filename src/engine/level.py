@@ -70,7 +70,7 @@ class Level:
     def moving_entities(self, elapsed_time: int) -> None:
         for entity in self.entities:
             if entity.can_it_move(elapsed_time):
-                entity.moving()
+                entity.moving(self.player.coords)
 
         if self.player.coords in self.get_ghosts_coords():
             self.is_dead = True

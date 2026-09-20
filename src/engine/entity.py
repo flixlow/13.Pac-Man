@@ -5,6 +5,9 @@ from ..utils import Parameters, Direction, GhostColor
 from .maze import Maze
 
 
+COORDINATES = tuple[int, int]
+
+
 class Entity(ABC):
     default_velocity: int = Parameters.PLAYER_VELOCITY
 
@@ -23,7 +26,7 @@ class Entity(ABC):
         self.animation_elapsed_ms: int = 0
 
     @abstractmethod
-    def moving(self) -> None:
+    def moving(self, destination: tuple[int, int] | None) -> None:
         ...
 
     def can_it_move(self, elapsed_ms: int) -> bool:
@@ -55,7 +58,7 @@ class Player(Entity):
                 return True
         return False
 
-    def moving(self) -> None:
+    def moving(self, _: tuple[int, int] | None) -> None:
         x, y = self.coords
         self.previous_coords = self.coords
         self.animation_elapsed_ms = 0
@@ -83,12 +86,12 @@ class Ghost(Entity):
         self.sequence: list[tuple[int, int]] = []
 
     @abstractmethod
-    def generate_sequence(self) -> None:
+    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         ...
 
-    def moving(self) -> None:
+    def moving(self, destination: tuple[int, int] | None) -> None:
         if self.sequence == []:
-            self.generate_sequence()
+            self.generate_sequence(destination)
 
         self.previous_coords = self.coords
         self.animation_elapsed_ms = 0
@@ -100,11 +103,11 @@ class Ghost(Entity):
 class Blue(Ghost):
     default_color = GhostColor.BLUE
 
-    def generate_sequence(self) -> None:
+    def generate_sequence(self, _: tuple[int, int] | None) -> None:
         current_coords = self.coords
         last_coords: None | tuple[int, int] = None
 
-        for _ in range(30):
+        for i in range(30):
             available_coords = self.maze.get_available_coords(current_coords)
             if last_coords and len(available_coords) > 1:
                 if last_coords in available_coords:
@@ -120,13 +123,13 @@ class Blue(Ghost):
 class Red(Ghost):
     default_color = GhostColor.RED
 
-    def pathfinding(self, player_pos: tuple[int, int]) -> None:
+    def pathfinding(self, end: tuple[int, int]) -> None:
         queue: list[tuple[int, int]] = [self.coords]
         origin: dict[tuple[int, int], tuple[int, int]] = dict()
         visited: set[tuple[int, int]] = set()
         while queue:
             current = queue.pop(0)
-            if current is player_pos:
+            if current is end:
                 break
             for coords in self.maze.get_available_coords(current):
                 if coords in visited:
@@ -140,20 +143,23 @@ class Red(Ghost):
             self.sequence.append(current)
             current = origin[current]
         self.sequence.reverse()
+        print(self.sequence)
 
-    def generate_sequence(self, ) -> None:
-        self.pathfinding((0, 0))
+    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
+        if destination is not None:
+            print(destination)
+            self.pathfinding(destination)
 
 
 class Green(Ghost):
     default_color = GhostColor.GREEN
 
-    def generate_sequence(self) -> None:
+    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         pass
 
 
 class Orange(Ghost):
     default_color = GhostColor.ORANGE
 
-    def generate_sequence(self) -> None:
+    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         pass
