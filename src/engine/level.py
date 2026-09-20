@@ -4,7 +4,7 @@ from typing import Callable
 
 from .maze import Maze
 from ..utils import Direction
-from ..entity import Entity, Ghost, Player, Blue, Red, Green, Orange
+from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
 
 
 class Level:

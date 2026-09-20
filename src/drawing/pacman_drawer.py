@@ -3,7 +3,7 @@ import pygame
 from .maze_drawer import MazeDrawer
 from ..utils import GhostColor, Parameters
 from ..engine.maze import Maze
-from ..entity import Ghost, Entity
+from ..engine.entity import Ghost, Entity
 
 
 class PacManDrawer(MazeDrawer):

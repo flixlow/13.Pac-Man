@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from random import choice
 
-from .utils import Parameters, Direction, GhostColor
-from .engine.maze import Maze
+from ..utils import Parameters, Direction, GhostColor
+from .maze import Maze
 
 
 class Entity(ABC):
