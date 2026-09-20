@@ -20,3 +20,5 @@ highscore can take only alphanumeric
 [ ] demander le nom du joueur en fin de partie
 [ ] animation eating pacman
 [ ] crazy mode
+[ ] animation
+[ ] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir

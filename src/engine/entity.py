@@ -120,8 +120,29 @@ class Blue(Ghost):
 class Red(Ghost):
     default_color = GhostColor.RED
 
-    def generate_sequence(self) -> None:
-        pass
+    def pathfinding(self, player_pos: tuple[int, int]) -> None:
+        queue: list[tuple[int, int]] = [self.coords]
+        origin: dict[tuple[int, int], tuple[int, int]] = dict()
+        visited: set[tuple[int, int]] = set()
+        while queue:
+            current = queue.pop(0)
+            if current is player_pos:
+                break
+            for coords in self.maze.get_available_coords(current):
+                if coords in visited:
+                    continue
+
+                visited.add(coords)
+                queue.append(coords)
+                origin[coords] = current
+
+        while current is not self.coords:
+            self.sequence.append(current)
+            current = origin[current]
+        self.sequence.reverse()
+
+    def generate_sequence(self, ) -> None:
+        self.pathfinding((0, 0))
 
 
 class Green(Ghost):
