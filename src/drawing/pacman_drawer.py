@@ -59,15 +59,18 @@ class PacManDrawer(MazeDrawer):
         for cell in cells:
             self.draw_pacgum(cell, super=super)
 
-    def display_entities(self, elapsed_time: int, entities: list[Entity]) -> None:
-        for entity in entities:
-            self.update_animation(elapsed_time)
+    def display_entities(self, elapsed_t: int, entities: list[Entity]) -> None:
+        for e in entities:
+            e.animation_elapsed_ms = min(
+                e.animation_elapsed_ms + elapsed_t,
+                e.movement_interval_ms,
+            )
 
-            if isinstance(entity, Ghost):
-                params = (PacManDrawer.render_coords(elapsed_time, entity), entity.color)
+            if isinstance(e, Ghost):
+                params = (PacManDrawer.render_coords(elapsed_t, e), e.color)
                 self.draw_ghost(*params)
             else:
-                self.draw_pacman(PacManDrawer.render_coords(elapsed_time, entity))
+                self.draw_pacman(PacManDrawer.render_coords(elapsed_t, e))
 
     def update_animation(self, elapsed_ms: int) -> None:
         self.animation_elapsed_ms = min(
@@ -109,9 +112,9 @@ class PacManDrawer(MazeDrawer):
 
     @staticmethod
     def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
-
+        animation_progress = getattr(entity, "animation_elapsed_ms", elapsed)
         progress = min(
-            elapsed / entity.movement_interval_ms,
+            animation_progress / max(1, entity.movement_interval_ms),
             1.0,
         )
         start_x, start_y = entity.previous_coords

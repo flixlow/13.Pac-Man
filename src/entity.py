@@ -20,6 +20,7 @@ class Entity(ABC):
         self.player_move_elapsed_ms: int = 0
         self.movement_interval_ms: int = max(1, 1000 // self.velocity)
         self.previous_coords: tuple[int, int] = coords
+        self.animation_elapsed_ms: int = 0
 
     @abstractmethod
     def moving(self) -> None:
