@@ -19,3 +19,4 @@ highscore can take only alphanumeric
 [ ] stocker les changements de direction queue
 [ ] pathfinding a implementer
 [ ] animation
+[ ] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir
