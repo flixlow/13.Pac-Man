@@ -141,7 +141,9 @@ class Monitor:
             self.check_events()
 
             if self.state is State.PACMAN:
-                self.game.moving_entities(elapsed_time)
+                if self.game.moving_entities(elapsed_time):
+                    self.state = State.PAUSE
+                    self.game.new_game()
 
             #  DISPLAY
             self.ending_animation(elapsed_time)
