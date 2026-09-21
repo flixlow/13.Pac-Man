@@ -15,23 +15,18 @@ class PacmanGame:
 
     def new_game(self) -> None:
         self.maze_interator: Iterator = iter(self.mazes)
-        self.maze: Maze = next(self.maze_interator)
-        self.level: Level = Level(self.maze)
+        self.level: Level = Level(next(self.maze_interator))
         self.player_state: PlayerState = PlayerState()
 
     def next_level(self) -> None:
         try:
-            self.maze = next(self.maze_interator)
-            self.level = Level(self.maze)
+            self.level = Level(next(self.maze_interator))
         except StopIteration:
             self.new_game()
 
-    def moving_entities(self, elapsed_time: int) -> bool:
+    def moving_entities(self, elapsed_time: int) -> None:
         if not (self.level.is_dead or self.game_over):
             self.level.moving_entities(elapsed_time)
-        if self.level.is_completed:
-            return True
-        return False
 
     def save_level_score(self) -> None:
         self.player_state.score += self.level.score
@@ -39,7 +34,7 @@ class PacmanGame:
     def enter_your_name(self) -> None:
         self.player_state.name = "secret pablo ghost"
 
-    def lose_a_life(self) -> State:
+    def ending_level(self) -> State:
         if self.level.is_completed:
             self.save_level_score()
             self.next_level()
@@ -53,4 +48,5 @@ class PacmanGame:
             self.enter_your_name()
             self.new_game()
             return State.MAIN_MENU
+
         return State.PAUSE
