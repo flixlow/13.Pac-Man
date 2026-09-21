@@ -11,8 +11,7 @@ class Menu:
         self.frame.fill((0, 125, 175))
         w, h = self.frame.size
         self.padding_x, self.padding_y = w // 10, h // 10
-
-
+        
         self.scorer: Scorer = scorer
 
         self.scorers_rendered: list[tuple[int, Surface, Surface]] = []
@@ -69,9 +68,6 @@ class Menu:
 
             self.scorers_rendered.append((value, user, score))
 
-
-        # settings
-
     def print_leaderboard(self) -> None:
         w, h = self.frame.size
         self.frame.draw_rect((0, 0), (w // 2, h), (50, 75, 150))
@@ -92,3 +88,22 @@ class Menu:
             oy += max(
                 user.get_height(), score.get_height()
             )
+
+class Button:
+    frame: Drawer = Menu.frame
+
+    def __init__(self, a: tuple[int, int], size: tuple[int, int]) -> None:
+        self.size = size
+        self.pos = a
+
+        self.button = pygame.image.load("assets/button/button.png")
+        self.button_pressed = pygame.image.load("assets/button/button_pressed.png")
+
+    def draw(self) -> None:
+        if not self.is_clicked():
+            Button.frame.put_image(self.pos, self.button)
+        else:
+            Button.frame.put_image(self.pos, self.button_pressed)
+
+    def is_clicked(self) -> bool:
+        

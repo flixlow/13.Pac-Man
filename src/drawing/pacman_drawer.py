@@ -31,7 +31,7 @@ class PacManDrawer(MazeDrawer):
         self.ghosts_img = self.ghosts_img_copy.copy()
 
         self.pacman_img_copy = pygame.image.load(
-            "assets/pacman/pacman.png").convert_alpha()
+            "assets/pacman/pacman_1.png").convert_alpha()
 
         PacManDrawer.update_size(self, size)
 
@@ -91,8 +91,8 @@ class PacManDrawer(MazeDrawer):
     def draw_pacman(self, cell: tuple[float, float]) -> None:
         x, y = cell
 
-        px = int(x * self.cell_size + self.offset_x)
-        py = int(y * self.cell_size + self.offset_y)
+        px = int(x * self.cell_size + self.offset_x + 0.1 * self.cell_size)
+        py = int(y * self.cell_size + self.offset_y + 0.1 * self.cell_size)
 
         x1, y1 = px, py
 
@@ -107,7 +107,7 @@ class PacManDrawer(MazeDrawer):
             )
 
         self.pacman_img = pygame.transform.scale(
-                self.pacman_img_copy, (self.cell_size, self.cell_size)
+                self.pacman_img_copy, (self.cell_size * 0.8, self.cell_size * 0.8)
             )
 
     @staticmethod
