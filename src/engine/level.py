@@ -4,7 +4,7 @@ from typing import Callable
 
 from .maze import Maze
 from ..utils import Direction
-from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
+from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange, Secret
 
 
 class Level:
@@ -20,7 +20,7 @@ class Level:
         self._init_pacgums()
 
     def _init_ghosts(self) -> None:
-        ghost_classes: list[Callable] = [Blue, Green, Red, Orange]
+        ghost_classes: list[Callable] = [Blue, Green, Red, Orange, Secret]
 
         shuffle(ghost_classes)
         for ghost_class, coords in zip(ghost_classes, self.maze.corners):
