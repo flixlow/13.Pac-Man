@@ -6,13 +6,19 @@ class MazeDrawer(Drawer):
     def __init__(self, size: tuple[int, int], maze: Maze) -> None:
         super().__init__(size)
 
-        self.maze = maze.maze
+        self.maze = maze.maze_map
         self.maze_height = maze.h
         self.maze_width = maze.w
 
         MazeDrawer.update_size(self, size)
 
         self.draw_maze()
+
+    def update_maze(self, maze: Maze) -> None:
+        self.maze = maze.maze_map
+        self.maze_height = maze.h
+        self.maze_width = maze.w
+        self.update_size(self.size)
 
     def update_size(self, new_size: tuple[int, int]) -> None:
         super().update_size(new_size)

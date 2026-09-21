@@ -5,7 +5,7 @@ from ..utils import Direction
 
 
 class Maze(BaseModel):
-    maze: list[list[int]]
+    maze_map: list[list[int]]
     corners: list[tuple[int, int]]
     seed: int
     w: int
@@ -20,7 +20,7 @@ class Maze(BaseModel):
         return self.h - 1
 
     def get_cell_walls(self, x: int, y: int) -> int:
-        return self.maze[y][x]
+        return self.maze_map[y][x]
 
     def get_available_coords(
             self, last_coords: tuple[int, int]) -> list[tuple[int, int]]:

@@ -5,7 +5,7 @@ install: Makefile mazegenerator-2.1.0-py3-none-any.whl
 	@echo "\033[0;32m\n[OK] installation completed ✔\n\033[0m"
 
 run:
-	uv run -m src config.json
+	@PYGAME_HIDE_SUPPORT_PROMPT=1 uv run -m src config.json
 
 debug:
 	uv run -m pdb -m src config.json

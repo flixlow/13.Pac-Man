@@ -43,7 +43,7 @@ class Monitor:
             self.screen_size, pygame.RESIZABLE
         )
 
-        maze = self.game.maze
+        maze = self.game.level.maze
         self.pacman_frame = PacManDrawer((w, h - self.header), maze)
         self.pacman_frame.draw_maze()
 
@@ -130,7 +130,9 @@ class Monitor:
         if self.game.level.is_dead or self.game.level.is_completed:
             self.counter_ending_animation += 1
         if self.counter_ending_animation >= elapsed_time:
-            self.state = self.game.lose_a_life()
+            self.state = self.game.ending_level()
+
+            self.pacman_frame.update_maze(self.game.level.maze)
 
             self.counter_ending_animation = 0
 
@@ -143,7 +145,6 @@ class Monitor:
             if self.state is State.PACMAN:
                 self.game.moving_entities(elapsed_time)
 
-            #  DISPLAY
             self.ending_animation(elapsed_time)
             self.display(elapsed_time)
 

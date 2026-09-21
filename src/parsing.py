@@ -46,7 +46,7 @@ class Config(BaseModel):
             try:
                 g = MazeGenerator(size=(lvl.width, lvl.height), seed=seed)
                 maze = Maze(
-                    maze=g.maze, seed=seed, w=lvl.width, h=lvl.height,
+                    maze_map=g.maze, seed=seed, w=lvl.width, h=lvl.height,
                     corners=self._get_corners(lvl.width - 1, lvl.height - 1)
                 )
 
