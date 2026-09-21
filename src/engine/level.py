@@ -1,10 +1,10 @@
 
-from random import shuffle
+from random import shuffle, random
 from typing import Callable
 
 from .maze import Maze
 from ..utils import Direction
-from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange
+from .entity import Entity, Ghost, Player, Blue, Red, Green, Orange, Secret
 
 
 class Level:
@@ -23,6 +23,10 @@ class Level:
         ghost_classes: list[Callable] = [Blue, Green, Red, Orange]
 
         shuffle(ghost_classes)
+
+        if random() < 0.05:
+            ghost_classes[0] = Secret
+
         for ghost_class, coords in zip(ghost_classes, self.maze.corners):
             new_ghost = ghost_class(coords, self.maze)
             self.ghosts.append(new_ghost)
@@ -46,7 +50,7 @@ class Level:
 
         for x in range(self.maze.w):
             for y in range(self.maze.h):
-                if self.maze.maze[y][x] == 15:
+                if self.maze.maze_map[y][x] == 15:
                     continue
                 self.pacgums.add((x, y))
 
