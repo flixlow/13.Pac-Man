@@ -21,7 +21,7 @@ class MazeDrawer(Drawer):
             self.size[0] // self.maze_width,
             self.size[1] // self.maze_height
         )
-        self.wall_width = 2 * max(1, (self.cell_size // 30))
+        self.wall_width = 3 * max(1, (self.cell_size // 30))
 
         maze_width_px = self.maze_width * self.cell_size
         maze_height_px = self.maze_height * self.cell_size
@@ -34,7 +34,7 @@ class MazeDrawer(Drawer):
         Render the full maze grid, including start and end cells.
         """
 
-        self.fill((255, 180, 255))
+        self.fill((30, 30, 30))
 
         for y in range(self.maze_height):
             for x in range(self.maze_width):
@@ -72,21 +72,21 @@ class MazeDrawer(Drawer):
             self.draw_rect(
                 (x1, y1),
                 (x2, y1 + self.wall_width),
-                (255, 0, 0)
+                (55, 15, 180)
             )
 
         if value & 2:
             self.draw_rect(
                 (x2 - self.wall_width, y1),
                 (x2, y2),
-                (0, 255, 0)
+                (65, 25, 195)
             )
 
         if value & 4:
             self.draw_rect(
                 (x1, y2 - self.wall_width),
                 (x2, y2),
-                (0, 0, 255)
+                (255, 240, 0)
             )
 
         if value & 8:

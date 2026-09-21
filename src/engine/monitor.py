@@ -86,7 +86,7 @@ class Monitor:
                 self.menu.draw_menu()
 
             self.header_img.update_size((w, self.header))
-            self.header_img.fill((255, 120, 120))
+            self.header_img.fill((255, 255, 255))
 
     def check_events(self) -> None:
         for event in pygame.event.get():

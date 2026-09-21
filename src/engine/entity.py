@@ -100,6 +100,7 @@ class Ghost(Entity):
         queue: list[tuple[int, int]] = [self.coords]
         origin: dict[tuple[int, int], tuple[int, int]] = dict()
         visited: set[tuple[int, int]] = set()
+
         while queue:
             current = queue.pop(0)
             if current == end:
@@ -116,6 +117,7 @@ class Ghost(Entity):
             self.sequence.append(current)
             current = origin[current]
         self.sequence.reverse()
+
         if n is not None:
             self.sequence = self.sequence[:n]
 
@@ -141,7 +143,7 @@ class Blue(Ghost):
 
 
 class Red(Ghost):
-    default_color = GhostColor.RED
+    default_color = GhostColor.SECRET
 
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         if destination is not None:

@@ -67,7 +67,7 @@ def print_life(frame: Drawer, a: tuple[int, int], life: int):
 
 def print_title(frame: Drawer):
     w, h = frame.size
-    title_font = pygame.font.Font(None, h // 2)
+    title_font = pygame.font.Font("assets/font/title.otf", h // 2)
     rendered_title = title_font.render(
         "PAC-MAN", True, (0, 0, 0)
     )
