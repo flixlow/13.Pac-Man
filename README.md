@@ -22,3 +22,5 @@ highscore can take only alphanumeric
 [ ] crazy mode
 [ ] animation
 [ ] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir
+
+![alt text](image.png)

@@ -5,9 +5,6 @@ from ..utils import Parameters, Direction, GhostColor
 from .maze import Maze
 
 
-COORDINATES = tuple[int, int]
-
-
 class Entity(ABC):
     default_velocity: int = Parameters.PLAYER_VELOCITY
 
@@ -148,7 +145,7 @@ class Red(Ghost):
 
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         if destination is not None:
-            self.pathfinding(destination, 10)
+            self.pathfinding(destination, 15)
 
 
 class Green(Ghost):
