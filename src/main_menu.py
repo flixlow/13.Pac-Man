@@ -9,11 +9,18 @@ class Menu:
     def __init__(self, size, scorer: Scorer) -> None:
         self.frame = Drawer(size)
         self.frame.fill((0, 125, 175))
+        w, h = self.frame.size
+        self.padding_x, self.padding_y = w // 10, h // 10
+
 
         self.scorer: Scorer = scorer
 
         self.scorers_rendered: list[tuple[int, Surface, Surface]] = []
 
+        # images
+        self.button = pygame.image.load("assets/button/button.png")
+        self.button_pressed = pygame.image.load("assets/button/button_pressed.png")
+        self.update_size()
         self.draw_menu()
 
     def draw_menu(self) -> None:
@@ -21,6 +28,17 @@ class Menu:
         self.render_leaderboard()
         self.print_leaderboard()
         self.print_buttons()
+
+    def update_size(self) -> None:
+        w, h = self.frame.size
+        self.padding_x, self.padding_y = w // 20, h // 10
+
+        self.button = pygame.transform.scale(self.button, (w // 2 - self.padding_x * 2, h // 2 - self.padding_y * 2))
+        self.button_pressed = pygame.transform.scale(self.button_pressed, (w // 2 - self.padding_x * 2, h // 2 - self.padding_y * 2))
+
+    def print_buttons(self) -> None:
+        w, h = self.frame.size
+        self.frame.put_image((w // 2 + self.padding_x, 0 + self.padding_y), self.button)
 
     def render_leaderboard(self) -> None:
         w, _ = self.frame.size
@@ -51,14 +69,8 @@ class Menu:
 
             self.scorers_rendered.append((value, user, score))
 
-    def print_buttons(self) -> None:
-        w, h = self.frame.size
-        self.padding_x, self.padding_y = w // 20, h // 10
 
-        self.frame.draw_rect((w // 2 + self.padding_x, 0 + self.padding_y), (w - self.padding_x, h // 2 - self.padding_y // 2), (255, 255, 255))
-
-        self.frame.draw_rect((w * 3/4 + self.padding_x // 4, h // 2 + self.padding_y // 2), (w * 4/4 - self.padding_x // 2, h - self.padding_y), (255, 255, 255))
-        self.frame.draw_rect((w * 2/4 + self.padding_x // 2, h // 2 + self.padding_y // 2), (w * 3/4 - self.padding_x // 4, h - self.padding_y), (255, 255, 255))
+        # settings
 
     def print_leaderboard(self) -> None:
         w, h = self.frame.size
