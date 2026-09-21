@@ -38,3 +38,13 @@ class Maze(BaseModel):
             coords.append((x - 1, y))
 
         return coords
+
+    def get_border_cells(self) -> list[tuple[int, int]]:
+        border_cells: list[tuple[int, int]] = []
+
+        for x in range(self.w):
+            for y in range(self.h):
+                if x in {0, self.x_max} or y in {0, self.y_max}:
+                    border_cells.append((x, y))
+
+        return border_cells

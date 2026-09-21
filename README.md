@@ -14,9 +14,9 @@ highscore can take only alphanumeric
 [x] implent velocity in simulation
 [x] generate sequences of coords for movement
 [x] stocker les changements de direction queue
+[x] pathfinding a implementer
 [ ] flag : --own_function for draw rectangle
 [ ] displayer le score et le timer
-[ ] pathfinding a implementer
 [ ] demander le nom du joueur en fin de partie
 [ ] animation eating pacman
 [ ] crazy mode

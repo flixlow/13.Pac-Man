@@ -99,6 +99,29 @@ class Ghost(Entity):
         if self.sequence != []:
             self.coords = self.sequence.pop(0)
 
+    def pathfinding(self, end: tuple[int, int], n: int | None) -> None:
+        queue: list[tuple[int, int]] = [self.coords]
+        origin: dict[tuple[int, int], tuple[int, int]] = dict()
+        visited: set[tuple[int, int]] = set()
+        while queue:
+            current = queue.pop(0)
+            if current == end:
+                break
+            for coords in self.maze.get_available_coords(current):
+                if coords in visited:
+                    continue
+
+                visited.add(coords)
+                queue.append(coords)
+                origin[coords] = current
+
+        while current != self.coords:
+            self.sequence.append(current)
+            current = origin[current]
+        self.sequence.reverse()
+        if n is not None:
+            self.sequence = self.sequence[:n]
+
 
 class Blue(Ghost):
     default_color = GhostColor.BLUE
@@ -123,43 +146,22 @@ class Blue(Ghost):
 class Red(Ghost):
     default_color = GhostColor.RED
 
-    def pathfinding(self, end: tuple[int, int]) -> None:
-        queue: list[tuple[int, int]] = [self.coords]
-        origin: dict[tuple[int, int], tuple[int, int]] = dict()
-        visited: set[tuple[int, int]] = set()
-        while queue:
-            current = queue.pop(0)
-            if current is end:
-                break
-            for coords in self.maze.get_available_coords(current):
-                if coords in visited:
-                    continue
-
-                visited.add(coords)
-                queue.append(coords)
-                origin[coords] = current
-
-        while current is not self.coords:
-            self.sequence.append(current)
-            current = origin[current]
-        self.sequence.reverse()
-        print(self.sequence)
-
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         if destination is not None:
-            print(destination)
-            self.pathfinding(destination)
+            self.pathfinding(destination, 10)
 
 
 class Green(Ghost):
     default_color = GhostColor.GREEN
 
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
-        pass
+        if destination is not None:
+            self.pathfinding(destination, 2)
 
 
 class Orange(Ghost):
     default_color = GhostColor.ORANGE
 
-    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
-        pass
+    def generate_sequence(self, _: tuple[int, int] | None) -> None:
+        cell = choice(self.maze.get_border_cells())
+        self.pathfinding(cell, None)

@@ -1,6 +1,6 @@
 
-from enum import Enum, auto
 import pygame
+from enum import Enum, auto
 
 
 class Paths:
