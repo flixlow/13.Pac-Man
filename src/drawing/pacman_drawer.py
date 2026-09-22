@@ -12,15 +12,15 @@ class PacManDrawer(MazeDrawer):
 
         self.ghosts_img_copy = {
             GhostColor.RED: pygame.image.load(
-                "assets/ghosts/red_ghost.png").convert_alpha(),
+                "assets/ghosts/red/1.png").convert_alpha(),
             GhostColor.BLUE: pygame.image.load(
-                "assets/ghosts/blue_ghost.png").convert_alpha(),
+                "assets/ghosts/blue/1.png").convert_alpha(),
             GhostColor.ORANGE: pygame.image.load(
-                "assets/ghosts/orange_ghost.png").convert_alpha(),
+                "assets/ghosts/orange/1.png").convert_alpha(),
             GhostColor.GREEN: pygame.image.load(
-                "assets/ghosts/green_ghost.png").convert_alpha(),
+                "assets/ghosts/pink/1.png").convert_alpha(),
             GhostColor.SECRET: pygame.image.load(
-                "assets/ghosts/secret_ghost.png").convert_alpha()
+                "assets/ghosts/crazyman/3.png").convert_alpha()
         }
 
         self.velocity = Parameters.PLAYER_VELOCITY
@@ -44,7 +44,10 @@ class PacManDrawer(MazeDrawer):
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
 
-        gum = (self.cell_size // 10, (255, 255, 210)) if not super else (self.cell_size // 5, (255, 60, 180))
+        gum = (
+            (self.cell_size // 10, (255, 255, 210)) if not super else
+            (self.cell_size // 5, (255, 60, 180))
+        )
         xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
 
         self.draw_rect(
@@ -107,7 +110,8 @@ class PacManDrawer(MazeDrawer):
             )
 
         self.pacman_img = pygame.transform.scale(
-                self.pacman_img_copy, (self.cell_size * 0.8, self.cell_size * 0.8)
+                self.pacman_img_copy, (
+                    self.cell_size * 0.8, self.cell_size * 0.8)
             )
 
     @staticmethod
