@@ -115,7 +115,15 @@ class Monitor:
     def display(self, elapsed_time: int) -> None:
 
         # HEADER
-        print_life(self.header_img, (0, 0), self.game.player_state.lives)
+        print(self.game.player_state.lives)
+        print_life(
+            self.header_img, (0, 0),
+            self.pacman_frame.alive.get_width(),
+            self.game.player_state.lives,
+            self.pacman_frame.alive,
+            self.pacman_frame.dead
+        )
+
         self.screen.blit(self.header_img.surface, (0, 0))
 
         print_title(self.header_img)

@@ -50,20 +50,18 @@ class Drawer:
         self.surface = pygame.Surface(new_size)
 
 
-def print_life(frame: Drawer, a: tuple[int, int], life: int):
-    TEST = 50
+def print_life(
+        frame: Drawer, a: tuple[int, int], gap: int,
+        life: int, alive: pygame.Surface, dead: pygame.Surface):
 
-    frame.draw_rect(
-        (a[0], a[1]), (a[0] + TEST * 3, a[1] + TEST)
-    )
+    LIFE = 3
 
-    for i in range(life):
-        frame.draw_rect(
-            (a[0] + i * TEST, a[1]),
-            (a[0] + (i + 1) * TEST, a[1] + TEST),
-            (255, 255//3*i, 0)
-        )
-
+    for i in range(LIFE):
+        x, y = a
+        if i < life:
+            frame.put_image((x + i * gap, y), alive)
+        else:
+            frame.put_image((x + i * gap, y), dead)
 
 def print_title(frame: Drawer):
     w, h = frame.size
