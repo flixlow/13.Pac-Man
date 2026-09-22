@@ -120,7 +120,7 @@ class Button:
         self.i = i + 1
         self.size = size
         self.text = text
-        self.font = pygame.font.Font("assets/font/title.otf", 60)
+        self.font = pygame.font.Font("assets/font/title.otf", 25)
 
         w, h = self.frame.size
         self.padding_x, self.padding_y = w // 20, h // 10
@@ -133,7 +133,9 @@ class Button:
         self.button_pressed = self.button_pressed_original
 
     def update_size(self) -> None:
+
         w, h = self.frame.size
+        self.font = pygame.font.Font("assets/font/title.otf", w // 25)
         self.padding_x, self.padding_y = w // 20, h // 10
         self.pos = (w // 2 + self.padding_x, self.i * self.padding_y)
 

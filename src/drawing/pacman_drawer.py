@@ -36,12 +36,19 @@ class PacManDrawer(MazeDrawer):
                 f"assets/ghosts/red/{i+1}.png").convert_alpha() for i in range(8)]
         }
 
+        self.alive_copy = pygame.image.load(
+            "assets/icon/heart.png").convert_alpha()
+        self.dead_copy = pygame.image.load(
+            "assets/icon/dead_heart.png").convert_alpha()
+
         self.velocity = Parameters.PLAYER_VELOCITY
         self.movement_interval_ms: int = max(1, 1000 // self.velocity)
         self.player_move_elapsed_ms: int = 0
         self.animation_elapsed_ms: int = 0
 
         self.ghosts_img = self.ghosts_img_copy.copy()
+        self.alive = self.alive_copy.copy()
+        self.dead = self.dead_copy.copy()
 
         self.pacman_img_copy = pygame.image.load(
             "assets/pacman/pacman_1.png").convert_alpha()
@@ -146,6 +153,14 @@ class PacManDrawer(MazeDrawer):
                 self.pacman_img_copy, (
                     self.cell_size * 0.8, self.cell_size * 0.8)
             )
+
+        self.alive = pygame.transform.scale(
+            self.alive_copy, (self.cell_size, self.cell_size)
+        )
+
+        self.dead = pygame.transform.scale(
+            self.dead_copy, (self.cell_size, self.cell_size)
+        )
 
     @staticmethod
     def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
