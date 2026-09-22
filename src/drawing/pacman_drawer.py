@@ -3,24 +3,37 @@ import pygame
 from .maze_drawer import MazeDrawer
 from ..utils import GhostColor, Parameters
 from ..engine.maze import Maze
-from ..engine.entity import Ghost, Entity
+from ..engine.entity import Ghost, Entity, Direction
 
 
 class PacManDrawer(MazeDrawer):
     def __init__(self, size: tuple[int, int], maze: Maze) -> None:
         super().__init__(size, maze)
 
+        # self.ghosts_img_copy = {
+        #     GhostColor.RED: pygame.image.load(
+        #         "assets/ghosts/red/1.png").convert_alpha(),
+        #     GhostColor.BLUE: pygame.image.load(
+        #         "assets/ghosts/blue/1.png").convert_alpha(),
+        #     GhostColor.ORANGE: pygame.image.load(
+        #         "assets/ghosts/orange/1.png").convert_alpha(),
+        #     GhostColor.GREEN: pygame.image.load(
+        #         "assets/ghosts/pink/1.png").convert_alpha(),
+        #     GhostColor.SECRET: pygame.image.load(
+        #         "assets/ghosts/crazyman/3.png").convert_alpha()
+        # }
+
         self.ghosts_img_copy = {
-            GhostColor.RED: pygame.image.load(
-                "assets/ghosts/red/1.png").convert_alpha(),
-            GhostColor.BLUE: pygame.image.load(
-                "assets/ghosts/blue/1.png").convert_alpha(),
-            GhostColor.ORANGE: pygame.image.load(
-                "assets/ghosts/orange/1.png").convert_alpha(),
-            GhostColor.GREEN: pygame.image.load(
-                "assets/ghosts/pink/1.png").convert_alpha(),
-            GhostColor.SECRET: pygame.image.load(
-                "assets/ghosts/crazyman/3.png").convert_alpha()
+            GhostColor.RED: [pygame.image.load(
+                f"assets/ghosts/red/{i+1}.png").convert_alpha() for i in range(8)],
+            GhostColor.BLUE: [pygame.image.load(
+                f"assets/ghosts/blue/{i+1}.png").convert_alpha() for i in range(8)],
+            GhostColor.ORANGE: [pygame.image.load(
+                f"assets/ghosts/orange/{i+1}.png").convert_alpha() for i in range(8)],
+            GhostColor.GREEN: [pygame.image.load(
+                f"assets/ghosts/pink/{i+1}.png").convert_alpha() for i in range(8)],
+            GhostColor.SECRET: [pygame.image.load(
+                f"assets/ghosts/orange/{i+1}.png").convert_alpha() for i in range(8)]
         }
 
         self.velocity = Parameters.PLAYER_VELOCITY
@@ -69,9 +82,11 @@ class PacManDrawer(MazeDrawer):
                 e.movement_interval_ms,
             )
 
+            direction = e.get_direction()
+
             if isinstance(e, Ghost):
                 params = (PacManDrawer.render_coords(elapsed_t, e), e.color)
-                self.draw_ghost(*params)
+                self.draw_ghost(*params, direction)
             else:
                 self.draw_pacman(PacManDrawer.render_coords(elapsed_t, e))
 
@@ -81,7 +96,8 @@ class PacManDrawer(MazeDrawer):
             self.movement_interval_ms,
         )
 
-    def draw_ghost(self, cell: tuple[float, float], color: GhostColor) -> None:
+    def draw_ghost(self, cell: tuple[float, float],
+                   color: GhostColor, direction: Direction) -> None:
         x, y = cell
 
         px = int(x * self.cell_size + self.offset_x)
@@ -89,7 +105,20 @@ class PacManDrawer(MazeDrawer):
 
         x1, y1 = px, py
 
-        self.put_image((x1, y1), self.ghosts_img[color])
+        match direction:
+            case Direction.SOUTH:
+                img = self.ghosts_img[color][0]
+            case Direction.NORTH:
+                img = self.ghosts_img[color][1]
+            case Direction.WEST:
+                img = self.ghosts_img[color][4]
+            case Direction.EAST:
+                img = self.ghosts_img[color][5]
+            case _:
+                img = self.ghosts_img[color][0]
+
+
+        self.put_image((x1, y1), img)
 
     def draw_pacman(self, cell: tuple[float, float]) -> None:
         x, y = cell
@@ -104,10 +133,14 @@ class PacManDrawer(MazeDrawer):
     def update_size(self, new_size: tuple[int, int]) -> None:
         super().update_size(new_size)
 
-        for image in self.ghosts_img:
-            self.ghosts_img[image] = pygame.transform.scale(
-                self.ghosts_img_copy[image], (self.cell_size, self.cell_size)
-            )
+        for color, images in self.ghosts_img.items():
+            lst = []
+            for image in images:
+                scaled = pygame.transform.scale(
+                    image, (self.cell_size, self.cell_size)
+                )
+                lst.append(scaled)
+            self.ghosts_img[color] = lst
 
         self.pacman_img = pygame.transform.scale(
                 self.pacman_img_copy, (
