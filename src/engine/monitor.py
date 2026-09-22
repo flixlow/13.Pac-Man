@@ -36,6 +36,7 @@ class Monitor:
         self.header_img.fill((255, 255, 255))
 
         self.menu = Menu((w, h - self.header), self.scorer)
+        self.menu.set_screen_origin((0, self.header))
         self.state = State.MAIN_MENU
 
         self.clock = pygame.time.Clock()
@@ -71,6 +72,17 @@ class Monitor:
             elif self.state != State.PAUSE and event.key in KEY_DIRECTION:
                 self.game.level.change_direction(KEY_DIRECTION[event.key])
 
+    def check_buttons(self) -> list[int]:
+        pressed = self.menu.check_buttons()
+
+        if 0 in pressed:
+            if self.state is State.MAIN_MENU:
+                self.state = State.PACMAN
+        if 1 in pressed:
+            pass
+        if 2 in pressed:
+            pass
+
     def update_size(self, event: Any) -> None:
         if event.type == pygame.VIDEORESIZE:
             w, h = event.size
@@ -79,6 +91,8 @@ class Monitor:
 
             self.pacman_frame.update_size((w, h - self.header))
             self.menu.frame.update_size((w, h - self.header))
+            self.menu.update_size()
+            self.menu.set_screen_origin((0, self.header))
 
             self.pacman_frame.draw_maze()
 
@@ -95,6 +109,8 @@ class Monitor:
             self.check_keydown(event)
 
             self.update_size(event)
+
+            self.check_buttons()
 
     def display(self, elapsed_time: int) -> None:
 
@@ -122,6 +138,7 @@ class Monitor:
             self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
         if self.state is State.MAIN_MENU:
+            self.menu.draw_menu()
             self.screen.blit(self.menu.frame.surface, (0, self.header))
 
         pygame.display.flip()
