@@ -35,6 +35,23 @@ class Entity(ABC):
         self.player_move_elapsed_ms -= self.movement_interval_ms
         return True
 
+    def get_direction(self) -> Direction:
+        diff = (
+            self.coords[0] - self.previous_coords[0],
+            self.coords[1] - self.previous_coords[1]
+        )
+        match diff:
+            case (-1, 0):
+                return Direction.WEST
+            case (1, 0):
+                return Direction.EAST
+            case (0, -1):
+                return Direction.NORTH
+            case (0, 1):
+                return Direction.SOUTH
+            case _:
+                return Direction.START
+
 
 class Player(Entity):
     direction: Direction = Direction.START
