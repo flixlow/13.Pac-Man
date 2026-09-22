@@ -55,6 +55,20 @@ class PacManDrawer(MazeDrawer):
 
         PacManDrawer.update_size(self, size)
 
+    @staticmethod
+    def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
+        animation_progress = getattr(entity, "animation_elapsed_ms", elapsed)
+        progress = min(
+            animation_progress / max(1, entity.movement_interval_ms),
+            1.0,
+        )
+        start_x, start_y = entity.previous_coords
+        end_x, end_y = entity.coords
+        return (
+            start_x + (end_x - start_x) * progress,
+            start_y + (end_y - start_y) * progress,
+        )
+
     def draw_pacgum(self, cell: tuple[int, int], super: bool) -> None:
         x, y = cell
 
@@ -124,7 +138,6 @@ class PacManDrawer(MazeDrawer):
             case _:
                 img = self.ghosts_img[color][0]
 
-
         self.put_image((x1, y1), img)
 
     def draw_pacman(self, cell: tuple[float, float]) -> None:
@@ -160,18 +173,4 @@ class PacManDrawer(MazeDrawer):
 
         self.dead = pygame.transform.scale(
             self.dead_copy, (self.cell_size, self.cell_size)
-        )
-
-    @staticmethod
-    def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
-        animation_progress = getattr(entity, "animation_elapsed_ms", elapsed)
-        progress = min(
-            animation_progress / max(1, entity.movement_interval_ms),
-            1.0,
-        )
-        start_x, start_y = entity.previous_coords
-        end_x, end_y = entity.coords
-        return (
-            start_x + (end_x - start_x) * progress,
-            start_y + (end_y - start_y) * progress,
         )

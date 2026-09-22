@@ -38,7 +38,7 @@ class Level:
             ghost_classes[0] = Secret
 
         for ghost_class, coords in zip(ghost_classes, self.maze.corners):
-            new_ghost = ghost_class(coords, self.maze)
+            new_ghost = ghost_class(coords, self.maze, self.player)
             self.ghosts.append(new_ghost)
             self.entities.append(new_ghost)
 
@@ -52,13 +52,14 @@ class Level:
         self.ghosts: list[Ghost] = []
         self.entities: list[Entity] = []
 
-        self._init_ghosts()
         self._init_player()
+        self._init_ghosts()
 
     def change_direction(self, direction: Direction) -> None:
         self.player.next_direction = direction
 
     def set_crazy_mode(self, status: bool) -> None:
+        self.on_crazy_mode = status
         for e in self.entities:
             e.crazy_mode = status
 
@@ -76,20 +77,19 @@ class Level:
         if not self.pacgums:
             self.is_completed = True
 
-    def moving_entities(self, elapsed_time: int) -> None:
+    def update(self, elapsed_time: int) -> None:
         if self.on_crazy_mode is True:
             self.timer += elapsed_time
-            if self.timer >= 10000:
+            if self.timer >= 5000:
+                self.timer = 0
                 self.set_crazy_mode(False)
 
-        for g in self.ghosts:
-            if g.can_it_move(elapsed_time):
-                g.moving(self.player.coords)
+        self.player.moving(elapsed_time)
 
         if self.player.coords in {ghost.coords for ghost in self.ghosts}:
             self.is_dead = True
 
-        if self.player.can_it_move(elapsed_time):
-            self.player.moving(None)
+        for g in self.ghosts:
+            g.moving(elapsed_time)
 
         self.is_pacgum_here()

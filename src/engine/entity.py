@@ -19,7 +19,7 @@ class Entity(ABC):
         self.movement_interval_ms: int = max(1, 1000 // self.velocity)
 
     @abstractmethod
-    def moving(self, destination: tuple[int, int] | None) -> None:
+    def moving(self, elapsed_time: int) -> None:
         ...
 
     def can_it_move(self, elapsed_ms: int) -> bool:
@@ -69,7 +69,9 @@ class Player(Entity):
                 return True
         return False
 
-    def moving(self, _: tuple[int, int] | None) -> None:
+    def moving(self, elapsed_time: int) -> None:
+        if not self.can_it_move(elapsed_time):
+            return
         x, y = self.coords
         self.previous_coords = self.coords
         self.animation_elapsed_ms = 0
@@ -88,13 +90,15 @@ class Ghost(Entity):
     default_velocity: int = Parameters.GHOST_VELOCITY
     default_color: GhostColor = GhostColor.SECRET
 
-    def __init__(self, coords: tuple[int, int], maze: Maze) -> None:
+    def __init__(
+            self, coords: tuple[int, int], maze: Maze, player: Player) -> None:
         super().__init__(coords, maze)
+        self.player: Player = player
         self.color: GhostColor = type(self).default_color
         self.sequence: list[tuple[int, int]] = []
 
     @abstractmethod
-    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
+    def generate_sequence(self) -> None:
         ...
 
     def pathfinding(self, end: tuple[int, int], n: int | None) -> None:
@@ -122,8 +126,8 @@ class Ghost(Entity):
         if n is not None:
             self.sequence = self.sequence[:n]
 
-    def get_direction_away_from(self, danger: tuple[int, int]) -> None:
-        x, y = danger
+    def get_direction_away_from(self) -> None:
+        x, y = self.player.coords
 
         availables = self.maze.get_available_coords(self.coords)
 
@@ -131,15 +135,19 @@ class Ghost(Entity):
 
         self.sequence = [cell]
 
-    def moving(self, position: tuple[int, int] | None) -> None:
-        if self.crazy_mode and position:
-            self.get_direction_away_from(position)
+    def moving(self, elapsed_time: int) -> None:
+        if not self.can_it_move(elapsed_time):
+            return
+
+        if self.crazy_mode:
+            self.get_direction_away_from()
         elif self.sequence == []:
-            self.generate_sequence(position)
+            self.generate_sequence()
 
         self.animation_elapsed_ms = 0
         self.previous_coords = self.coords
-        self.coords = self.sequence.pop(0)
+        if self.sequence:
+            self.coords = self.sequence.pop(0)
 
 
 class Secret(Ghost):
@@ -150,19 +158,17 @@ class Secret(Ghost):
 
         self.sequence = [choice(list(neightbour_cells))]
 
-    def generate_sequence(self, goal: tuple[int, int] | None) -> None:
-        if goal is not None:
-            self.pathfinding(goal, None)
+    def generate_sequence(self) -> None:
+        self.pathfinding(self.player.coords, None)
 
         if len(self.sequence) >= 15:
-            if goal is not None:
-                self.teleportate(goal)
+            self.teleportate(self.player.coords)
 
 
 class Blue(Ghost):
     default_color = GhostColor.BLUE
 
-    def generate_sequence(self, _: tuple[int, int] | None) -> None:
+    def generate_sequence(self) -> None:
         current_coords = self.coords
         last_coords: None | tuple[int, int] = None
 
@@ -182,22 +188,20 @@ class Blue(Ghost):
 class Red(Ghost):
     default_color = GhostColor.SECRET
 
-    def generate_sequence(self, goal: tuple[int, int] | None) -> None:
-        if goal is not None:
-            self.pathfinding(goal, 15)
+    def generate_sequence(self) -> None:
+        self.pathfinding(self.player.coords, 15)
 
 
 class Pink(Ghost):
     default_color = GhostColor.PINK
 
-    def generate_sequence(self, goal: tuple[int, int] | None) -> None:
-        if goal is not None:
-            self.pathfinding(goal, 5)
+    def generate_sequence(self) -> None:
+        self.pathfinding(self.player.coords, 5)
 
 
 class Orange(Ghost):
     default_color = GhostColor.ORANGE
 
-    def generate_sequence(self, _: tuple[int, int] | None) -> None:
+    def generate_sequence(self) -> None:
         cell = choice(self.maze.get_border_cells())
         self.pathfinding(cell, None)

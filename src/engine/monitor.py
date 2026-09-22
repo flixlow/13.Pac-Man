@@ -162,13 +162,12 @@ class Monitor:
     def main_loop(self) -> None:
 
         while self.running:
-            elapsed_time: int = self.clock.tick(60)
-            self.time += elapsed_time
+            elapsed_time = self.clock.tick(60)
 
             self.check_events()
 
             if self.state is State.PACMAN:
-                self.game.moving_entities(elapsed_time)
+                self.game.running(elapsed_time)
 
             self.ending_animation(elapsed_time)
             self.display(elapsed_time)

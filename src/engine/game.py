@@ -24,9 +24,9 @@ class PacmanGame:
         except StopIteration:
             self.new_game()
 
-    def moving_entities(self, elapsed_time: int) -> None:
+    def running(self, elapsed_time: int) -> None:
         if not (self.level.is_dead or self.game_over):
-            self.level.moving_entities(elapsed_time)
+            self.level.update(elapsed_time)
 
     def save_level_score(self) -> None:
         self.player_state.score += self.level.score
