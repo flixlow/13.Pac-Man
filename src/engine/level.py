@@ -72,11 +72,14 @@ class Level:
             self.is_completed = True
 
     def moving_entities(self, elapsed_time: int) -> None:
-        for entity in self.entities:
-            if entity.can_it_move(elapsed_time):
-                entity.moving(self.player.coords)
+        for g in self.ghosts:
+            if g.can_it_move(elapsed_time):
+                g.moving(self.player.coords)
 
         if self.player.coords in self.get_ghosts_coords():
             self.is_dead = True
+
+        if self.player.can_it_move(elapsed_time):
+            self.player.moving(None)
 
         self.is_pacgum_here()
