@@ -11,9 +11,11 @@ class Level:
     def __init__(self, maze: Maze) -> None:
         self.maze: Maze = maze
 
+        self.timer: int = 0
         self.score: int = 0
         self.is_dead: bool = False
         self.is_completed: bool = False
+        self.on_crazy_mode: bool = False
 
         self._init_entities()
         self._init_pacgums()
@@ -64,6 +66,7 @@ class Level:
         if self.player.coords in self.pacgums:
             if self.player.coords in self.maze.corners:
                 self.set_crazy_mode(True)
+                self.timer = 0
                 self.score += 200
             else:
                 self.score += 20
@@ -74,6 +77,11 @@ class Level:
             self.is_completed = True
 
     def moving_entities(self, elapsed_time: int) -> None:
+        if self.on_crazy_mode is True:
+            self.timer += elapsed_time
+            if self.timer >= 10000:
+                self.set_crazy_mode(False)
+
         for g in self.ghosts:
             if g.can_it_move(elapsed_time):
                 g.moving(self.player.coords)

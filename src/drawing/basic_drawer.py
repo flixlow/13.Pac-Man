@@ -63,6 +63,7 @@ def print_life(
         else:
             frame.put_image((x + i * gap, y), dead)
 
+
 def print_title(frame: Drawer):
     w, h = frame.size
     title_font = pygame.font.Font("assets/font/title.otf", h // 2)

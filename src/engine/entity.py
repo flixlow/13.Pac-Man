@@ -97,19 +97,6 @@ class Ghost(Entity):
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         ...
 
-    def crazy_move(self) -> None:
-        pass
-
-    def moving(self, destination: tuple[int, int] | None) -> None:
-        if self.crazy_mode:
-            self.crazy_move()
-        if self.sequence == []:
-            self.generate_sequence(destination)
-
-        self.animation_elapsed_ms = 0
-        self.previous_coords = self.coords
-        self.coords = self.sequence.pop(0)
-
     def pathfinding(self, end: tuple[int, int], n: int | None) -> None:
         queue: list[tuple[int, int]] = [self.coords]
         origin: dict[tuple[int, int], tuple[int, int]] = dict()
@@ -135,6 +122,42 @@ class Ghost(Entity):
         if n is not None:
             self.sequence = self.sequence[:n]
 
+    def get_direction_away_from(self, danger: tuple[int, int]) -> None:
+        x, y = danger
+
+        availables = self.maze.get_available_coords(self.coords)
+
+        cell = max(availables, key=lambda c: (abs(c[0] - x) + (abs(c[1] - y))))
+
+        self.sequence = [cell]
+
+    def moving(self, position: tuple[int, int] | None) -> None:
+        if self.crazy_mode and position:
+            self.get_direction_away_from(position)
+        elif self.sequence == []:
+            self.generate_sequence(position)
+
+        self.animation_elapsed_ms = 0
+        self.previous_coords = self.coords
+        self.coords = self.sequence.pop(0)
+
+
+class Secret(Ghost):
+    default_color = GhostColor.SECRET
+
+    def teleportate(self, pos: tuple[int, int]) -> None:
+        neightbour_cells = self.maze.get_neighbour_cells(pos, 2)
+
+        self.sequence = [choice(list(neightbour_cells))]
+
+    def generate_sequence(self, goal: tuple[int, int] | None) -> None:
+        if goal is not None:
+            self.pathfinding(goal, None)
+
+        if len(self.sequence) >= 15:
+            if goal is not None:
+                self.teleportate(goal)
+
 
 class Blue(Ghost):
     default_color = GhostColor.BLUE
@@ -159,17 +182,17 @@ class Blue(Ghost):
 class Red(Ghost):
     default_color = GhostColor.SECRET
 
-    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
-        if destination is not None:
-            self.pathfinding(destination, 15)
+    def generate_sequence(self, goal: tuple[int, int] | None) -> None:
+        if goal is not None:
+            self.pathfinding(goal, 15)
 
 
 class Pink(Ghost):
     default_color = GhostColor.PINK
 
-    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
-        if destination is not None:
-            self.pathfinding(destination, 5)
+    def generate_sequence(self, goal: tuple[int, int] | None) -> None:
+        if goal is not None:
+            self.pathfinding(goal, 5)
 
 
 class Orange(Ghost):
@@ -178,20 +201,3 @@ class Orange(Ghost):
     def generate_sequence(self, _: tuple[int, int] | None) -> None:
         cell = choice(self.maze.get_border_cells())
         self.pathfinding(cell, None)
-
-
-class Secret(Ghost):
-    default_color = GhostColor.SECRET
-
-    def teleportate(self, pos: tuple[int, int]) -> None:
-        neightbour_cells = self.maze.get_neighbour_cells(pos, 3)
-
-        self.sequence = [choice(list(neightbour_cells))]
-
-    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
-        if destination is not None:
-            self.pathfinding(destination, None)
-
-        if len(self.sequence) >= 15:
-            if destination is not None:
-                self.teleportate(destination)
