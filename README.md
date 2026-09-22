@@ -21,6 +21,7 @@ highscore can take only alphanumeric
 [ ] animation
 [ ] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir
 [ ] class Color pour les params
+[ ] tester le new game si jamais le next level n'a plus de level 
 
 ![alt text](image.png)
 

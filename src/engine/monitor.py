@@ -55,12 +55,10 @@ class Monitor:
         if event.type == pygame.QUIT:
             self.running = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                self.running = False
-
     def check_keydown(self, event: Any) -> None:
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.state = State.MAIN_MENU
             if event.key == pygame.K_SPACE:
                 if self.state is State.MAIN_MENU:
                     self.state = State.PACMAN
@@ -115,7 +113,6 @@ class Monitor:
     def display(self, elapsed_time: int) -> None:
 
         # HEADER
-        print(self.game.player_state.lives)
         print_life(
             self.header_img, (0, 0),
             self.pacman_frame.alive.get_width(),

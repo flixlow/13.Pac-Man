@@ -12,12 +12,20 @@ class Level:
         self.maze: Maze = maze
 
         self.score: int = 0
-        self.on_crazy_mode: bool = False
-        self.is_completed: bool = False
         self.is_dead: bool = False
+        self.is_completed: bool = False
 
         self._init_entities()
         self._init_pacgums()
+
+    def _init_pacgums(self) -> None:
+        self.pacgums: set[tuple[int, int]] = set()
+
+        for x in range(self.maze.w):
+            for y in range(self.maze.h):
+                if self.maze.maze_map[y][x] == 15:
+                    continue
+                self.pacgums.add((x, y))
 
     def _init_ghosts(self) -> None:
         ghost_classes: list[Callable] = [Blue, Pink, Red, Orange]
@@ -45,29 +53,23 @@ class Level:
         self._init_ghosts()
         self._init_player()
 
-    def _init_pacgums(self) -> None:
-        self.pacgums: set[tuple[int, int]] = set()
-
-        for x in range(self.maze.w):
-            for y in range(self.maze.h):
-                if self.maze.maze_map[y][x] == 15:
-                    continue
-                self.pacgums.add((x, y))
-
-    def get_ghosts_coords(self) -> set[tuple[int, int]]:
-        return {ghost.coords for ghost in self.ghosts}
-
     def change_direction(self, direction: Direction) -> None:
         self.player.next_direction = direction
+
+    def set_crazy_mode(self, status: bool) -> None:
+        for e in self.entities:
+            e.crazy_mode = status
 
     def is_pacgum_here(self) -> None:
         if self.player.coords in self.pacgums:
             if self.player.coords in self.maze.corners:
-                self.crazy_mode = True
+                self.set_crazy_mode(True)
                 self.score += 200
             else:
                 self.score += 20
+
             self.pacgums.remove(self.player.coords)
+
         if not self.pacgums:
             self.is_completed = True
 
@@ -76,7 +78,7 @@ class Level:
             if g.can_it_move(elapsed_time):
                 g.moving(self.player.coords)
 
-        if self.player.coords in self.get_ghosts_coords():
+        if self.player.coords in {ghost.coords for ghost in self.ghosts}:
             self.is_dead = True
 
         if self.player.can_it_move(elapsed_time):

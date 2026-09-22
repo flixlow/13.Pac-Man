@@ -97,15 +97,18 @@ class Ghost(Entity):
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         ...
 
+    def crazy_move(self) -> None:
+        pass
+
     def moving(self, destination: tuple[int, int] | None) -> None:
+        if self.crazy_mode:
+            self.crazy_move()
         if self.sequence == []:
             self.generate_sequence(destination)
 
-        self.previous_coords = self.coords
         self.animation_elapsed_ms = 0
-
-        if self.sequence != []:
-            self.coords = self.sequence.pop(0)
+        self.previous_coords = self.coords
+        self.coords = self.sequence.pop(0)
 
     def pathfinding(self, end: tuple[int, int], n: int | None) -> None:
         queue: list[tuple[int, int]] = [self.coords]
@@ -181,13 +184,14 @@ class Secret(Ghost):
     default_color = GhostColor.SECRET
 
     def teleportate(self, pos: tuple[int, int]) -> None:
-        neightbour_cells = self.maze.get_neighbours_cells(pos, 3)
+        neightbour_cells = self.maze.get_neighbour_cells(pos, 3)
+
         self.sequence = [choice(list(neightbour_cells))]
 
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         if destination is not None:
             self.pathfinding(destination, None)
 
-        if len(self.sequence) >= 10:
+        if len(self.sequence) >= 15:
             if destination is not None:
                 self.teleportate(destination)
