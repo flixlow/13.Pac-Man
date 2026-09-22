@@ -23,3 +23,6 @@ highscore can take only alphanumeric
 [ ] class Color pour les params
 
 ![alt text](image.png)
+
+
+https://en.wikipedia.org/wiki/Chebyshev_distance

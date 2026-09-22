@@ -28,7 +28,7 @@ class PlayerState:
 class GhostColor(Enum):
     RED = auto()
     BLUE = auto()
-    GREEN = auto()
+    PINK = auto()
     ORANGE = auto()
     SECRET = auto()
 

@@ -6,21 +6,17 @@ from .maze import Maze
 
 
 class Entity(ABC):
-    default_velocity: int = Parameters.PLAYER_VELOCITY
+    default_velocity: int = 3
 
-    def __init__(
-        self,
-        coords: tuple[int, int],
-        maze: Maze,
-        velocity: int | None = None,
-    ) -> None:
-        self.coords: tuple[int, int] = coords
+    def __init__(self, coords: tuple[int, int], maze: Maze) -> None:
         self.maze: Maze = maze
-        self.velocity: int = velocity or type(self).default_velocity
-        self.player_move_elapsed_ms: int = 0
-        self.movement_interval_ms: int = max(1, 1000 // self.velocity)
-        self.previous_coords: tuple[int, int] = coords
+        self.crazy_mode: bool = False
         self.animation_elapsed_ms: int = 0
+        self.player_move_elapsed_ms: int = 0
+        self.coords: tuple[int, int] = coords
+        self.previous_coords: tuple[int, int] = coords
+        self.velocity: int = type(self).default_velocity
+        self.movement_interval_ms: int = max(1, 1000 // self.velocity)
 
     @abstractmethod
     def moving(self, destination: tuple[int, int] | None) -> None:
@@ -56,6 +52,7 @@ class Entity(ABC):
 class Player(Entity):
     direction: Direction = Direction.START
     next_direction: Direction = Direction.START
+    default_velocity: int = Parameters.PLAYER_VELOCITY
 
     def is_wall_here(self, direction: Direction) -> bool:
         cell = self.maze.get_cell_walls(*self.coords)
@@ -91,12 +88,9 @@ class Ghost(Entity):
     default_velocity: int = Parameters.GHOST_VELOCITY
     default_color: GhostColor = GhostColor.SECRET
 
-    def __init__(
-        self, coords: tuple[int, int], maze: Maze,
-        color: GhostColor | None = None, velocity: int | None = None
-    ) -> None:
-        super().__init__(coords, maze, velocity)
-        self.color: GhostColor = color or type(self).default_color
+    def __init__(self, coords: tuple[int, int], maze: Maze) -> None:
+        super().__init__(coords, maze)
+        self.color: GhostColor = type(self).default_color
         self.sequence: list[tuple[int, int]] = []
 
     @abstractmethod
@@ -167,8 +161,8 @@ class Red(Ghost):
             self.pathfinding(destination, 15)
 
 
-class Green(Ghost):
-    default_color = GhostColor.GREEN
+class Pink(Ghost):
+    default_color = GhostColor.PINK
 
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         if destination is not None:
@@ -186,26 +180,14 @@ class Orange(Ghost):
 class Secret(Ghost):
     default_color = GhostColor.SECRET
 
-    def get_neightbour_cells(
-            self, pos: tuple[int, int], n: int) -> list[tuple[int, int]]:
-        pos_x, pos_y = pos
-        neightbour_cells: list[tuple[int, int]] = []
-
-        for x in range(self.maze.w):
-            for y in range(self.maze.h):
-                if x in range((pos_x - n), (pos_x + n)):
-                    if y in range((pos_y - n), (pos_y + n)):
-                        neightbour_cells.append((x, y))
-        return neightbour_cells
-
     def teleportate(self, pos: tuple[int, int]) -> None:
-        neightbour_cells = self.get_neightbour_cells(pos, 3)
-        self.sequence = [choice(neightbour_cells)]
+        neightbour_cells = self.maze.get_neighbours_cells(pos, 3)
+        self.sequence = [choice(list(neightbour_cells))]
 
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         if destination is not None:
             self.pathfinding(destination, None)
 
-        if len(self.sequence) >= 15:
+        if len(self.sequence) >= 10:
             if destination is not None:
                 self.teleportate(destination)

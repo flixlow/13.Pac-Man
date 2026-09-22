@@ -30,10 +30,10 @@ class PacManDrawer(MazeDrawer):
                 f"assets/ghosts/blue/{i+1}.png").convert_alpha() for i in range(8)],
             GhostColor.ORANGE: [pygame.image.load(
                 f"assets/ghosts/orange/{i+1}.png").convert_alpha() for i in range(8)],
-            GhostColor.GREEN: [pygame.image.load(
+            GhostColor.PINK: [pygame.image.load(
                 f"assets/ghosts/pink/{i+1}.png").convert_alpha() for i in range(8)],
             GhostColor.SECRET: [pygame.image.load(
-                f"assets/ghosts/orange/{i+1}.png").convert_alpha() for i in range(8)]
+                f"assets/ghosts/red/{i+1}.png").convert_alpha() for i in range(8)]
         }
 
         self.velocity = Parameters.PLAYER_VELOCITY

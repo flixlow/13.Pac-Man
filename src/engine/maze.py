@@ -22,6 +22,20 @@ class Maze(BaseModel):
     def get_cell_walls(self, x: int, y: int) -> int:
         return self.maze_map[y][x]
 
+    def get_neighbours_cells(
+            self, pos: tuple[int, int], radius: int) -> set[tuple[int, int]]:
+        pos_x, pos_y = pos
+        neightbour_cells: set[tuple[int, int]] = set()
+
+        for x in range(self.w):
+            for y in range(self.h):
+                if abs(x - pos_x) <= 1 or abs(y - pos_y) <= 1:
+                    continue
+
+                if abs(x - pos_x) <= radius or abs(y - pos_y) <= radius:
+                    neightbour_cells.add((x, y))
+        return neightbour_cells
+
     def get_available_coords(
             self, last_coords: tuple[int, int]) -> list[tuple[int, int]]:
         coords: list[tuple[int, int]] = []
