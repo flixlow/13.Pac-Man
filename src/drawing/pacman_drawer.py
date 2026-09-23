@@ -1,12 +1,12 @@
+
 import pygame
+from random import choice
 
 from .maze_drawer import MazeDrawer
 from ..utils import GhostColor, Parameters
 from ..engine.maze import Maze
-from ..engine.entity import Ghost, Entity, Direction
-
-
-from random import choice
+from ..entity import Ghost, Entity
+from ..utils import Direction
 
 
 class PacManDrawer(MazeDrawer):
@@ -120,7 +120,11 @@ class PacManDrawer(MazeDrawer):
             if isinstance(e, Ghost):
                 if not e.is_alive:
                     continue
-                params = (PacManDrawer.render_coords(elapsed_t, e), e.color)
+                if e.crazy_mode:
+                    color = GhostColor.CRAZY
+                else:
+                    color = e.color
+                params = (PacManDrawer.render_coords(elapsed_t, e), color)
                 self.draw_ghost(*params, direction)
             else:
                 self.draw_pacman(PacManDrawer.render_coords(elapsed_t, e))
