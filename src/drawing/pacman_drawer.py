@@ -44,8 +44,10 @@ class PacManDrawer(MazeDrawer):
         self.dead_copy = pygame.image.load(
             "assets/icon/dead_heart.png").convert_alpha()
 
-        self.pacman_img_copy = pygame.image.load(
-            "assets/pacman/pacman_1.png").convert_alpha()
+        self.pacman_img_copy = [
+            pygame.image.load(f"assets/pacman/{i}.png").convert_alpha()
+            for i in range(5)
+        ]
 
         self.fruit_copy = [
             pygame.image.load(
@@ -60,6 +62,7 @@ class PacManDrawer(MazeDrawer):
 
         self.ghosts_img = self.ghosts_img_copy.copy()
         self.fruit = self.fruit_copy.copy()
+        self.pacman_img = self.pacman_img_copy.copy()
 
         PacManDrawer.update_size(self, size)
 
@@ -85,21 +88,22 @@ class PacManDrawer(MazeDrawer):
 
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
-
         if super:
-
             fruit_size = self.fruit[self.fruit_n].get_width()
             self.put_image(
                 (x1 + fruit_size // 2, y1 + fruit_size // 2),
                 self.fruit[self.fruit_n]
             )
         else:
+            nc = (self.tick[0]) % 2000
+            diff = 1000 - abs(1000 - nc) // 150 - 1000
+
             xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
 
             self.draw_rect(
-                (xc - self.cell_size // 15, yc - self.cell_size // 15),
-                (xc + self.cell_size // 15, yc + self.cell_size // 15),
-                (255, 60, 180)
+                (xc - self.cell_size // 15, yc - self.cell_size // 15 + diff),
+                (xc + self.cell_size // 15, yc + self.cell_size // 15 + diff),
+                (255, 255, 255)
             )
 
     def draw_multiple_pacgums(
@@ -185,7 +189,9 @@ class PacManDrawer(MazeDrawer):
 
         x1, y1 = px, py
 
-        self.put_image((x1, y1), self.pacman_img)
+        n = (self.tick[0] // 100) % 5
+
+        self.put_image((x1, y1), self.pacman_img[n])
 
     def update_size(self, new_size: tuple[int, int]) -> None:
         super().update_size(new_size)
@@ -199,10 +205,11 @@ class PacManDrawer(MazeDrawer):
                 lst.append(scaled)
             self.ghosts_img[color] = lst
 
-        self.pacman_img: pygame.Surface = pygame.transform.scale(
-                self.pacman_img_copy, (
-                    self.cell_size * 0.8, self.cell_size * 0.8)
-            )
+        self.pacman_img: list[pygame.Surface] = [
+            pygame.transform.scale(
+                img, (self.cell_size * 0.8, self.cell_size * 0.8))
+            for img in self.pacman_img
+        ]
 
         self.alive = pygame.transform.scale(
             self.alive_copy, (self.cell_size, self.cell_size)
