@@ -6,16 +6,15 @@ from .maze_drawer import MazeDrawer
 from ..utils import GhostColor, Parameters
 from ..engine.maze import Maze
 from ..entity import Ghost, Entity
-from ..utils import Direction
+from ..utils import Direction, Timer
 
 
 class PacManDrawer(MazeDrawer):
-    def __init__(self, size: tuple[int, int], maze: Maze) -> None:
-        from ..engine.monitor import tick_count_main
+    def __init__(self, size: tuple[int, int], maze: Maze, t: Timer) -> None:
         super().__init__(size, maze)
 
         self.fruit_n = choice([0, 1, 2])
-        self.tick = tick_count_main
+        self.timer = t
 
         self.ghosts_img_copy = {
             GhostColor.RED: [pygame.image.load(
@@ -143,7 +142,7 @@ class PacManDrawer(MazeDrawer):
         py = int(y * self.cell_size + self.offset_y)
 
         x1, y1 = px, py
-        is_jsp = self.tick[0] % 500 < 500 // 2
+        is_jsp = self.timer.total_spend_time % 500 < 500 // 2
 
         if color is GhostColor.CRAZY:
             if is_jsp:

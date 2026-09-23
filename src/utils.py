@@ -3,6 +3,13 @@ import pygame
 from enum import Enum, auto
 
 
+class Timer:
+    elapsed_time: int = 0
+    starting_timer: int = 0
+    total_spend_time: int = 0
+    crazy_mode_period: int = 0
+
+
 class Paths:
     ASSETS = "assets/"
     GHOSTS = ASSETS + "ghosts/"

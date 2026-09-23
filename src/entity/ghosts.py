@@ -5,16 +5,16 @@ from abc import abstractmethod
 from .entity import Entity
 from .player import Player
 from ..engine.maze import Maze
-from ..utils import GhostColor, Parameters
+from ..utils import GhostColor, Parameters, Timer
 
 
 class Ghost(Entity):
     default_velocity: int = Parameters.GHOST_VELOCITY
     default_color: GhostColor = GhostColor.SECRET
 
-    def __init__(
-            self, coords: tuple[int, int], maze: Maze, player: Player) -> None:
-        super().__init__(coords, maze)
+    def __init__(self, coords: tuple[int, int],
+                 maze: Maze, t: Timer, player: Player) -> None:
+        super().__init__(coords, maze, t)
         self.color: GhostColor = type(self).default_color
         self.sequence: list[tuple[int, int]] = []
         self.player: Player = player
@@ -65,12 +65,12 @@ class Ghost(Entity):
 
         self.sequence = [cell]
 
-    def moving(self, elapsed_time: int) -> None:
-        if not self.can_it_move(elapsed_time):
+    def moving(self) -> None:
+        if not self.can_it_move():
             return
 
         if not self.is_alive:
-            self.respawn_timer += elapsed_time
+            self.respawn_timer += self.timer.elapsed_time
             if self.respawn_timer >= 200:
                 self.is_alive = True
             else:
