@@ -61,7 +61,7 @@ class PacManDrawer(MazeDrawer):
 
         self.ghosts_img = self.ghosts_img_copy.copy()
         self.fruit = self.fruit_copy.copy()
-        self.pacman_img = self.pacman_img_copy.copy()
+        self.pacman_img: list[pygame.Surface] = self.pacman_img_copy.copy()
 
         PacManDrawer.update_size(self, size)
 
@@ -94,7 +94,7 @@ class PacManDrawer(MazeDrawer):
                 self.fruit[self.fruit_n]
             )
         else:
-            nc = (self.tick[0]) % 2000
+            nc = (self.timer.elapsed_time) % 2000
             diff = 1000 - abs(1000 - nc) // 150 - 1000
 
             xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
@@ -188,7 +188,7 @@ class PacManDrawer(MazeDrawer):
 
         x1, y1 = px, py
 
-        n = (self.tick[0] // 100) % 5
+        n = (self.timer.total_spend_time // 100) % 5
 
         self.put_image((x1, y1), self.pacman_img[n])
 
@@ -204,7 +204,7 @@ class PacManDrawer(MazeDrawer):
                 lst.append(scaled)
             self.ghosts_img[color] = lst
 
-        self.pacman_img: list[pygame.Surface] = [
+        self.pacman_img = [
             pygame.transform.scale(
                 img, (self.cell_size * 0.8, self.cell_size * 0.8))
             for img in self.pacman_img
