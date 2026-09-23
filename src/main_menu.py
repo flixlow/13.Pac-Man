@@ -111,7 +111,6 @@ class Menu:
 
 
 class Button:
-
     def __init__(self, frame: Drawer, a: tuple[int, int],
                  i: int, size: int, text: str) -> None:
         self.pos = a

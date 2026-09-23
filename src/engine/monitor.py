@@ -115,7 +115,6 @@ class Monitor:
     def display(self, elapsed_time: int) -> None:
 
         # HEADER
-        print(self.game.player_state.lives)
         print_life(
             self.header_img, (0, 0),
             self.pacman_frame.alive.get_width(),

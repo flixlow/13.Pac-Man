@@ -15,7 +15,9 @@ class Scorer:
             if not Path(self.file).exists():
                 return {}
             with open(self.file, encoding="utf-8") as f:
-                return json.load(f)
+                content = json.load(f)
+                return dict(sorted(
+                    content.items(), key=lambda x: x[1], reverse=True))
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
         except json.JSONDecodeError as e:
@@ -34,7 +36,3 @@ class Scorer:
                 f.write(json.dumps(self.scores, indent=4))
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
-
-        self.scores = dict(
-            sorted(self.scores.items(), key=lambda x: x[1], reverse=True)
-        )
