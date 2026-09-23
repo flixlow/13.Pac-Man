@@ -30,6 +30,7 @@ class GhostColor(Enum):
     BLUE = auto()
     PINK = auto()
     ORANGE = auto()
+    CRAZY = auto()
     SECRET = auto()
 
 

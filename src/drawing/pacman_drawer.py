@@ -32,7 +32,11 @@ class PacManDrawer(MazeDrawer):
                 for i in range(8)],
             GhostColor.SECRET: [pygame.image.load(
                 f"assets/ghosts/red/{i+1}.png").convert_alpha()
-                for i in range(8)]
+                for i in range(8)],
+            GhostColor.CRAZY: [
+                pygame.image.load(
+                    f"assets/ghosts/crazyman/{i+1}.png").convert_alpha()
+                for i in range(4)]
         }
 
         self.alive_copy = pygame.image.load(
@@ -136,6 +140,12 @@ class PacManDrawer(MazeDrawer):
 
         x1, y1 = px, py
         is_jsp = self.tick[0] % 500 < 500 // 2
+
+        if color is GhostColor.CRAZY:
+            if is_jsp:
+                img = self.ghosts_img[GhostColor.CRAZY][0]
+            else:
+                img = self.ghosts_img[GhostColor.CRAZY][1]
 
         match direction:
             case Direction.SOUTH:

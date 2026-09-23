@@ -167,7 +167,6 @@ class Monitor:
     def main_loop(self) -> None:
 
         while self.running:
-
             elapsed_time: int = self.clock.tick(60)
             tick_count_main[0] += elapsed_time
 
