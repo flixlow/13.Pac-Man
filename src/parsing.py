@@ -1,10 +1,9 @@
-from mazegenerator import MazeGenerator  # type: ignore
-from pydantic import BaseModel, Field
 from pathlib import Path
+from hashlib import sha256
 from random import seed, shuffle
-import hashlib
-import json
-import sys
+from pydantic import BaseModel, Field
+from json import loads, JSONDecodeError
+from mazegenerator import MazeGenerator  # type: ignore
 
 from .errors import GenerationError, ParsingError
 from .engine.maze import Maze
@@ -28,7 +27,7 @@ class Config(BaseModel):
 
     @staticmethod
     def _get_new_seed(seed: int) -> int:
-        digest = hashlib.sha256(str(seed).encode()).digest()
+        digest = sha256(str(seed).encode()).digest()
         return int.from_bytes(digest, byteorder="big")
 
     @staticmethod
@@ -65,16 +64,12 @@ def parsing(file_name: str) -> Config:
     try:
         with open(file, encoding="utf-8") as f:
             lines = [ln for ln in f if not ln.lstrip().startswith('#')]
-            content = json.loads("".join(lines))
+            content = loads("".join(lines))
         return Config(**content)
     except OSError as e:
         raise ParsingError(f"{file_name}: {e.__class__.__name__}")
-    except json.JSONDecodeError as e:
+    except JSONDecodeError as e:
         raise ParsingError(
             f"Error occurs while reading {file.as_posix()}"
             f"(line {e.lineno})."
         ) from e
-
-
-if __name__ == "__main__":
-    print(parsing(sys.argv[1]))

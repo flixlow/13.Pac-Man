@@ -1,5 +1,6 @@
-import json
+
 from pathlib import Path
+from json import load, JSONDecodeError, dumps
 
 from .utils import PlayerState
 from .errors import ScorerFileError
@@ -15,12 +16,12 @@ class Scorer:
             if not Path(self.file).exists():
                 return {}
             with open(self.file, encoding="utf-8") as f:
-                content = json.load(f)
+                content = load(f)
                 return dict(sorted(
                     content.items(), key=lambda x: x[1], reverse=True))
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
-        except json.JSONDecodeError as e:
+        except JSONDecodeError as e:
             raise ScorerFileError(
                 f"Error occurs while reading {self.file}."
                 f"(line {e.lineno})."
@@ -33,6 +34,6 @@ class Scorer:
 
         try:
             with open(self.file, 'w') as f:
-                f.write(json.dumps(self.scores, indent=4))
+                f.write(dumps(self.scores, indent=4))
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
