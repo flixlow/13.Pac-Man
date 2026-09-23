@@ -202,7 +202,7 @@ class Blue(Ghost):
 
 
 class Red(Ghost):
-    default_color = GhostColor.SECRET
+    default_color = GhostColor.RED
 
     def generate_sequence(self) -> None:
         self.pathfinding(self.player.coords, 15)
