@@ -160,7 +160,7 @@ class Blue(Ghost):
 
 
 class Red(Ghost):
-    default_color = GhostColor.SECRET
+    default_color = GhostColor.RED
 
     def generate_sequence(self, destination: tuple[int, int] | None) -> None:
         if destination is not None:

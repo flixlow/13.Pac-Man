@@ -5,35 +5,31 @@ from ..utils import GhostColor, Parameters
 from ..engine.maze import Maze
 from ..engine.entity import Ghost, Entity, Direction
 
+from random import choice
+
 
 class PacManDrawer(MazeDrawer):
     def __init__(self, size: tuple[int, int], maze: Maze) -> None:
         super().__init__(size, maze)
 
-        # self.ghosts_img_copy = {
-        #     GhostColor.RED: pygame.image.load(
-        #         "assets/ghosts/red/1.png").convert_alpha(),
-        #     GhostColor.BLUE: pygame.image.load(
-        #         "assets/ghosts/blue/1.png").convert_alpha(),
-        #     GhostColor.ORANGE: pygame.image.load(
-        #         "assets/ghosts/orange/1.png").convert_alpha(),
-        #     GhostColor.GREEN: pygame.image.load(
-        #         "assets/ghosts/pink/1.png").convert_alpha(),
-        #     GhostColor.SECRET: pygame.image.load(
-        #         "assets/ghosts/crazyman/3.png").convert_alpha()
-        # }
+        self.fruit_n = choice([0, 1, 2])
 
         self.ghosts_img_copy = {
             GhostColor.RED: [pygame.image.load(
-                f"assets/ghosts/red/{i+1}.png").convert_alpha() for i in range(8)],
+                f"assets/ghosts/red/{i+1}.png").convert_alpha()
+                for i in range(8)],
             GhostColor.BLUE: [pygame.image.load(
-                f"assets/ghosts/blue/{i+1}.png").convert_alpha() for i in range(8)],
+                f"assets/ghosts/blue/{i+1}.png").convert_alpha()
+                for i in range(8)],
             GhostColor.ORANGE: [pygame.image.load(
-                f"assets/ghosts/orange/{i+1}.png").convert_alpha() for i in range(8)],
+                f"assets/ghosts/orange/{i+1}.png").convert_alpha()
+                for i in range(8)],
             GhostColor.GREEN: [pygame.image.load(
-                f"assets/ghosts/pink/{i+1}.png").convert_alpha() for i in range(8)],
+                f"assets/ghosts/pink/{i+1}.png").convert_alpha()
+                for i in range(8)],
             GhostColor.SECRET: [pygame.image.load(
-                f"assets/ghosts/orange/{i+1}.png").convert_alpha() for i in range(8)]
+                f"assets/ghosts/orange/{i+1}.png").convert_alpha()
+                for i in range(8)]
         }
 
         self.alive_copy = pygame.image.load(
@@ -41,17 +37,22 @@ class PacManDrawer(MazeDrawer):
         self.dead_copy = pygame.image.load(
             "assets/icon/dead_heart.png").convert_alpha()
 
+        self.pacman_img_copy = pygame.image.load(
+            "assets/pacman/pacman_1.png").convert_alpha()
+
+        self.fruit_copy = [
+            pygame.image.load(
+                f"assets/fruit/{i+1}.png"
+            ).convert_alpha() for i in range(3)
+        ]
+
         self.velocity = Parameters.PLAYER_VELOCITY
         self.movement_interval_ms: int = max(1, 1000 // self.velocity)
         self.player_move_elapsed_ms: int = 0
         self.animation_elapsed_ms: int = 0
 
         self.ghosts_img = self.ghosts_img_copy.copy()
-        self.alive = self.alive_copy.copy()
-        self.dead = self.dead_copy.copy()
-
-        self.pacman_img_copy = pygame.image.load(
-            "assets/pacman/pacman_1.png").convert_alpha()
+        self.fruit = self.fruit_copy.copy()
 
         PacManDrawer.update_size(self, size)
 
@@ -64,17 +65,21 @@ class PacManDrawer(MazeDrawer):
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
 
-        gum = (
-            (self.cell_size // 10, (255, 255, 210)) if not super else
-            (self.cell_size // 5, (255, 60, 180))
-        )
-        xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
+        if super:
+            
+            fruit_size = self.fruit[self.fruit_n].get_width()
+            self.put_image(
+                (x1 + fruit_size // 2, y1 + fruit_size // 2),
+                self.fruit[self.fruit_n]
+            )
+        else:
+            xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
 
-        self.draw_rect(
-            (xc - gum[0] // 2, yc - gum[0] // 2),
-            (xc + gum[0] // 2, yc + gum[0] // 2),
-            gum[1]
-        )
+            self.draw_rect(
+                (xc - self.cell_size // 15, yc - self.cell_size // 15),
+                (xc + self.cell_size // 15, yc + self.cell_size // 15),
+                (255, 60, 180)
+            )
 
     def draw_multiple_pacgums(
             self, cells: set[tuple[int, int]],
@@ -124,7 +129,6 @@ class PacManDrawer(MazeDrawer):
             case _:
                 img = self.ghosts_img[color][0]
 
-
         self.put_image((x1, y1), img)
 
     def draw_pacman(self, cell: tuple[float, float]) -> None:
@@ -161,6 +165,12 @@ class PacManDrawer(MazeDrawer):
         self.dead = pygame.transform.scale(
             self.dead_copy, (self.cell_size, self.cell_size)
         )
+
+        self.fruit = [
+            pygame.transform.scale(
+                fruit_img, (self.cell_size // 2, self.cell_size // 2))
+            for fruit_img in self.fruit_copy
+        ]
 
     @staticmethod
     def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
