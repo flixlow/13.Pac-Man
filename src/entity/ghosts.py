@@ -1,91 +1,11 @@
-from abc import ABC, abstractmethod
+
 from random import choice
+from abc import abstractmethod
 
-from ..utils import Parameters, Direction, GhostColor
-from .maze import Maze
-
-
-class Entity(ABC):
-    is_alive: bool = True
-    default_velocity: int = 3
-
-    def __init__(self, coords: tuple[int, int], maze: Maze) -> None:
-        self.maze: Maze = maze
-        self.crazy_mode: bool = False
-        self.animation_elapsed_ms: int = 0
-        self.player_move_elapsed_ms: int = 0
-        self.coords: tuple[int, int] = coords
-        self.previous_coords: tuple[int, int] = coords
-        self.starting_coords: tuple[int, int] = coords
-        self.velocity: int = type(self).default_velocity
-        self.movement_interval_ms: int = max(1, 1000 // self.velocity)
-
-    @abstractmethod
-    def moving(self, elapsed_time: int) -> None:
-        ...
-
-    def can_it_move(self, elapsed_ms: int) -> bool:
-        self.player_move_elapsed_ms += elapsed_ms
-
-        if self.player_move_elapsed_ms < self.movement_interval_ms:
-            return False
-
-        self.player_move_elapsed_ms -= self.movement_interval_ms
-        return True
-
-    def get_direction(self) -> Direction:
-        diff = (
-            self.coords[0] - self.previous_coords[0],
-            self.coords[1] - self.previous_coords[1]
-        )
-        match diff:
-            case (-1, 0):
-                return Direction.WEST
-            case (1, 0):
-                return Direction.EAST
-            case (0, -1):
-                return Direction.NORTH
-            case (0, 1):
-                return Direction.SOUTH
-            case _:
-                return Direction.START
-
-
-class Player(Entity):
-    direction: Direction = Direction.START
-    next_direction: Direction = Direction.START
-    default_velocity: int = Parameters.PLAYER_VELOCITY
-
-    def is_wall_here(self, direction: Direction) -> bool:
-        cell = self.maze.get_cell_walls(*self.coords)
-        return bool(cell & direction.value)
-
-    def can_it_move(self, elapsed_ms: int) -> bool:
-        if super().can_it_move(elapsed_ms) and self.is_alive:
-            if self.next_direction is not Direction.START\
-                    and not self.is_wall_here(self.next_direction):
-                self.direction = self.next_direction
-                self.next_direction = Direction.START
-                return True
-            elif not self.is_wall_here(self.direction):
-                return True
-        return False
-
-    def moving(self, elapsed_time: int) -> None:
-        if not self.can_it_move(elapsed_time):
-            return
-        x, y = self.coords
-        self.previous_coords = self.coords
-        self.animation_elapsed_ms = 0
-        match self.direction:
-            case Direction.NORTH:
-                self.coords = (x, y - 1)
-            case Direction.WEST:
-                self.coords = (x - 1, y)
-            case Direction.SOUTH:
-                self.coords = (x, y + 1)
-            case Direction.EAST:
-                self.coords = (x + 1, y)
+from .entity import Entity
+from .player import Player
+from ..engine.maze import Maze
+from ..utils import GhostColor, Parameters
 
 
 class Ghost(Entity):
@@ -107,6 +27,7 @@ class Ghost(Entity):
     def respawn(self) -> None:
         self.is_alive = False
         self.respawn_timer = 0
+        self.crazy_mode = False
         self.coords = self.starting_coords
         self.previous_coords = self.starting_coords
 

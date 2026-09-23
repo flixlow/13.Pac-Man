@@ -4,7 +4,7 @@ from typing import Callable
 
 from .maze import Maze
 from ..utils import Direction
-from .entity import Entity, Ghost, Player, Blue, Red, Pink, Orange, Secret
+from ..entity import Entity, Ghost, Player, Blue, Red, Pink, Orange, Secret
 
 
 class Level:
@@ -59,8 +59,27 @@ class Level:
 
     def set_crazy_mode(self, status: bool) -> None:
         self.on_crazy_mode = status
+
         for e in self.entities:
             e.crazy_mode = status
+
+    def check_crazy_mode(self, elapsed_time: int) -> None:
+        if self.on_crazy_mode is True:
+            self.timer += elapsed_time
+            if self.timer >= 5000:
+                self.timer = 0
+                self.set_crazy_mode(False)
+
+    def check_collision(self) -> None:
+        for g in self.ghosts:
+            if not g.is_alive:
+                continue
+            if g.coords == self.player.coords:
+                if self.on_crazy_mode:
+                    self.score += 200
+                    g.respawn()
+                else:
+                    self.player.is_alive = False
 
     def is_pacgum_here(self) -> None:
         if self.player.coords in self.pacgums:
@@ -75,24 +94,6 @@ class Level:
 
         if not self.pacgums:
             self.is_completed = True
-
-    def check_collision(self) -> None:
-        for g in self.ghosts:
-            if not g.is_alive:
-                continue
-            if g.coords == self.player.coords:
-                if self.on_crazy_mode:
-                    self.score += 200
-                    g.respawn()
-                else:
-                    self.player.is_alive = False
-
-    def check_crazy_mode(self, elapsed_time: int) -> None:
-        if self.on_crazy_mode is True:
-            self.timer += elapsed_time
-            if self.timer >= 5000:
-                self.timer = 0
-                self.set_crazy_mode(False)
 
     def update(self, elapsed_time: int) -> None:
         self.check_crazy_mode(elapsed_time)
