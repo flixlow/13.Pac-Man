@@ -27,7 +27,7 @@ class PacManDrawer(MazeDrawer):
             GhostColor.ORANGE: [pygame.image.load(
                 f"assets/ghosts/orange/{i+1}.png").convert_alpha()
                 for i in range(8)],
-            GhostColor.GREEN: [pygame.image.load(
+            GhostColor.PINK: [pygame.image.load(
                 f"assets/ghosts/pink/{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.SECRET: [pygame.image.load(
@@ -203,17 +203,3 @@ class PacManDrawer(MazeDrawer):
                 fruit_img, (self.cell_size // 2, self.cell_size // 2))
             for fruit_img in self.fruit_copy
         ]
-
-    @staticmethod
-    def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
-        animation_progress = getattr(entity, "animation_elapsed_ms", elapsed)
-        progress = min(
-            animation_progress / max(1, entity.movement_interval_ms),
-            1.0,
-        )
-        start_x, start_y = entity.previous_coords
-        end_x, end_y = entity.coords
-        return (
-            start_x + (end_x - start_x) * progress,
-            start_y + (end_y - start_y) * progress,
-        )

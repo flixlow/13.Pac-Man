@@ -5,7 +5,7 @@ from .drawing.basic_drawer import Drawer
 
 class Button:
     def __init__(self, frame: Drawer, a: tuple[int, int],
-                 i: float, size: int, text: str) -> None:
+                 i: int, size: int, text: str) -> None:
         self.pos = a
         self.frame = frame
         self.screen_origin = (0, 0)
@@ -29,7 +29,7 @@ class Button:
         w, h = self.frame.size
         self.font = pygame.font.Font("assets/font/title.otf", w // 25)
         self.padding_x, self.padding_y = w // 20, h // 10
-        self.pos = (w // 2 + self.padding_x, int(self.i * self.padding_y))
+        self.pos = (w // 2 + self.padding_x, self.i * self.padding_y)
 
         self.rendered_text = self.font.render(self.text, False, (100, 80, 0))
 
