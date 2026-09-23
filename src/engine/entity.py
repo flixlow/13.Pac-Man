@@ -6,24 +6,22 @@ from .maze import Maze
 
 
 class Entity(ABC):
-    default_velocity: int = Parameters.PLAYER_VELOCITY
+    is_alive: bool = True
+    default_velocity: int = 3
 
-    def __init__(
-        self,
-        coords: tuple[int, int],
-        maze: Maze,
-        velocity: int | None = None,
-    ) -> None:
-        self.coords: tuple[int, int] = coords
+    def __init__(self, coords: tuple[int, int], maze: Maze) -> None:
         self.maze: Maze = maze
-        self.velocity: int = velocity or type(self).default_velocity
-        self.player_move_elapsed_ms: int = 0
-        self.movement_interval_ms: int = max(1, 1000 // self.velocity)
-        self.previous_coords: tuple[int, int] = coords
+        self.crazy_mode: bool = False
         self.animation_elapsed_ms: int = 0
+        self.player_move_elapsed_ms: int = 0
+        self.coords: tuple[int, int] = coords
+        self.previous_coords: tuple[int, int] = coords
+        self.starting_coords: tuple[int, int] = coords
+        self.velocity: int = type(self).default_velocity
+        self.movement_interval_ms: int = max(1, 1000 // self.velocity)
 
     @abstractmethod
-    def moving(self, destination: tuple[int, int] | None) -> None:
+    def moving(self, elapsed_time: int) -> None:
         ...
 
     def can_it_move(self, elapsed_ms: int) -> bool:
@@ -56,13 +54,14 @@ class Entity(ABC):
 class Player(Entity):
     direction: Direction = Direction.START
     next_direction: Direction = Direction.START
+    default_velocity: int = Parameters.PLAYER_VELOCITY
 
     def is_wall_here(self, direction: Direction) -> bool:
         cell = self.maze.get_cell_walls(*self.coords)
         return bool(cell & direction.value)
 
     def can_it_move(self, elapsed_ms: int) -> bool:
-        if super().can_it_move(elapsed_ms):
+        if super().can_it_move(elapsed_ms) and self.is_alive:
             if self.next_direction is not Direction.START\
                     and not self.is_wall_here(self.next_direction):
                 self.direction = self.next_direction
@@ -72,7 +71,9 @@ class Player(Entity):
                 return True
         return False
 
-    def moving(self, _: tuple[int, int] | None) -> None:
+    def moving(self, elapsed_time: int) -> None:
+        if not self.can_it_move(elapsed_time):
+            return
         x, y = self.coords
         self.previous_coords = self.coords
         self.animation_elapsed_ms = 0
@@ -92,26 +93,22 @@ class Ghost(Entity):
     default_color: GhostColor = GhostColor.SECRET
 
     def __init__(
-        self, coords: tuple[int, int], maze: Maze,
-        color: GhostColor | None = None, velocity: int | None = None
-    ) -> None:
-        super().__init__(coords, maze, velocity)
-        self.color: GhostColor = color or type(self).default_color
+            self, coords: tuple[int, int], maze: Maze, player: Player) -> None:
+        super().__init__(coords, maze)
+        self.color: GhostColor = type(self).default_color
         self.sequence: list[tuple[int, int]] = []
+        self.player: Player = player
+        self.respawn_timer: int = 0
 
     @abstractmethod
-    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
+    def generate_sequence(self) -> None:
         ...
 
-    def moving(self, destination: tuple[int, int] | None) -> None:
-        if self.sequence == []:
-            self.generate_sequence(destination)
-
-        self.previous_coords = self.coords
-        self.animation_elapsed_ms = 0
-
-        if self.sequence != []:
-            self.coords = self.sequence.pop(0)
+    def respawn(self) -> None:
+        self.is_alive = False
+        self.respawn_timer = 0
+        self.coords = self.starting_coords
+        self.previous_coords = self.starting_coords
 
     def pathfinding(self, end: tuple[int, int], n: int | None) -> None:
         queue: list[tuple[int, int]] = [self.coords]
@@ -138,11 +135,56 @@ class Ghost(Entity):
         if n is not None:
             self.sequence = self.sequence[:n]
 
+    def get_direction_away_from(self) -> None:
+        x, y = self.player.coords
+
+        availables = self.maze.get_available_coords(self.coords)
+
+        cell = max(availables, key=lambda c: (abs(c[0] - x) + (abs(c[1] - y))))
+
+        self.sequence = [cell]
+
+    def moving(self, elapsed_time: int) -> None:
+        if not self.can_it_move(elapsed_time):
+            return
+
+        if not self.is_alive:
+            self.respawn_timer += elapsed_time
+            if self.respawn_timer >= 200:
+                self.is_alive = True
+            else:
+                return
+
+        if self.crazy_mode:
+            self.get_direction_away_from()
+        elif self.sequence == []:
+            self.generate_sequence()
+
+        self.animation_elapsed_ms = 0
+        self.previous_coords = self.coords
+        if self.sequence:
+            self.coords = self.sequence.pop(0)
+
+
+class Secret(Ghost):
+    default_color = GhostColor.SECRET
+
+    def teleportate(self, pos: tuple[int, int]) -> None:
+        neightbour_cells = self.maze.get_neighbour_cells(pos, 2)
+
+        self.sequence = [choice(list(neightbour_cells))]
+
+    def generate_sequence(self) -> None:
+        self.pathfinding(self.player.coords, None)
+
+        if len(self.sequence) >= 15:
+            self.teleportate(self.player.coords)
+
 
 class Blue(Ghost):
     default_color = GhostColor.BLUE
 
-    def generate_sequence(self, _: tuple[int, int] | None) -> None:
+    def generate_sequence(self) -> None:
         current_coords = self.coords
         last_coords: None | tuple[int, int] = None
 
@@ -162,50 +204,20 @@ class Blue(Ghost):
 class Red(Ghost):
     default_color = GhostColor.RED
 
-    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
-        if destination is not None:
-            self.pathfinding(destination, 15)
+    def generate_sequence(self) -> None:
+        self.pathfinding(self.player.coords, 15)
 
 
-class Green(Ghost):
-    default_color = GhostColor.GREEN
+class Pink(Ghost):
+    default_color = GhostColor.PINK
 
-    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
-        if destination is not None:
-            self.pathfinding(destination, 5)
+    def generate_sequence(self) -> None:
+        self.pathfinding(self.player.coords, 5)
 
 
 class Orange(Ghost):
     default_color = GhostColor.ORANGE
 
-    def generate_sequence(self, _: tuple[int, int] | None) -> None:
+    def generate_sequence(self) -> None:
         cell = choice(self.maze.get_border_cells())
         self.pathfinding(cell, None)
-
-
-class Secret(Ghost):
-    default_color = GhostColor.SECRET
-
-    def get_neightbour_cells(
-            self, pos: tuple[int, int], n: int) -> list[tuple[int, int]]:
-        pos_x, pos_y = pos
-        neightbour_cells: list[tuple[int, int]] = []
-
-        for x in range(self.maze.w):
-            for y in range(self.maze.h):
-                if x in range((pos_x - n), (pos_x + n)):
-                    if y in range((pos_y - n), (pos_y + n)):
-                        neightbour_cells.append((x, y))
-        return neightbour_cells
-
-    def teleportate(self, pos: tuple[int, int]) -> None:
-        neightbour_cells = self.get_neightbour_cells(pos, 3)
-        self.sequence = [choice(neightbour_cells)]
-
-    def generate_sequence(self, destination: tuple[int, int] | None) -> None:
-        if destination is not None:
-            self.pathfinding(destination, None)
-
-        if len(self.sequence) >= 15:
-            if destination is not None:
-                self.teleportate(destination)

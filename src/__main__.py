@@ -17,5 +17,5 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except (PacmanError, ValidationError) as e:
+    except (PacmanError, ValidationError, KeyboardInterrupt) as e:
         print(f"[ERROR]: {e}")

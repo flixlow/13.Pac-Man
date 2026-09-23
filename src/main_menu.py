@@ -1,5 +1,6 @@
 from .drawing.basic_drawer import Drawer
 from .scorer import Scorer
+from .button import Button
 
 import pygame
 from pygame import Surface
@@ -15,14 +16,13 @@ class Menu:
 
         self.scorers_rendered: list[tuple[int, Surface, Surface]] = []
 
-        self.play_button = Button(
-            self.frame, (w // 2 + w // 10, 0 + h // 10), 0, 2, "PLAY")
-        self.button_test = Button(
-            self.frame, (w // 2 + w // 10, 0 + h // 10), 2.5, 1, "TEST1")
-        self.button_test2 = Button(
-            self.frame, (w // 2 + w // 10, 0 + h // 10), 4, 1, "TEST2")
+        pos = (w // 2 + w // 10, 0 + h // 10)
+        self.play_button = Button(self.frame, pos, 0, 2, "PLAY")
+        self.settings = Button(self.frame, pos, 2, 2, "SETTINGS")
+        self.clic = Button(self.frame, pos, 4, 2, "CLIC HERE")
+        self.exit = Button(self.frame, pos, 6, 2, "EXIT")
 
-        self.buttons = [self.play_button, self.button_test, self.button_test2]
+        self.buttons = [self.play_button, self.settings, self.clic, self.exit]
 
         self.button = pygame.image.load(
             "assets/button/button.png")
