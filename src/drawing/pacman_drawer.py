@@ -56,6 +56,20 @@ class PacManDrawer(MazeDrawer):
 
         PacManDrawer.update_size(self, size)
 
+    @staticmethod
+    def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
+        animation_progress = getattr(entity, "animation_elapsed_ms", elapsed)
+        progress = min(
+            animation_progress / max(1, entity.movement_interval_ms),
+            1.0,
+        )
+        start_x, start_y = entity.previous_coords
+        end_x, end_y = entity.coords
+        return (
+            start_x + (end_x - start_x) * progress,
+            start_y + (end_y - start_y) * progress,
+        )
+
     def draw_pacgum(self, cell: tuple[int, int], super: bool) -> None:
         x, y = cell
 
@@ -97,6 +111,8 @@ class PacManDrawer(MazeDrawer):
             direction = e.get_direction()
 
             if isinstance(e, Ghost):
+                if not e.is_alive:
+                    continue
                 params = (PacManDrawer.render_coords(elapsed_t, e), e.color)
                 self.draw_ghost(*params, direction)
             else:

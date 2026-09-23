@@ -1,14 +1,14 @@
 import pygame
 from typing import Any
 
-from ..scorer import Scorer
 from .maze import Maze
-from ..utils import State, KEY_DIRECTION
+from ..scorer import Scorer
+from .game import PacmanGame
+from ..main_menu import Menu
 from ..parsing import parsing, Config
+from ..utils import State, KEY_DIRECTION
 from ..drawing.pacman_drawer import PacManDrawer
 from ..drawing.basic_drawer import Drawer, print_life, print_title
-from ..main_menu import Menu
-from .game import PacmanGame
 
 
 class Monitor:
@@ -20,6 +20,7 @@ class Monitor:
         self.game.new_game()
 
         self._init_pygame()
+        self.time: int = 0
         self.running: bool = True
         self.counter_ending_animation: int = 0
 
@@ -55,12 +56,10 @@ class Monitor:
         if event.type == pygame.QUIT:
             self.running = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                self.running = False
-
     def check_keydown(self, event: Any) -> None:
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.state = State.MAIN_MENU
             if event.key == pygame.K_SPACE:
                 if self.state is State.MAIN_MENU:
                     self.state = State.PACMAN
@@ -72,7 +71,7 @@ class Monitor:
             elif self.state != State.PAUSE and event.key in KEY_DIRECTION:
                 self.game.level.change_direction(KEY_DIRECTION[event.key])
 
-    def check_buttons(self) -> list[int]:
+    def check_buttons(self) -> None:
         pressed = self.menu.check_buttons()
 
         if 0 in pressed:
@@ -80,8 +79,8 @@ class Monitor:
                 self.state = State.PACMAN
         if 1 in pressed:
             pass
-        if 2 in pressed:
-            pass
+        if 3 in pressed:
+            self.running = False
 
     def update_size(self, event: Any) -> None:
         if event.type == pygame.VIDEORESIZE:
@@ -151,7 +150,7 @@ class Monitor:
         pygame.display.flip()
 
     def ending_animation(self, elapsed_time: int) -> None:
-        if self.game.level.is_dead or self.game.level.is_completed:
+        if not self.game.level.player.is_alive or self.game.level.is_completed:
             self.counter_ending_animation += 1
         if self.counter_ending_animation >= elapsed_time:
             self.state = self.game.ending_level()
@@ -161,13 +160,14 @@ class Monitor:
             self.counter_ending_animation = 0
 
     def main_loop(self) -> None:
+
         while self.running:
-            elapsed_time: int = self.clock.tick(60)
+            elapsed_time = self.clock.tick(60)
 
             self.check_events()
 
             if self.state is State.PACMAN:
-                self.game.moving_entities(elapsed_time)
+                self.game.running(elapsed_time)
 
             self.ending_animation(elapsed_time)
             self.display(elapsed_time)
