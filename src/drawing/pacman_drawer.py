@@ -150,30 +150,30 @@ class PacManDrawer(MazeDrawer):
                 img = self.ghosts_img[GhostColor.CRAZY][0]
             else:
                 img = self.ghosts_img[GhostColor.CRAZY][1]
-
-        match direction:
-            case Direction.SOUTH:
-                if is_jsp:
+        else:
+            match direction:
+                case Direction.SOUTH:
+                    if is_jsp:
+                        img = self.ghosts_img[color][0]
+                    else:
+                        img = self.ghosts_img[color][2]
+                case Direction.NORTH:
+                    if is_jsp:
+                        img = self.ghosts_img[color][1]
+                    else:
+                        img = self.ghosts_img[color][3]
+                case Direction.WEST:
+                    if is_jsp:
+                        img = self.ghosts_img[color][4]
+                    else:
+                        img = self.ghosts_img[color][6]
+                case Direction.EAST:
+                    if is_jsp:
+                        img = self.ghosts_img[color][5]
+                    else:
+                        img = self.ghosts_img[color][7]
+                case _:
                     img = self.ghosts_img[color][0]
-                else:
-                    img = self.ghosts_img[color][2]
-            case Direction.NORTH:
-                if is_jsp:
-                    img = self.ghosts_img[color][1]
-                else:
-                    img = self.ghosts_img[color][3]
-            case Direction.WEST:
-                if is_jsp:
-                    img = self.ghosts_img[color][4]
-                else:
-                    img = self.ghosts_img[color][6]
-            case Direction.EAST:
-                if is_jsp:
-                    img = self.ghosts_img[color][5]
-                else:
-                    img = self.ghosts_img[color][7]
-            case _:
-                img = self.ghosts_img[color][0]
 
         self.put_image((x1, y1), img)
 
