@@ -5,14 +5,17 @@ from ..utils import GhostColor, Parameters
 from ..engine.maze import Maze
 from ..engine.entity import Ghost, Entity, Direction
 
+
 from random import choice
 
 
 class PacManDrawer(MazeDrawer):
     def __init__(self, size: tuple[int, int], maze: Maze) -> None:
+        from ..engine.monitor import tick_count_main
         super().__init__(size, maze)
 
         self.fruit_n = choice([0, 1, 2])
+        self.tick = tick_count_main
 
         self.ghosts_img_copy = {
             GhostColor.RED: [pygame.image.load(
@@ -66,7 +69,7 @@ class PacManDrawer(MazeDrawer):
         x2, y2 = px + self.cell_size, py + self.cell_size
 
         if super:
-            
+
             fruit_size = self.fruit[self.fruit_n].get_width()
             self.put_image(
                 (x1 + fruit_size // 2, y1 + fruit_size // 2),
@@ -116,16 +119,29 @@ class PacManDrawer(MazeDrawer):
         py = int(y * self.cell_size + self.offset_y)
 
         x1, y1 = px, py
+        is_jsp = self.tick[0] % 500 < 500 // 2
 
         match direction:
             case Direction.SOUTH:
-                img = self.ghosts_img[color][0]
+                if is_jsp:
+                    img = self.ghosts_img[color][0]
+                else:
+                    img = self.ghosts_img[color][2]
             case Direction.NORTH:
-                img = self.ghosts_img[color][1]
+                if is_jsp:
+                    img = self.ghosts_img[color][1]
+                else:
+                    img = self.ghosts_img[color][3]
             case Direction.WEST:
-                img = self.ghosts_img[color][4]
+                if is_jsp:
+                    img = self.ghosts_img[color][4]
+                else:
+                    img = self.ghosts_img[color][6]
             case Direction.EAST:
-                img = self.ghosts_img[color][5]
+                if is_jsp:
+                    img = self.ghosts_img[color][5]
+                else:
+                    img = self.ghosts_img[color][7]
             case _:
                 img = self.ghosts_img[color][0]
 
