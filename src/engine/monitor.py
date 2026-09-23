@@ -150,7 +150,7 @@ class Monitor:
         pygame.display.flip()
 
     def ending_animation(self, elapsed_time: int) -> None:
-        if self.game.level.is_dead or self.game.level.is_completed:
+        if not self.game.level.player.is_alive or self.game.level.is_completed:
             self.counter_ending_animation += 1
         if self.counter_ending_animation >= elapsed_time:
             self.state = self.game.ending_level()

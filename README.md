@@ -23,6 +23,7 @@ highscore can take only alphanumeric
 [ ] class Color pour les params
 [ ] tester le new game si jamais le next level n'a plus de level
 [ ] ou placer le timer
+[ ] permettre d'inverser et de pouvoir manger les pacgums
 
 ![alt text](image.png)
 

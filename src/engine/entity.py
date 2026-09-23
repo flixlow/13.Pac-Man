@@ -6,6 +6,7 @@ from .maze import Maze
 
 
 class Entity(ABC):
+    is_alive: bool = True
     default_velocity: int = 3
 
     def __init__(self, coords: tuple[int, int], maze: Maze) -> None:
@@ -15,6 +16,7 @@ class Entity(ABC):
         self.player_move_elapsed_ms: int = 0
         self.coords: tuple[int, int] = coords
         self.previous_coords: tuple[int, int] = coords
+        self.starting_coords: tuple[int, int] = coords
         self.velocity: int = type(self).default_velocity
         self.movement_interval_ms: int = max(1, 1000 // self.velocity)
 
@@ -59,7 +61,7 @@ class Player(Entity):
         return bool(cell & direction.value)
 
     def can_it_move(self, elapsed_ms: int) -> bool:
-        if super().can_it_move(elapsed_ms):
+        if super().can_it_move(elapsed_ms) and self.is_alive:
             if self.next_direction is not Direction.START\
                     and not self.is_wall_here(self.next_direction):
                 self.direction = self.next_direction
@@ -93,13 +95,20 @@ class Ghost(Entity):
     def __init__(
             self, coords: tuple[int, int], maze: Maze, player: Player) -> None:
         super().__init__(coords, maze)
-        self.player: Player = player
         self.color: GhostColor = type(self).default_color
         self.sequence: list[tuple[int, int]] = []
+        self.player: Player = player
+        self.respawn_timer: int = 0
 
     @abstractmethod
     def generate_sequence(self) -> None:
         ...
+
+    def respawn(self) -> None:
+        self.is_alive = False
+        self.respawn_timer = 0
+        self.coords = self.starting_coords
+        self.previous_coords = self.starting_coords
 
     def pathfinding(self, end: tuple[int, int], n: int | None) -> None:
         queue: list[tuple[int, int]] = [self.coords]
@@ -138,6 +147,13 @@ class Ghost(Entity):
     def moving(self, elapsed_time: int) -> None:
         if not self.can_it_move(elapsed_time):
             return
+
+        if not self.is_alive:
+            self.respawn_timer += elapsed_time
+            if self.respawn_timer >= 200:
+                self.is_alive = True
+            else:
+                return
 
         if self.crazy_mode:
             self.get_direction_away_from()

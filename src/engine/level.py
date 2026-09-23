@@ -13,7 +13,6 @@ class Level:
 
         self.timer: int = 0
         self.score: int = 0
-        self.is_dead: bool = False
         self.is_completed: bool = False
         self.on_crazy_mode: bool = False
 
@@ -77,17 +76,30 @@ class Level:
         if not self.pacgums:
             self.is_completed = True
 
-    def update(self, elapsed_time: int) -> None:
+    def check_collision(self) -> None:
+        for g in self.ghosts:
+            if not g.is_alive:
+                continue
+            if g.coords == self.player.coords:
+                if self.on_crazy_mode:
+                    self.score += 200
+                    g.respawn()
+                else:
+                    self.player.is_alive = False
+
+    def check_crazy_mode(self, elapsed_time: int) -> None:
         if self.on_crazy_mode is True:
             self.timer += elapsed_time
             if self.timer >= 5000:
                 self.timer = 0
                 self.set_crazy_mode(False)
 
+    def update(self, elapsed_time: int) -> None:
+        self.check_crazy_mode(elapsed_time)
+
         self.player.moving(elapsed_time)
 
-        if self.player.coords in {ghost.coords for ghost in self.ghosts}:
-            self.is_dead = True
+        self.check_collision()
 
         for g in self.ghosts:
             g.moving(elapsed_time)

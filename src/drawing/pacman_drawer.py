@@ -106,6 +106,8 @@ class PacManDrawer(MazeDrawer):
             direction = e.get_direction()
 
             if isinstance(e, Ghost):
+                if not e.is_alive:
+                    continue
                 params = (PacManDrawer.render_coords(elapsed_t, e), e.color)
                 self.draw_ghost(*params, direction)
             else:

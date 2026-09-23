@@ -24,10 +24,6 @@ class PacmanGame:
         except StopIteration:
             self.new_game()
 
-    def running(self, elapsed_time: int) -> None:
-        if not (self.level.is_dead or self.game_over):
-            self.level.update(elapsed_time)
-
     def save_level_score(self) -> None:
         self.player_state.score += self.level.score
 
@@ -39,9 +35,9 @@ class PacmanGame:
             self.save_level_score()
             self.next_level()
 
-        elif self.level.is_dead:
+        elif not self.level.player.is_alive:
             self.player_state.lives -= 1
-            self.level.is_dead = False
+            self.level.player.is_alive = True
 
         if self.player_state.lives < 1:
             self.save_level_score()
@@ -50,3 +46,7 @@ class PacmanGame:
             return State.MAIN_MENU
 
         return State.PAUSE
+
+    def running(self, elapsed_time: int) -> None:
+        if self.level.player.is_alive or not self.game_over:
+            self.level.update(elapsed_time)
