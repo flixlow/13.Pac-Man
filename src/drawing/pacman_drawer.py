@@ -31,7 +31,7 @@ class PacManDrawer(MazeDrawer):
                 f"assets/ghosts/pink/{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.SECRET: [pygame.image.load(
-                f"assets/ghosts/orange/{i+1}.png").convert_alpha()
+                f"assets/ghosts/red/{i+1}.png").convert_alpha()
                 for i in range(8)]
         }
 
@@ -185,7 +185,7 @@ class PacManDrawer(MazeDrawer):
                 lst.append(scaled)
             self.ghosts_img[color] = lst
 
-        self.pacman_img = pygame.transform.scale(
+        self.pacman_img: pygame.Surface = pygame.transform.scale(
                 self.pacman_img_copy, (
                     self.cell_size * 0.8, self.cell_size * 0.8)
             )

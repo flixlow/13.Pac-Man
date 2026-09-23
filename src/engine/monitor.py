@@ -12,6 +12,7 @@ from ..drawing.basic_drawer import Drawer, print_life, print_title
 
 tick_count_main = [0]
 
+
 class Monitor:
     def __init__(self, config_file: str) -> None:
         self.config: Config = parsing(config_file)
@@ -60,6 +61,9 @@ class Monitor:
     def check_keydown(self, event: Any) -> None:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                if self.state == State.MAIN_MENU:
+                    self.running = False
+                    return
                 self.state = State.MAIN_MENU
             if event.key == pygame.K_SPACE:
                 if self.state is State.MAIN_MENU:
@@ -163,7 +167,6 @@ class Monitor:
     def main_loop(self) -> None:
 
         while self.running:
-            global tick_count_main
 
             elapsed_time: int = self.clock.tick(60)
             tick_count_main[0] += elapsed_time
