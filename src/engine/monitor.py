@@ -6,19 +6,18 @@ from ..scorer import Scorer
 from .game import PacmanGame
 from ..main_menu import Menu
 from ..parsing import parsing, Config
-from ..utils import State, KEY_DIRECTION
+from ..utils import State, KEY_DIRECTION, Timer
 from ..drawing.pacman_drawer import PacManDrawer
 from ..drawing.basic_drawer import Drawer, print_life, print_title
-
-tick_count_main = [0]
 
 
 class Monitor:
     def __init__(self, config_file: str) -> None:
+        self.timer: Timer = Timer()
         self.config: Config = parsing(config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[Maze] = self.config.generate_all_maze()
-        self.game: PacmanGame = PacmanGame(self.config, self.mazes)
+        self.game: PacmanGame = PacmanGame(self.config, self.mazes, self.timer)
         self.game.new_game()
 
         self._init_pygame()
@@ -47,8 +46,9 @@ class Monitor:
             self.screen_size, pygame.RESIZABLE
         )
 
-        maze = self.game.level.maze
-        self.pacman_frame = PacManDrawer((w, h - self.header), maze)
+        self.pacman_frame = PacManDrawer(
+            (w, h - self.header), self.game.level.maze, self.timer
+        )
         self.pacman_frame.draw_maze()
 
     def new_game(self) -> None:
@@ -116,9 +116,8 @@ class Monitor:
 
             self.check_buttons()
 
-    def display(self, elapsed_time: int) -> None:
+    def display(self) -> None:
 
-        # HEADER
         print_life(
             self.header_img, (0, 0),
             self.pacman_frame.alive.get_width(),
@@ -130,7 +129,6 @@ class Monitor:
         self.screen.blit(self.header_img.surface, (0, 0))
 
         print_title(self.header_img)
-        # ======
 
         if self.state is State.PACMAN:
             self.pacman_frame.draw_maze()
@@ -145,7 +143,7 @@ class Monitor:
                 self.game.level.pacgums - super)
 
             self.pacman_frame.display_entities(
-                elapsed_time, self.game.level.entities)
+                self.timer.elapsed_time, self.game.level.entities)
             self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
         if self.state is State.MAIN_MENU:
@@ -154,10 +152,11 @@ class Monitor:
 
         pygame.display.flip()
 
-    def ending_animation(self, elapsed_time: int) -> None:
+    def ending_animation(self) -> None:
         if not self.game.level.player.is_alive or self.game.level.is_completed:
             self.counter_ending_animation += 1
-        if self.counter_ending_animation >= elapsed_time:
+
+        if self.counter_ending_animation >= self.timer.elapsed_time:
             self.state = self.game.ending_level()
 
             self.pacman_frame.update_maze(self.game.level.maze)
@@ -167,15 +166,15 @@ class Monitor:
     def main_loop(self) -> None:
 
         while self.running:
-            elapsed_time: int = self.clock.tick(60)
-            tick_count_main[0] += elapsed_time
+
+            self.timer.tick(self.clock)
 
             self.check_events()
 
             if self.state is State.PACMAN:
-                self.game.running(elapsed_time)
+                self.game.running()
 
-            self.ending_animation(elapsed_time)
-            self.display(elapsed_time)
+            self.ending_animation()
+            self.display()
 
         pygame.quit()

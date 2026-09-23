@@ -12,19 +12,24 @@ class Player(Entity):
         cell = self.maze.get_cell_walls(*self.coords)
         return bool(cell & direction.value)
 
-    def can_it_move(self, elapsed_ms: int) -> bool:
-        if super().can_it_move(elapsed_ms) and self.is_alive:
+    def can_it_move(self) -> bool:
+        if super().can_it_move() and self.is_alive:
+
             if self.next_direction is not Direction.START\
                     and not self.is_wall_here(self.next_direction):
+
                 self.direction = self.next_direction
                 self.next_direction = Direction.START
+
                 return True
+
             elif not self.is_wall_here(self.direction):
                 return True
+
         return False
 
-    def moving(self, elapsed_time: int) -> None:
-        if not self.can_it_move(elapsed_time):
+    def moving(self) -> None:
+        if not self.can_it_move():
             return
         x, y = self.coords
         self.previous_coords = self.coords

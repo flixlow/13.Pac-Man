@@ -1,7 +1,5 @@
 # 13.Pac-Man
 draft:
-[ ] {'felix': '45000', 'bcondemi': '5012', 'pablo': '10000', 'badge': 'felix'} :
-highscore can take only alphanumeric
 [x] gerer les conflits de deplacement, ajouter inertie automatique avec direction tant que pas de mur
 [x] main menu
 [x] ajouter les vies
@@ -13,17 +11,18 @@ highscore can take only alphanumeric
 [x] generate sequences of coords for movement
 [x] stocker les changements de direction queue
 [x] pathfinding a implementer
-[ ] flag : --own_function for draw rectangle
+[x] permettre d'inverser et de pouvoir manger les pacgums
+[x] crazy mode
 [ ] displayer le score et le timer
 [ ] demander le nom du joueur en fin de partie
+[ ] {'felix': '45000', 'bcondemi': '5012', 'pablo': '10000', 'badge': 'felix'} : highscore can take only alphanumeric
 [ ] animation eating pacman
-[ ] crazy mode
-[ ] animation
 [ ] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir
 [ ] class Color pour les params
-[ ] tester le new game si jamais le next level n'a plus de level
-[ ] ou placer le timer
-[ ] permettre d'inverser et de pouvoir manger les pacgums
+[ ] bug new game si jamais le next level n'a plus de level
+[ ] comment etablir le timer interne general
+[ ] flag : --own_function for draw rectangle
+[ ] animation teleportation
 
 ![alt text](image.png)
 

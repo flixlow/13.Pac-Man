@@ -2,25 +2,26 @@
 from typing import Iterator
 
 from .maze import Maze
-from ..utils import PlayerState, State
-from ..parsing import Config
 from .level import Level
+from ..parsing import Config
+from ..utils import PlayerState, State, Timer
 
 
 class PacmanGame:
-    def __init__(self, config: Config, mazes: list[Maze]) -> None:
+    def __init__(self, config: Config, mazes: list[Maze], t: Timer) -> None:
         self.config: Config = config
         self.mazes: list[Maze] = mazes
         self.game_over: bool = False
+        self.timer = t
 
     def new_game(self) -> None:
         self.maze_interator: Iterator = iter(self.mazes)
-        self.level: Level = Level(next(self.maze_interator))
+        self.level: Level = Level(next(self.maze_interator), self.timer)
         self.player_state: PlayerState = PlayerState()
 
     def next_level(self) -> None:
         try:
-            self.level = Level(next(self.maze_interator))
+            self.level = Level(next(self.maze_interator), self.timer)
         except StopIteration:
             self.new_game()
 
@@ -47,6 +48,6 @@ class PacmanGame:
 
         return State.PAUSE
 
-    def running(self, elapsed_time: int) -> None:
+    def running(self) -> None:
         if self.level.player.is_alive or not self.game_over:
-            self.level.update(elapsed_time)
+            self.level.update()

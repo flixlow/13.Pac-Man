@@ -1,15 +1,16 @@
 
 from abc import ABC, abstractmethod
 
-from ..utils import Direction
 from ..engine.maze import Maze
+from ..utils import Direction, Timer
 
 
 class Entity(ABC):
     is_alive: bool = True
     default_velocity: int = 3
 
-    def __init__(self, coords: tuple[int, int], maze: Maze) -> None:
+    def __init__(self, coords: tuple[int, int], maze: Maze, t: Timer) -> None:
+        self.timer: Timer = t
         self.maze: Maze = maze
         self.crazy_mode: bool = False
         self.animation_elapsed_ms: int = 0
@@ -21,17 +22,8 @@ class Entity(ABC):
         self.movement_interval_ms: int = max(1, 1000 // self.velocity)
 
     @abstractmethod
-    def moving(self, elapsed_time: int) -> None:
+    def moving(self) -> None:
         ...
-
-    def can_it_move(self, elapsed_ms: int) -> bool:
-        self.player_move_elapsed_ms += elapsed_ms
-
-        if self.player_move_elapsed_ms < self.movement_interval_ms:
-            return False
-
-        self.player_move_elapsed_ms -= self.movement_interval_ms
-        return True
 
     def get_direction(self) -> Direction:
         diff = (
@@ -49,3 +41,12 @@ class Entity(ABC):
                 return Direction.SOUTH
             case _:
                 return Direction.START
+
+    def can_it_move(self) -> bool:
+        self.player_move_elapsed_ms += self.timer.elapsed_time
+
+        if self.player_move_elapsed_ms < self.movement_interval_ms:
+            return False
+
+        self.player_move_elapsed_ms -= self.movement_interval_ms
+        return True

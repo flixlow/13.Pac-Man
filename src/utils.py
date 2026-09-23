@@ -1,6 +1,17 @@
 
-import pygame
 from enum import Enum, auto
+from pygame import K_UP, K_w, K_RIGHT, K_d, K_DOWN, K_s, K_LEFT, K_a
+
+
+class Timer:
+    def __init__(self) -> None:
+        self.elapsed_time = 0
+        self.total_spend_time = 0
+        self.crazy_mode_elapsed_time = 0
+
+    def tick(self, clock):
+        self.elapsed_time = clock.tick(60)
+        self.total_spend_time += self.elapsed_time
 
 
 class Paths:
@@ -51,12 +62,12 @@ class State(Enum):
 
 
 KEY_DIRECTION: dict[int, Direction] = {
-        pygame.K_UP: Direction.NORTH,
-        pygame.K_w: Direction.NORTH,
-        pygame.K_RIGHT: Direction.EAST,
-        pygame.K_d: Direction.EAST,
-        pygame.K_DOWN: Direction.SOUTH,
-        pygame.K_s: Direction.SOUTH,
-        pygame.K_LEFT: Direction.WEST,
-        pygame.K_a: Direction.WEST,
+        K_UP: Direction.NORTH,
+        K_w: Direction.NORTH,
+        K_RIGHT: Direction.EAST,
+        K_d: Direction.EAST,
+        K_DOWN: Direction.SOUTH,
+        K_s: Direction.SOUTH,
+        K_LEFT: Direction.WEST,
+        K_a: Direction.WEST,
     }
