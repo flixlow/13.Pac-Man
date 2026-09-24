@@ -65,9 +65,9 @@ class Level:
 
     def check_crazy_mode(self) -> None:
         if self.on_crazy_mode is True:
-            self.timer.crazy_mode_period += self.timer.elapsed_time
-            if self.timer.crazy_mode_period >= 5000:
-                self.timer.crazy_mode_period = 0
+            self.timer.crazy_mode_elapsed_time += self.timer.elapsed_time
+            if self.timer.crazy_mode_elapsed_time >= 5000:
+                self.timer.crazy_mode_elapsed_time = 0
                 self.set_crazy_mode(False)
 
     def check_collision(self) -> None:
@@ -85,7 +85,7 @@ class Level:
         if self.player.coords in self.pacgums:
             if self.player.coords in self.maze.corners:
                 self.set_crazy_mode(True)
-                self.timer.crazy_mode_period = 0
+                self.timer.crazy_mode_elapsed_time = 0
                 self.score += 200
             else:
                 self.score += 20
