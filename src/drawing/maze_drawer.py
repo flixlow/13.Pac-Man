@@ -12,7 +12,7 @@ class MazeDrawer(Drawer):
 
         MazeDrawer.update_size(self, size)
 
-        self.draw_maze()
+        MazeDrawer.draw_maze(self)
 
     def update_maze(self, maze: Maze) -> None:
         self.maze = maze.maze_map
@@ -39,7 +39,6 @@ class MazeDrawer(Drawer):
         """
         Render the full maze grid, including start and end cells.
         """
-
         self.fill((30, 30, 30))
 
         for y in range(self.maze_height):
@@ -49,7 +48,10 @@ class MazeDrawer(Drawer):
                 )
 
     def draw_cell(self, value: int,
-                  cell: tuple[int, int], bg: bool = False) -> None:
+                  cell: tuple[int, int],
+                  bg: tuple[int, int, int] | None = None,
+                  progress: float | None = None,
+                  ) -> None:
 
         x, y = cell
 
@@ -59,18 +61,35 @@ class MazeDrawer(Drawer):
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
 
-        if bg:
+        colors = (
+            [(55, 15, 180), (255, 255, 255)],
+            [(65, 25, 195), (100, 100, 100)],
+            [(255, 240, 0), (255, 255, 255)],
+            [(255, 255, 0), (100, 100, 100)]
+        )
+
+        top, left, bottom, right = (
+            color[0] if progress is None else tuple(int(c * progress) for c in color[1]) for color in colors
+        )
+
+        if progress:
+            progress = 1.0 - progress
+            bg = tuple(int(c * progress) for c in (0, 0, 0))
+
+        if bg is not None:
             self.draw_rect(
                 (x1, y1),
                 (x2, y2),
-                (255, 180, 255)
+                bg
             )
+
+        logo_color = (0, 0, 0) if progress is None else (0, 0, 50)
 
         if value == 15:
             self.draw_rect(
                 (x1, y1),
                 (x2, y2),
-                (0, 0, 0)
+                logo_color
             )
             return
 
@@ -78,26 +97,26 @@ class MazeDrawer(Drawer):
             self.draw_rect(
                 (x1, y1),
                 (x2, y1 + self.wall_width),
-                (55, 15, 180)
+                top
             )
 
         if value & 2:
             self.draw_rect(
                 (x2 - self.wall_width, y1),
                 (x2, y2),
-                (65, 25, 195)
+                left
             )
 
         if value & 4:
             self.draw_rect(
                 (x1, y2 - self.wall_width),
                 (x2, y2),
-                (255, 240, 0)
+                bottom
             )
 
         if value & 8:
             self.draw_rect(
                 (x1, y1),
                 (x1 + self.wall_width, y2),
-                (255, 255, 0)
+                right
             )

@@ -49,7 +49,6 @@ class Monitor:
         self.pacman_frame = PacManDrawer(
             (w, h - self.header), self.game.level.maze, self.timer
         )
-        self.pacman_frame.draw_maze()
 
     def new_game(self) -> None:
         self.scorer.save(self.game.player_state)
