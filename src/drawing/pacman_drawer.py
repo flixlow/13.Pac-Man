@@ -66,6 +66,20 @@ class PacManDrawer(MazeDrawer):
 
         PacManDrawer.update_size(self, size)
 
+    @staticmethod
+    def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
+        animation_progress = getattr(entity, "animation_elapsed_ms", elapsed)
+        progress = min(
+            animation_progress / max(1, entity.movement_interval_ms),
+            1.0,
+        )
+        start_x, start_y = entity.previous_coords
+        end_x, end_y = entity.coords
+        return (
+            start_x + (end_x - start_x) * progress,
+            start_y + (end_y - start_y) * progress,
+        )
+
     def draw_maze(self):
         target_color = (150, 150, 150)
         elapsed = self.timer.crazy_mode_elapsed_time
@@ -84,22 +98,9 @@ class PacManDrawer(MazeDrawer):
         for y in range(self.maze_height):
             for x in range(self.maze_width):
                 self.draw_cell(
-                    self.maze[y][x], (x, y), bg, None if progress == 0 else progress
+                    self.maze[y][x], (x, y), bg, None
+                    if progress == 0 else progress
                 )
-
-    @staticmethod
-    def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
-        animation_progress = getattr(entity, "animation_elapsed_ms", elapsed)
-        progress = min(
-            animation_progress / max(1, entity.movement_interval_ms),
-            1.0,
-        )
-        start_x, start_y = entity.previous_coords
-        end_x, end_y = entity.coords
-        return (
-            start_x + (end_x - start_x) * progress,
-            start_y + (end_y - start_y) * progress,
-        )
 
     def draw_pacgum(self, cell: tuple[int, int], super: bool) -> None:
         x, y = cell

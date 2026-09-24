@@ -76,9 +76,13 @@ class MazeDrawer(Drawer):
             for color in colors
         )
 
-        if progress:
+        if progress is not None:
             progress = 1.0 - progress
-            bg = tuple(int(c * progress) for c in (0, 0, 0))
+            bg = (
+                int(theme.MAZE_BG.value[0] * progress),
+                int(theme.MAZE_BG.value[1] * progress),
+                int(theme.MAZE_BG.value[2] * progress),
+            )
 
         if bg is not None:
             self.draw_rect(
