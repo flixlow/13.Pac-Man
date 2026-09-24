@@ -15,6 +15,7 @@ class PacManDrawer(MazeDrawer):
 
         self.fruit_n = choice([0, 1, 2])
         self.timer = t
+        self.last_pacman_direction: Direction = Direction.START
 
         self.ghosts_img_copy = {
             GhostColor.RED: [pygame.image.load(
@@ -201,21 +202,30 @@ class PacManDrawer(MazeDrawer):
         if n > 4:
             n = 8 - n
 
-        match direction:
-            case Direction.NORTH:
-                self.pacman_img = self._rotate(self.pacman_img_copy, 1)
-            case Direction.WEST:
-                self.pacman_img = self._rotate(self.pacman_img_copy, 2)
-            case Direction.SOUTH:
-                self.pacman_img = self._rotate(self.pacman_img_copy, 3)
+        if direction != self.last_pacman_direction:
+            match direction:
+                case Direction.NORTH:
+                    self.pacman_img = self._rotate_and_scale(self.pacman_img_copy, 1)
+                case Direction.WEST:
+                    self.pacman_img = self._rotate_and_scale(self.pacman_img_copy, 2)
+                case Direction.SOUTH:
+                    self.pacman_img = self._rotate_and_scale(self.pacman_img_copy, 3)
+                case Direction.EAST:
+                    self.pacman_img = self._rotate_and_scale(self.pacman_img_copy, 4)
 
         self.put_image((x1, y1), self.pacman_img[n])
 
-    def _rotate(self, img_set: list[pygame.Surface], n: int) -> list[pygame.Surface]:
+    def _rotate_and_scale(
+            self, img_set: list[pygame.Surface],
+            n: int) -> list[pygame.Surface]:
         return [
-            pygame.transform.rotate(img, 90 * n) for img in img_set
+            pygame.transform.scale(
+                rotated,
+                (self.cell_size * 0.8, self.cell_size * 0.8)
+            ) for rotated in (
+                pygame.transform.rotate(img, 90 * n)
+                for img in img_set)
         ]
-
 
     def update_size(self, new_size: tuple[int, int]) -> None:
         super().update_size(new_size)
