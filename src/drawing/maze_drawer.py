@@ -1,5 +1,6 @@
 from .basic_drawer import Drawer
 from ..engine.maze import Maze
+from ..color_utils import theme
 
 
 class MazeDrawer(Drawer):
@@ -40,7 +41,7 @@ class MazeDrawer(Drawer):
         Render the full maze grid, including start and end cells.
         """
 
-        self.fill((30, 30, 30))
+        self.fill(theme.MAZE_BG.value)
 
         for y in range(self.maze_height):
             for x in range(self.maze_width):
@@ -59,18 +60,11 @@ class MazeDrawer(Drawer):
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
 
-        if bg:
-            self.draw_rect(
-                (x1, y1),
-                (x2, y2),
-                (255, 180, 255)
-            )
-
         if value == 15:
             self.draw_rect(
                 (x1, y1),
                 (x2, y2),
-                (0, 0, 0)
+                theme.FOURTY_TWO.value
             )
             return
 
@@ -78,26 +72,26 @@ class MazeDrawer(Drawer):
             self.draw_rect(
                 (x1, y1),
                 (x2, y1 + self.wall_width),
-                (55, 15, 180)
+                theme.NORTH.value
             )
 
         if value & 2:
             self.draw_rect(
                 (x2 - self.wall_width, y1),
                 (x2, y2),
-                (65, 25, 195)
+                theme.WEST.value
             )
 
         if value & 4:
             self.draw_rect(
                 (x1, y2 - self.wall_width),
                 (x2, y2),
-                (255, 240, 0)
+                theme.SOUTH.value
             )
 
         if value & 8:
             self.draw_rect(
                 (x1, y1),
                 (x1 + self.wall_width, y2),
-                (255, 255, 0)
+                theme.EAST.value
             )

@@ -5,6 +5,7 @@ from .maze import Maze
 from ..scorer import Scorer
 from .game import PacmanGame
 from ..main_menu import Menu
+from ..color_utils import theme
 from ..parsing import parsing, Config
 from ..utils import State, KEY_DIRECTION, Timer
 from ..drawing.pacman_drawer import PacManDrawer
@@ -35,7 +36,7 @@ class Monitor:
         w, h = self.screen_size
         self.header: int = h // 5
         self.header_img = Drawer((w, h // 5))
-        self.header_img.fill((255, 255, 255))
+        self.header_img.fill(theme.TITLE_BG.value)
 
         self.menu = Menu((w, h - self.header), self.scorer)
         self.menu.set_screen_origin((0, self.header))
@@ -65,6 +66,7 @@ class Monitor:
                     self.running = False
                     return
                 self.state = State.MAIN_MENU
+
             if event.key == pygame.K_SPACE:
                 if self.state is State.MAIN_MENU:
                     self.state = State.PACMAN
@@ -84,6 +86,8 @@ class Monitor:
                 self.state = State.PACMAN
         if 1 in pressed:
             pass
+        if 2 in pressed:
+            theme.cycle()
         if 3 in pressed:
             self.running = False
 
@@ -104,7 +108,7 @@ class Monitor:
                 self.menu.draw_menu()
 
             self.header_img.update_size((w, self.header))
-            self.header_img.fill((255, 255, 255))
+            self.header_img.fill(theme.TITLE_BG.value)
 
     def check_events(self) -> None:
         for event in pygame.event.get():

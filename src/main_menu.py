@@ -1,4 +1,5 @@
 from .drawing.basic_drawer import Drawer
+from .color_utils import theme
 from .scorer import Scorer
 from .button import Button
 
@@ -32,7 +33,7 @@ class Menu:
         self.draw_menu()
 
     def draw_menu(self) -> None:
-        self.frame.fill((230, 200, 15))
+        self.frame.fill(theme.MENU_BG.value)
         self.render_leaderboard()
         self.print_leaderboard()
         self.print_buttons()
@@ -70,11 +71,11 @@ class Menu:
                 key = key[:15] + "..."
 
             user = self.font_name.render(
-                f"{i + 1}: {key}   ", True, (255, 255, 255)
+                f"{i + 1}: {key}   ", True, theme.USERNAME.value
             )
 
             score = self.font_name.render(
-                f"{value}", True, (255, 255, 0)
+                f"{value}", True, theme.SCORE.value
             )
 
             self.max_width_user = max(self.max_width_user, user.get_width())
@@ -90,7 +91,7 @@ class Menu:
 
     def print_leaderboard(self) -> None:
         w, h = self.frame.size
-        self.frame.draw_rect((0, 0), (w // 2, h), (50, 75, 150))
+        self.frame.draw_rect((0, 0), (w // 2, h), theme.HIGHSCORE_BG.value)
 
         px, py = self.frame.size
         ox, oy = (

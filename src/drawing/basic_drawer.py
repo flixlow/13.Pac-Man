@@ -1,5 +1,7 @@
 import pygame
 
+from ..color_utils import theme
+
 
 class Drawer:
     def __init__(self, size: tuple[int, int]) -> None:
@@ -67,9 +69,9 @@ def print_life(
 def print_title(frame: Drawer):
     w, h = frame.size
     title_font = pygame.font.Font("assets/font/title.otf", h // 2)
-    rendered_title = title_font.render(
-        "PAC-MAN", True, (0, 0, 0)
-    )
+
+    rendered_title = title_font.render("PAC-MAN", True, theme.TITLE.value)
+
     w_text, h_text = rendered_title.get_size()
     frame.surface.blit(
         rendered_title,

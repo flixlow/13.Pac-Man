@@ -2,11 +2,11 @@
 import pygame
 from random import choice
 
-from .maze_drawer import MazeDrawer
-from ..utils import GhostColor, Parameters
 from ..engine.maze import Maze
 from ..entity import Ghost, Entity
-from ..utils import Direction, Timer
+from .maze_drawer import MazeDrawer
+from ..color_utils import theme
+from ..utils import GhostColor, Parameters, Direction, Timer
 
 
 class PacManDrawer(MazeDrawer):
@@ -103,7 +103,7 @@ class PacManDrawer(MazeDrawer):
             self.draw_rect(
                 (xc - self.cell_size // 15, yc - self.cell_size // 15 + diff),
                 (xc + self.cell_size // 15, yc + self.cell_size // 15 + diff),
-                (255, 255, 255)
+                theme.PACGUM.value
             )
 
     def draw_multiple_pacgums(
