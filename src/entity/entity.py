@@ -14,7 +14,7 @@ class Entity(ABC):
         self.maze: Maze = maze
         self.crazy_mode: bool = False
         self.animation_elapsed_ms: int = 0
-        self.player_move_elapsed_ms: int = 0
+        self.entity_move_elapsed_ms: int = 0
         self.coords: tuple[int, int] = coords
         self.previous_coords: tuple[int, int] = coords
         self.starting_coords: tuple[int, int] = coords
@@ -43,10 +43,10 @@ class Entity(ABC):
                 return Direction.START
 
     def can_it_move(self) -> bool:
-        self.player_move_elapsed_ms += self.timer.elapsed_time
+        self.entity_move_elapsed_ms += self.timer.elapsed_time
 
-        if self.player_move_elapsed_ms < self.movement_interval_ms:
+        if self.entity_move_elapsed_ms < self.movement_interval_ms:
             return False
 
-        self.player_move_elapsed_ms -= self.movement_interval_ms
+        self.entity_move_elapsed_ms -= self.movement_interval_ms
         return True

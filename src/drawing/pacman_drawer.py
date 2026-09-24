@@ -123,10 +123,8 @@ class PacManDrawer(MazeDrawer):
             if isinstance(e, Ghost):
                 if not e.is_alive:
                     continue
-                if e.crazy_mode:
-                    color = GhostColor.CRAZY
-                else:
-                    color = e.color
+
+                color = GhostColor.CRAZY if e.crazy_mode else e.color
                 params = (PacManDrawer.render_coords(elapsed_t, e), color)
                 self.draw_ghost(*params, direction)
             else:

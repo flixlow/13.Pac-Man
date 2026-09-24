@@ -7,6 +7,14 @@ from ..utils import Direction, Timer
 from ..entity import Entity, Ghost, Player, Blue, Red, Pink, Orange, Secret
 
 
+OPPOSITE = {
+    Direction.NORTH: Direction.SOUTH,
+    Direction.SOUTH: Direction.NORTH,
+    Direction.EAST: Direction.WEST,
+    Direction.WEST: Direction.EAST
+}
+
+
 class Level:
     def __init__(self, maze: Maze, t: Timer) -> None:
         self.maze: Maze = maze
@@ -29,7 +37,7 @@ class Level:
                 self.pacgums.add((x, y))
 
     def _init_ghosts(self) -> None:
-        ghost_classes: list[Callable] = [Secret, Secret, Secret, Secret]
+        ghost_classes: list[Callable] = [Blue, Red, Orange, Pink]
 
         shuffle(ghost_classes)
 
@@ -54,20 +62,24 @@ class Level:
         self._init_player()
         self._init_ghosts()
 
-    def change_direction(self, direction: Direction) -> None:
-        self.player.next_direction = direction
-
     def set_crazy_mode(self, status: bool) -> None:
         self.on_crazy_mode = status
 
         for e in self.entities:
             e.crazy_mode = status
 
+    def change_direction(self, new_direction: Direction) -> None:
+        if self.player.direction != Direction.START\
+                and OPPOSITE.get(self.player.direction) == new_direction:
+            self.player.reverse(new_direction)
+        else:
+            self.player.next_direction = new_direction
+
     def check_crazy_mode(self) -> None:
         if self.on_crazy_mode is True:
-            self.timer.crazy_mode_period += self.timer.elapsed_time
-            if self.timer.crazy_mode_period >= 5000:
-                self.timer.crazy_mode_period = 0
+            self.timer.crazy_mode_elapsed_time += self.timer.elapsed_time
+            if self.timer.crazy_mode_elapsed_time >= 5000:
+                self.timer.crazy_mode_elapsed_time = 0
                 self.set_crazy_mode(False)
 
     def check_collision(self) -> None:
@@ -85,7 +97,7 @@ class Level:
         if self.player.coords in self.pacgums:
             if self.player.coords in self.maze.corners:
                 self.set_crazy_mode(True)
-                self.timer.crazy_mode_period = 0
+                self.timer.crazy_mode_elapsed_time = 0
                 self.score += 200
             else:
                 self.score += 20
