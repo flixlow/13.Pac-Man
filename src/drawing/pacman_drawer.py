@@ -128,7 +128,9 @@ class PacManDrawer(MazeDrawer):
                 params = (PacManDrawer.render_coords(elapsed_t, e), color)
                 self.draw_ghost(*params, direction)
             else:
-                self.draw_pacman(PacManDrawer.render_coords(elapsed_t, e))
+                self.draw_pacman(
+                    PacManDrawer.render_coords(elapsed_t, e), direction
+                )
 
     def update_animation(self, elapsed_ms: int) -> None:
         self.animation_elapsed_ms = min(

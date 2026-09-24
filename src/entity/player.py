@@ -8,6 +8,9 @@ class Player(Entity):
     next_direction: Direction = Direction.START
     default_velocity: int = Parameters.PLAYER_VELOCITY
 
+    def get_direction(self) -> Direction:
+        return self.direction
+
     def is_wall_here(self, direction: Direction) -> bool:
         cell = self.maze.get_cell_walls(*self.coords)
         return bool(cell & direction.value)
