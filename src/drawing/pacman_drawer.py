@@ -66,6 +66,27 @@ class PacManDrawer(MazeDrawer):
 
         PacManDrawer.update_size(self, size)
 
+    def draw_maze(self):
+        target_color = (150, 150, 150)
+        elapsed = self.timer.crazy_mode_elapsed_time
+
+        progress = elapsed % 1250 / 1250
+        if progress > 0.5:
+            progress = 1.0 - progress
+
+        if progress:
+            self.fill(tuple(int(c * progress) for c in target_color))
+            bg = (255, 0, 0)
+        else:
+            self.fill((0, 0, 0))
+            bg = None
+
+        for y in range(self.maze_height):
+            for x in range(self.maze_width):
+                self.draw_cell(
+                    self.maze[y][x], (x, y), bg, None if progress == 0 else progress
+                )
+
     @staticmethod
     def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
         animation_progress = getattr(entity, "animation_elapsed_ms", elapsed)
@@ -233,6 +254,7 @@ class PacManDrawer(MazeDrawer):
 
     def update_size(self, new_size: tuple[int, int]) -> None:
         super().update_size(new_size)
+        w, h = new_size
 
         for color, images in self.ghosts_img.items():
             lst = []
@@ -250,11 +272,11 @@ class PacManDrawer(MazeDrawer):
         ]
 
         self.alive = pygame.transform.scale(
-            self.alive_copy, (self.cell_size, self.cell_size)
+            self.alive_copy, (h // 10, h // 10)
         )
 
         self.dead = pygame.transform.scale(
-            self.dead_copy, (self.cell_size, self.cell_size)
+            self.dead_copy, (h // 10, h // 10)
         )
 
         self.fruit = [
