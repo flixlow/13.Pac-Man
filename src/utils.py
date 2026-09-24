@@ -26,8 +26,8 @@ class Paths:
 
 
 class Parameters:
-    PLAYER_VELOCITY = 6
-    GHOST_VELOCITY = 4
+    PLAYER_VELOCITY = 4
+    GHOST_VELOCITY = 2
 
 
 class PlayerState:

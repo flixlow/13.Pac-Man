@@ -110,11 +110,9 @@ class Level:
     def update(self) -> None:
         self.check_crazy_mode()
 
-        self.player.moving()
-
-        self.check_collision()
-
-        for g in self.ghosts:
-            g.moving()
+        for e in self.entities:
+            e.moving()
 
         self.is_pacgum_here()
+
+        self.check_collision()

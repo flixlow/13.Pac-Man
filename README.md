@@ -14,17 +14,18 @@ draft:
 [x] permettre d'inverser et de pouvoir manger les pacgums
 [x] crazy mode
 [x] animation eating pacman
-[ ] bug deplacement pas fluide
+[x] comment etablir le timer interne general
+[x] bug deplacement pas fluide
+[x] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir
+[x] bug new game si jamais le next level n'a plus de level
+[ ] bug vies lorsque le niveau change et la taille aussi
+[ ] AssetLoader
+[ ] animation teleportation
 [ ] displayer le score et le timer
 [ ] demander le nom du joueur en fin de partie
-[ ] {'felix': '45000', 'bcondemi': '5012', 'pablo': '10000', 'badge': 'felix'} : highscore can take only alphanumeric
-[ ] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir
+[ ] {'badge': 'felix'} : highscore can take only alphanumeric
 [ ] class Color pour les params
-[ ] bug new game si jamais le next level n'a plus de level
-[ ] comment etablir le timer interne general
 [ ] flag : --own_function for draw rectangle
-[ ] animation teleportation
-[ ] AssetLoader
 
 ![alt text](image.png)
 
