@@ -192,8 +192,8 @@ class PacManDrawer(MazeDrawer):
                     direction: Direction) -> None:
         x, y = cell
 
-        px = int(x * self.cell_size + self.offset_x + 0.1 * self.cell_size)
-        py = int(y * self.cell_size + self.offset_y + 0.1 * self.cell_size)
+        px = int(x * self.cell_size + self.offset_x + 0.05 * self.cell_size)
+        py = int(y * self.cell_size + self.offset_y + 0.05 * self.cell_size)
 
         x1, y1 = px, py
 
@@ -205,13 +205,17 @@ class PacManDrawer(MazeDrawer):
         if direction != self.last_pacman_direction:
             match direction:
                 case Direction.NORTH:
-                    self.pacman_img = self._rotate_and_scale(self.pacman_img_copy, 1)
+                    self.pacman_img = self._rotate_and_scale(
+                        self.pacman_img_copy, 1)
                 case Direction.WEST:
-                    self.pacman_img = self._rotate_and_scale(self.pacman_img_copy, 2)
+                    self.pacman_img = self._rotate_and_scale(
+                        self.pacman_img_copy, 2)
                 case Direction.SOUTH:
-                    self.pacman_img = self._rotate_and_scale(self.pacman_img_copy, 3)
+                    self.pacman_img = self._rotate_and_scale(
+                        self.pacman_img_copy, 3)
                 case Direction.EAST:
-                    self.pacman_img = self._rotate_and_scale(self.pacman_img_copy, 4)
+                    self.pacman_img = self._rotate_and_scale(
+                        self.pacman_img_copy, 4)
 
         self.put_image((x1, y1), self.pacman_img[n])
 
@@ -221,7 +225,7 @@ class PacManDrawer(MazeDrawer):
         return [
             pygame.transform.scale(
                 rotated,
-                (self.cell_size * 0.8, self.cell_size * 0.8)
+                (self.cell_size * 0.9, self.cell_size * 0.9)
             ) for rotated in (
                 pygame.transform.rotate(img, 90 * n)
                 for img in img_set)
@@ -241,7 +245,7 @@ class PacManDrawer(MazeDrawer):
 
         self.pacman_img = [
             pygame.transform.scale(
-                img, (self.cell_size * 0.8, self.cell_size * 0.8))
+                img, (self.cell_size * 0.9, self.cell_size * 0.9))
             for img in self.pacman_img
         ]
 
