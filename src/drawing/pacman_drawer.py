@@ -147,10 +147,17 @@ class PacManDrawer(MazeDrawer):
         is_jsp = self.timer.total_spend_time % 500 < 500 // 2
 
         if color is GhostColor.CRAZY:
+            offset = 0
+            if (
+                self.timer.crazy_mode_elapsed_time > 3000 and
+                (self.timer.crazy_mode_elapsed_time // 100) % 10 <= 5
+            ):
+                offset = 2
+
             if is_jsp:
-                img = self.ghosts_img[GhostColor.CRAZY][0]
+                img = self.ghosts_img[GhostColor.CRAZY][0 + offset]
             else:
-                img = self.ghosts_img[GhostColor.CRAZY][1]
+                img = self.ghosts_img[GhostColor.CRAZY][1 + offset]
         else:
             match direction:
                 case Direction.SOUTH:
@@ -178,7 +185,8 @@ class PacManDrawer(MazeDrawer):
 
         self.put_image((x1, y1), img)
 
-    def draw_pacman(self, cell: tuple[float, float]) -> None:
+    def draw_pacman(self, cell: tuple[float, float],
+                    direction: Direction) -> None:
         x, y = cell
 
         px = int(x * self.cell_size + self.offset_x + 0.1 * self.cell_size)
@@ -186,9 +194,26 @@ class PacManDrawer(MazeDrawer):
 
         x1, y1 = px, py
 
-        n = (self.timer.total_spend_time // 100) % 5
+        n = (self.timer.total_spend_time // 70) % 8
+
+        if n > 4:
+            n = 8 - n
+
+        match direction:
+            case Direction.NORTH:
+                self.pacman_img = self._rotate(self.pacman_img_copy, 1)
+            case Direction.WEST:
+                self.pacman_img = self._rotate(self.pacman_img_copy, 2)
+            case Direction.SOUTH:
+                self.pacman_img = self._rotate(self.pacman_img_copy, 3)
 
         self.put_image((x1, y1), self.pacman_img[n])
+
+    def _rotate(self, img_set: list[pygame.Surface], n: int) -> list[pygame.Surface]:
+        return [
+            pygame.transform.rotate(img, 90 * n) for img in img_set
+        ]
+
 
     def update_size(self, new_size: tuple[int, int]) -> None:
         super().update_size(new_size)
