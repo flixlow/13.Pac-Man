@@ -1,5 +1,6 @@
 from .basic_drawer import Drawer
 from ..engine.maze import Maze
+from ..color_utils import theme
 
 
 class MazeDrawer(Drawer):
@@ -39,7 +40,8 @@ class MazeDrawer(Drawer):
         """
         Render the full maze grid, including start and end cells.
         """
-        self.fill((30, 30, 30))
+
+        self.fill(theme.MAZE_BG.value)
 
         for y in range(self.maze_height):
             for x in range(self.maze_width):
