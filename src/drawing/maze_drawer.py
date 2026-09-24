@@ -64,14 +64,16 @@ class MazeDrawer(Drawer):
         x2, y2 = px + self.cell_size, py + self.cell_size
 
         colors = (
-            [(55, 15, 180), (255, 255, 255)],
-            [(65, 25, 195), (100, 100, 100)],
-            [(255, 240, 0), (255, 255, 255)],
-            [(255, 255, 0), (100, 100, 100)]
+            [theme.NORTH.value, (255, 255, 255)],
+            [theme.WEST.value, (100, 100, 100)],
+            [theme.SOUTH.value, (255, 255, 255)],
+            [theme.EAST.value, (100, 100, 100)]
         )
 
         top, left, bottom, right = (
-            color[0] if progress is None else tuple(int(c * progress) for c in color[1]) for color in colors
+            color[0] if progress is None
+            else tuple(int(c * progress) for c in color[1])
+            for color in colors
         )
 
         if progress:
@@ -84,8 +86,13 @@ class MazeDrawer(Drawer):
                 (x2, y2),
                 bg
             )
-
-        logo_color = (0, 0, 0) if progress is None else (0, 0, 50)
+        else:
+            self.draw_rect(
+                (x1, y1),
+                (x2, y2),
+                theme.MAZE_BG.value
+            )
+        logo_color = theme.FOURTY_TWO.value if progress is None else (0, 0, 50)
 
         if value == 15:
             self.draw_rect(

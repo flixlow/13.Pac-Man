@@ -121,6 +121,10 @@ class Monitor:
 
     def display(self) -> None:
 
+        self.header_img.fill(theme.TITLE_BG.value)
+
+        print_title(self.header_img)
+
         print_life(
             self.header_img, (0, 0),
             self.pacman_frame.alive.get_width(),
@@ -130,8 +134,6 @@ class Monitor:
         )
 
         self.screen.blit(self.header_img.surface, (0, 0))
-
-        print_title(self.header_img)
 
         if self.state is State.PACMAN:
             self.pacman_frame.draw_maze()

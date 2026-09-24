@@ -10,7 +10,7 @@ from pygame import Surface
 class Menu:
     def __init__(self, size, scorer: Scorer) -> None:
         self.frame = Drawer(size)
-        self.frame.fill((0, 125, 175))
+        # self.frame.fill((0, 0, 0))
         w, h = self.frame.size
 
         self.scorer: Scorer = scorer

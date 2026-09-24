@@ -78,7 +78,7 @@ class PacManDrawer(MazeDrawer):
             self.fill(tuple(int(c * progress) for c in target_color))
             bg = (255, 0, 0)
         else:
-            self.fill((0, 0, 0))
+            self.fill(theme.BACKGROUND.value)
             bg = None
 
         for y in range(self.maze_height):
