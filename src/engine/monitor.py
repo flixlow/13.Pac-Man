@@ -10,7 +10,7 @@ from ..parsing import parsing, Config
 from ..utils import State, KEY_DIRECTION, Timer
 from ..drawing.pacman_drawer import PacManDrawer
 from ..drawing.basic_drawer import Drawer, print_life, print_title
-from ..drawing.utils_drawing import PlayerFrame
+from ..drawing.utils_drawing import PlayerScore
 
 
 class Monitor:
@@ -43,7 +43,7 @@ class Monitor:
         self.menu.set_screen_origin((0, self.header))
         self.state = State.MAIN_MENU
 
-        self.player_frame = PlayerFrame((w, h - self.header))
+        self.player_frame = PlayerScore((w, h - self.header), self.timer)
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
@@ -66,7 +66,7 @@ class Monitor:
     def check_keydown(self, event: Any) -> None:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                if self.state == State.MAIN_MENU:
+                if self.state in (State.ENTER_YOUR_NAME, State.MAIN_MENU):
                     self.running = False
                     return
                 self.state = State.MAIN_MENU
@@ -114,6 +114,11 @@ class Monitor:
             if self.state is State.MAIN_MENU:
                 self.menu.draw_menu()
 
+            if self.state is State.ENTER_YOUR_NAME:
+                self.player_frame.frame.update_size((w, h - self.header))
+                self.player_frame.render()
+                self.check_alpha(event)
+
             self.header_img.update_size((w, self.header))
             self.header_img.fill(theme.TITLE_BG.value)
 
@@ -121,11 +126,35 @@ class Monitor:
         for event in pygame.event.get():
             self.check_exit(event)
 
+            if self.state == State.ENTER_YOUR_NAME:
+                self.check_alpha(event)
+
             self.check_keydown(event)
 
             self.update_size(event)
 
             self.check_buttons()
+
+    def check_alpha(self, event) -> None:
+        if event.type == pygame.KEYDOWN:
+            if pygame.K_a <= event.key <= pygame.K_z:
+                self.player_frame.jsp(event)
+
+            elif pygame.K_0 <= event.key <= pygame.K_9:
+                self.player_frame.jsp(event)
+
+            elif event.key in [
+                pygame.K_UP,
+                pygame.K_DOWN,
+                pygame.K_LEFT,
+                pygame.K_RIGHT,
+                pygame.K_BACKSPACE,
+                pygame.K_SPACE
+            ]:
+                self.player_frame.jsp(event)
+
+            else:
+                self.player_frame.jsp(None)
 
     def display(self) -> None:
 
@@ -176,6 +205,9 @@ class Monitor:
 
             self.counter_ending_animation = 0
 
+        if self.game.game_over or self.game.has_beaten_the_game:
+            self.state = State.ENTER_YOUR_NAME
+
     def main_loop(self) -> None:
 
         while self.running:
@@ -184,11 +216,13 @@ class Monitor:
 
             self.check_events()
 
-            if self.game.game_over or self.game.has_beaten_the_game:
-                print("ENTER YOUR NAME")
-
             if self.state is State.PACMAN:
                 self.game.running()
+
+            elif self.state is State.ENTER_YOUR_NAME:
+                self.player_frame.render()
+                self.screen.blit(
+                    self.player_frame.frame.surface, (0, self.header))
 
             self.ending_animation()
             self.display()

@@ -54,6 +54,7 @@ class Direction(Enum):
 
 
 class State(Enum):
+    ENTER_YOUR_NAME = auto()
     MAIN_MENU = auto()
     PACMAN = auto()
     PAUSE = auto()
