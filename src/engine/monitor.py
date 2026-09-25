@@ -56,6 +56,8 @@ class Monitor:
 
     def new_game(self) -> None:
         self.scorer.save(self.game.player_state)
+        self.game = PacmanGame(self.config, self.mazes, self.timer)
+        self.game.new_game()
 
     def check_exit(self, event: Any) -> None:
         if event.type == pygame.QUIT:
@@ -181,6 +183,9 @@ class Monitor:
             self.timer.tick(self.clock)
 
             self.check_events()
+
+            if self.game.game_over or self.game.has_beaten_the_game:
+                print("ENTER YOUR NAME")
 
             if self.state is State.PACMAN:
                 self.game.running()
