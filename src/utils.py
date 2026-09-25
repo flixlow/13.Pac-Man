@@ -56,6 +56,7 @@ class Direction(Enum):
 class DisplayState(Enum):
     PRESS_SPACE_TO_RESUME = auto()
     ENTER_YOUR_NAME = auto()
+    GAME_OVER = auto() # ici
     IN_GAME = auto()
     MENU = auto()
 

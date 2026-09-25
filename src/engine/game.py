@@ -9,6 +9,7 @@ from ..utils import PlayerState, Timer
 
 
 class GameState(Enum):
+    DISPLAY = auto()
     START_NEW_GAME = auto()
     IN_GAME = auto()
     PAUSE = auto()

@@ -98,12 +98,15 @@ class Monitor:
                 if self.state == DisplayState.MENU:
                     self.game.state = GameState.IN_GAME
 
-                if self.state == DisplayState.PRESS_SPACE_TO_RESUME:
+                elif self.state == DisplayState.PRESS_SPACE_TO_RESUME:
                     self.game.state = GameState.IN_GAME
 
-                if self.state == DisplayState.ENTER_YOUR_NAME:
+                elif self.state == DisplayState.ENTER_YOUR_NAME:
                     self.state = DisplayState.MENU
                     self.game._init_new_game()
+
+                elif self.state == DisplayState.GAME_OVER:
+                    self.state = DisplayState.ENTER_YOUR_NAME
 
             elif self.state == DisplayState.IN_GAME\
                     and event.key in KEY_DIRECTION:
@@ -192,22 +195,30 @@ class Monitor:
 
     def display_press_to_resume(self) -> None:
         self.display_game()
+        print("Press space to restart !")
+
+    def display_game_over(self) -> None:
+        print("GAME OOOOOOVEEEERRRRRRRR...")
 
     def display_state(self) -> None:
 
         self.display_header()
 
-        if self.state is DisplayState.IN_GAME:
-            self.display_game()
+        match self.state:
+            case DisplayState.IN_GAME:
+                self.display_game()
 
-        if self.state is DisplayState.MENU:
-            self.display_menu()
+            case DisplayState.MENU:
+                self.display_menu()
 
-        if self.state is DisplayState.ENTER_YOUR_NAME:
-            self.display_enter_your_name()
+            case DisplayState.ENTER_YOUR_NAME:
+                self.display_enter_your_name()
 
-        if self.state is DisplayState.PRESS_SPACE_TO_RESUME:
-            self.display_press_to_resume()
+            case DisplayState.PRESS_SPACE_TO_RESUME:
+                self.display_press_to_resume()
+
+            case DisplayState.GAME_OVER:
+                self.display_game_over()
 
         pygame.display.flip()
 
@@ -228,20 +239,24 @@ class Monitor:
 
     def check_game_state(self) -> None:
         match self.game.state:
+
             case GameState.IN_GAME:
                 self.state = DisplayState.IN_GAME
-            case GameState.START_NEW_GAME:
+
+            case GameState.START_NEW_GAME | GameState.PAUSE:
                 self.state = DisplayState.MENU
-            case GameState.PAUSE:
-                self.state = DisplayState.MENU
-            case GameState.HAS_LOSE_A_LIFE:
+
+            case GameState.HAS_LOSE_A_LIFE | GameState.HAS_COMPLETED_LEVEL:
                 self.state = DisplayState.PRESS_SPACE_TO_RESUME
-            case GameState.HAS_COMPLETED_LEVEL:
-                self.state = DisplayState.PRESS_SPACE_TO_RESUME
+
             case GameState.GAME_OVER:
-                self.state = DisplayState.ENTER_YOUR_NAME
+                self.state = DisplayState.GAME_OVER
+
             case GameState.HAS_BEATEN_THE_GAME:
                 self.state = DisplayState.ENTER_YOUR_NAME
+
+            case GameState.DISPLAY:
+                ...
 
     def main_loop(self) -> None:
         while self.running:
@@ -257,7 +272,5 @@ class Monitor:
             self.display_state()
 
             self.ending_animation()
-
-            # print(f'{self.state}: {self.game.state}')
 
         pygame.quit()

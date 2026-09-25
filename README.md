@@ -19,13 +19,16 @@ draft:
 [x] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir
 [x] bug new game si jamais le next level n'a plus de level
 [x] bug vies lorsque le niveau change et la taille aussi
-[ ] bug fin d'animation
+[x] demander le nom du joueur en fin de partie
+[x] class Color pour les params
+[x] displayer le score
+[ ] revoir la facon de stocker les color classes
 [ ] AssetLoader
+[ ] bug fin d'animation
 [ ] animation teleportation
-[ ] displayer le score et le timer
-[ ] demander le nom du joueur en fin de partie
+[ ] displayer le timer
+[ ] game over screen
 [ ] {'badge': 'felix'} : highscore can take only alphanumeric
-[ ] class Color pour les params
 [ ] flag : --own_function for draw rectangle
 
 ![alt text](image.png)
