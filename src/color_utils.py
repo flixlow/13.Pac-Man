@@ -194,4 +194,4 @@ class Theme:
         return self._palette[attr]
 
 
-theme = Theme("backroom")
+theme = Theme("neon")

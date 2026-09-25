@@ -18,7 +18,8 @@ draft:
 [x] bug deplacement pas fluide
 [x] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir
 [x] bug new game si jamais le next level n'a plus de level
-[ ] bug vies lorsque le niveau change et la taille aussi
+[x] bug vies lorsque le niveau change et la taille aussi
+[ ] bug fin d'animation
 [ ] AssetLoader
 [ ] animation teleportation
 [ ] displayer le score et le timer

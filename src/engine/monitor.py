@@ -60,6 +60,34 @@ class Monitor:
                 event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.running = False
 
+    def check_alpha(self, event) -> None:
+        if self.state != DisplayState.ENTER_YOUR_NAME:
+            return
+        if event.type == pygame.KEYDOWN:
+            if pygame.K_a <= event.key <= pygame.K_z:
+                self.player_frame.jsp(event)
+
+            elif pygame.K_0 <= event.key <= pygame.K_9:
+                self.player_frame.jsp(event)
+
+            elif event.key in [
+                pygame.K_UP,
+                pygame.K_DOWN,
+                pygame.K_LEFT,
+                pygame.K_RIGHT,
+                pygame.K_BACKSPACE,
+                pygame.K_SPACE
+            ]:
+                self.player_frame.jsp(event)
+
+            elif event.key is pygame.K_RETURN:
+                self.game.player_state.name = "".join(self.player_frame.name)
+                self.scorer.save(self.game.player_state)
+                self.game._init_new_game()
+
+            else:
+                self.player_frame.jsp(None)
+
     def check_keydown(self, event: Any) -> None:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -125,29 +153,6 @@ class Monitor:
 
             self.check_buttons()
 
-    def check_alpha(self, event) -> None:
-        if self.state != DisplayState.ENTER_YOUR_NAME:
-            return
-        if event.type == pygame.KEYDOWN:
-            if pygame.K_a <= event.key <= pygame.K_z:
-                self.player_frame.jsp(event)
-
-            elif pygame.K_0 <= event.key <= pygame.K_9:
-                self.player_frame.jsp(event)
-
-            elif event.key in [
-                pygame.K_UP,
-                pygame.K_DOWN,
-                pygame.K_LEFT,
-                pygame.K_RIGHT,
-                pygame.K_BACKSPACE,
-                pygame.K_SPACE
-            ]:
-                self.player_frame.jsp(event)
-
-            else:
-                self.player_frame.jsp(None)
-
     def display_header(self) -> None:
         self.header_img.fill(theme.TITLE_BG.value)
 
@@ -181,6 +186,13 @@ class Monitor:
 
         self.screen.blit(self.menu.frame.surface, (0, self.header))
 
+    def display_enter_your_name(self) -> None:
+        self.player_frame.render()
+        self.screen.blit(self.player_frame.frame.surface, (0, self.header))
+
+    def display_press_to_resume(self) -> None:
+        self.display_game()
+
     def display_state(self) -> None:
 
         self.display_header()
@@ -192,8 +204,10 @@ class Monitor:
             self.display_menu()
 
         if self.state is DisplayState.ENTER_YOUR_NAME:
-            self.player_frame.render()
-            self.screen.blit(self.player_frame.frame.surface, (0, self.header))
+            self.display_enter_your_name()
+
+        if self.state is DisplayState.PRESS_SPACE_TO_RESUME:
+            self.display_press_to_resume()
 
         pygame.display.flip()
 
@@ -244,6 +258,6 @@ class Monitor:
 
             self.ending_animation()
 
-            print(f'{self.state}: {self.game.state}')
+            # print(f'{self.state}: {self.game.state}')
 
         pygame.quit()
