@@ -12,6 +12,7 @@ class PacmanGame:
         self.config: Config = config
         self.mazes: list[Maze] = mazes
         self.game_over: bool = False
+        self.has_beaten_the_game: bool = False
         self.timer = t
 
     def new_game(self) -> None:
@@ -23,7 +24,7 @@ class PacmanGame:
         try:
             self.level = Level(next(self.maze_interator), self.timer)
         except StopIteration:
-            self.new_game()
+            self.has_beaten_the_game = True
 
     def save_level_score(self) -> None:
         self.player_state.score += self.level.score
@@ -44,6 +45,7 @@ class PacmanGame:
             self.save_level_score()
             self.enter_your_name()
             self.new_game()
+            self.game_over = True
             return State.MAIN_MENU
 
         return State.PAUSE
