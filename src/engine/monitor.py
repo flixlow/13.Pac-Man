@@ -10,6 +10,7 @@ from ..parsing import parsing, Config
 from ..utils import State, KEY_DIRECTION, Timer
 from ..drawing.pacman_drawer import PacManDrawer
 from ..drawing.basic_drawer import Drawer, print_life, print_title
+from ..drawing.utils_drawing import PlayerFrame
 
 
 class Monitor:
@@ -42,6 +43,8 @@ class Monitor:
         self.menu.set_screen_origin((0, self.header))
         self.state = State.MAIN_MENU
 
+        self.player_frame = PlayerFrame((w, h - self.header))
+
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
             self.screen_size, pygame.RESIZABLE
@@ -73,6 +76,9 @@ class Monitor:
                 if self.state is State.PAUSE:
                     self.game.level._init_entities()
                     self.state = State.PACMAN
+
+                if self.game.game_over:
+                    print("GAME OVER")
 
             elif self.state != State.PAUSE and event.key in KEY_DIRECTION:
                 self.game.level.change_direction(KEY_DIRECTION[event.key])
