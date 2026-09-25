@@ -1,6 +1,6 @@
 
 from enum import Enum, auto
-from pygame import K_UP, K_w, K_RIGHT, K_d, K_DOWN, K_s, K_LEFT, K_a
+from pygame import K_UP, K_w, K_RIGHT, K_d, K_DOWN, K_s, K_LEFT, K_a, time
 
 
 class Timer:
@@ -9,7 +9,7 @@ class Timer:
         self.total_spend_time = 0
         self.crazy_mode_elapsed_time = 0
 
-    def tick(self, clock):
+    def tick(self, clock: time.Clock) -> None:
         self.elapsed_time = clock.tick(60)
         self.total_spend_time += self.elapsed_time
 
@@ -53,12 +53,11 @@ class Direction(Enum):
     WEST = 8
 
 
-class State(Enum):
-    MAIN_MENU = auto()
-    PACMAN = auto()
-    PAUSE = auto()
-    SCORE = auto()
-    NEXT = auto()
+class DisplayState(Enum):
+    PRESS_SPACE_TO_RESUME = auto()
+    ENTER_YOUR_NAME = auto()
+    IN_GAME = auto()
+    MENU = auto()
 
 
 KEY_DIRECTION: dict[int, Direction] = {
