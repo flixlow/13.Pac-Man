@@ -117,8 +117,7 @@ class Monitor:
         for event in pygame.event.get():
             self.check_exit(event)
 
-            if self.state == State.ENTER_YOUR_NAME:
-                self.check_alpha(event)
+            self.check_alpha(event)
 
             self.check_keydown(event)
 
@@ -127,6 +126,8 @@ class Monitor:
             self.check_buttons()
 
     def check_alpha(self, event) -> None:
+        if self.state != DisplayState.ENTER_YOUR_NAME:
+            return
         if event.type == pygame.KEYDOWN:
             if pygame.K_a <= event.key <= pygame.K_z:
                 self.player_frame.jsp(event)
@@ -190,10 +191,15 @@ class Monitor:
         if self.state is DisplayState.MENU:
             self.display_menu()
 
+        if self.state is DisplayState.ENTER_YOUR_NAME:
+            self.player_frame.render()
+            self.screen.blit(self.player_frame.frame.surface, (0, self.header))
+
         pygame.display.flip()
 
     def ending_animation(self) -> None:
-        if self.game.state in {GameState.HAS_LOSE_A_LIFE, GameState.HAS_COMPLETED_LEVEL}:
+        if self.game.state\
+                in {GameState.HAS_LOSE_A_LIFE, GameState.HAS_COMPLETED_LEVEL}:
             self.counter_ending_animation += self.timer.elapsed_time
 
         if self.counter_ending_animation >= self.timer.elapsed_time:
@@ -202,7 +208,8 @@ class Monitor:
 
             self.counter_ending_animation = 0
 
-        if self.game.state in {GameState.GAME_OVER, GameState.HAS_BEATEN_THE_GAME}:
+        if self.game.state\
+                in {GameState.GAME_OVER, GameState.HAS_BEATEN_THE_GAME}:
             self.scorer.save(self.game.player_state)
 
     def check_game_state(self) -> None:
@@ -234,11 +241,6 @@ class Monitor:
             self.check_user_events()
 
             self.display_state()
-
-            elif self.state is State.ENTER_YOUR_NAME:
-                self.player_frame.render()
-                self.screen.blit(
-                    self.player_frame.frame.surface, (0, self.header))
 
             self.ending_animation()
 
