@@ -134,10 +134,12 @@ class PacManDrawer(MazeDrawer):
         for cell in cells:
             self.draw_pacgum(cell, super=super)
 
-    def display_entities(self, elapsed_t: int, entities: list[Entity]) -> None:
+    def draw_entities(self, entities: list[Entity]) -> None:
+        elapsed = self.timer.elapsed_time
+
         for e in entities:
             e.animation_elapsed_ms = min(
-                e.animation_elapsed_ms + elapsed_t,
+                e.animation_elapsed_ms + elapsed,
                 e.movement_interval_ms,
             )
 
@@ -148,16 +150,16 @@ class PacManDrawer(MazeDrawer):
                     continue
 
                 color = GhostColor.CRAZY if e.crazy_mode else e.color
-                params = (PacManDrawer.render_coords(elapsed_t, e), color)
+                params = (PacManDrawer.render_coords(elapsed, e), color)
                 self.draw_ghost(*params, direction)
             else:
                 self.draw_pacman(
-                    PacManDrawer.render_coords(elapsed_t, e), direction
+                    PacManDrawer.render_coords(elapsed, e), direction
                 )
 
-    def update_animation(self, elapsed_ms: int) -> None:
+    def update_animation(self) -> None:
         self.animation_elapsed_ms = min(
-            self.animation_elapsed_ms + elapsed_ms,
+            self.animation_elapsed_ms + self.timer.elapsed_time,
             self.movement_interval_ms,
         )
 

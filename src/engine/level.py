@@ -29,13 +29,13 @@ class Level:
 
     def _init_pacgums(self) -> None:
         self.pacgums: set[tuple[int, int]] = set()
+        self.super_pacgums: set[tuple[int, int]] = set(self.maze.corners)
 
         for x in range(self.maze.w):
             for y in range(self.maze.h):
                 if self.maze.maze_map[y][x] == 15:
                     continue
-                # self.pacgums.add((x, y))
-        self.pacgums.add((2, 2))
+                self.pacgums.add((x, y))
 
     def _init_ghosts(self) -> None:
         ghost_classes: list[Callable] = [Blue, Red, Orange, Pink]
@@ -97,9 +97,10 @@ class Level:
     def is_pacgum_here(self) -> None:
         if self.player.coords in self.pacgums:
             if self.player.coords in self.maze.corners:
+                self.score += 200
                 self.set_crazy_mode(True)
                 self.timer.crazy_mode_elapsed_time = 0
-                self.score += 200
+                self.super_pacgums.remove(self.player.coords)
             else:
                 self.score += 20
 

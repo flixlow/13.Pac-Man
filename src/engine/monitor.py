@@ -3,11 +3,11 @@ from typing import Any
 
 from .maze import Maze
 from ..scorer import Scorer
-from .game import PacmanGame
 from ..main_menu import Menu
 from ..color_utils import theme
 from ..parsing import parsing, Config
-from ..utils import State, KEY_DIRECTION, Timer
+from .game import PacmanGame, GameState
+from ..utils import DisplayState, KEY_DIRECTION, Timer
 from ..drawing.pacman_drawer import PacManDrawer
 from ..drawing.basic_drawer import Drawer, print_life, print_title
 from ..drawing.utils_drawing import PlayerScore
@@ -20,7 +20,6 @@ class Monitor:
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[Maze] = self.config.generate_all_maze()
         self.game: PacmanGame = PacmanGame(self.config, self.mazes, self.timer)
-        self.game.new_game()
 
         self._init_pygame()
         self.time: int = 0
@@ -41,7 +40,7 @@ class Monitor:
 
         self.menu = Menu((w, h - self.header), self.scorer)
         self.menu.set_screen_origin((0, self.header))
-        self.state = State.MAIN_MENU
+        self.state = DisplayState.MENU
 
         self.player_frame = PlayerScore((w, h - self.header), self.timer)
 
@@ -54,53 +53,38 @@ class Monitor:
             (w, h - self.header), self.game.level.maze, self.timer
         )
 
-    def new_game(self) -> None:
-        self.scorer.save(self.game.player_state)
-        self.game = PacmanGame(self.config, self.mazes, self.timer)
-        self.game.new_game()
-
     def check_exit(self, event: Any) -> None:
         if event.type == pygame.QUIT:
+            self.running = False
+        if self.state in {DisplayState.MENU, DisplayState.ENTER_YOUR_NAME} and\
+                event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.running = False
 
     def check_keydown(self, event: Any) -> None:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                if self.state in (State.ENTER_YOUR_NAME, State.MAIN_MENU):
-                    self.running = False
-                    return
-                self.state = State.MAIN_MENU
+                self.game.state = GameState.PAUSE
 
             if event.key == pygame.K_SPACE:
-                if self.state is State.MAIN_MENU:
-                    self.state = State.PACMAN
 
-                if self.state is State.PAUSE:
-                    self.game.level._init_entities()
-                    self.state = State.PACMAN
+                if self.state == DisplayState.MENU:
+                    self.game.state = GameState.IN_GAME
 
-                if self.game.game_over:
-                    print("GAME OVER")
+                if self.state == DisplayState.PRESS_SPACE_TO_RESUME:
+                    self.game.state = GameState.IN_GAME
 
-            elif self.state != State.PAUSE and event.key in KEY_DIRECTION:
+                if self.state == DisplayState.ENTER_YOUR_NAME:
+                    self.state = DisplayState.MENU
+                    self.game._init_new_game()
+
+            elif self.state == DisplayState.IN_GAME\
+                    and event.key in KEY_DIRECTION:
                 self.game.level.change_direction(KEY_DIRECTION[event.key])
 
-    def check_buttons(self) -> None:
-        pressed = self.menu.check_buttons()
-
-        if 0 in pressed:
-            if self.state is State.MAIN_MENU:
-                self.state = State.PACMAN
-        if 1 in pressed:
-            pass
-        if 2 in pressed:
-            theme.cycle()
-        if 3 in pressed:
-            self.running = False
-
-    def update_size(self, event: Any) -> None:
+    def check_resize(self, event: Any) -> None:
         if event.type == pygame.VIDEORESIZE:
             w, h = event.size
+
             self.screen_size = (w, h)
             self.header = h // 5
 
@@ -108,21 +92,28 @@ class Monitor:
             self.menu.frame.update_size((w, h - self.header))
             self.menu.update_size()
             self.menu.set_screen_origin((0, self.header))
-
-            self.pacman_frame.draw_maze()
-
-            if self.state is State.MAIN_MENU:
-                self.menu.draw_menu()
-
-            if self.state is State.ENTER_YOUR_NAME:
-                self.player_frame.frame.update_size((w, h - self.header))
-                self.player_frame.render()
-                self.check_alpha(event)
-
             self.header_img.update_size((w, self.header))
+
             self.header_img.fill(theme.TITLE_BG.value)
 
-    def check_events(self) -> None:
+    def check_buttons(self) -> None:
+        if self.state != DisplayState.MENU:
+            return
+
+        pressed = self.menu.check_buttons()
+
+        if 0 in pressed:
+            if self.state is DisplayState.MENU:
+                self.game.state = GameState.IN_GAME
+
+        if 1 in pressed:
+            pass
+        if 2 in pressed:
+            theme.cycle()
+        if 3 in pressed:
+            self.running = False
+
+    def check_user_events(self) -> None:
         for event in pygame.event.get():
             self.check_exit(event)
 
@@ -131,7 +122,7 @@ class Monitor:
 
             self.check_keydown(event)
 
-            self.update_size(event)
+            self.check_resize(event)
 
             self.check_buttons()
 
@@ -156,8 +147,7 @@ class Monitor:
             else:
                 self.player_frame.jsp(None)
 
-    def display(self) -> None:
-
+    def display_header(self) -> None:
         self.header_img.fill(theme.TITLE_BG.value)
 
         print_title(self.header_img)
@@ -172,52 +162,78 @@ class Monitor:
 
         self.screen.blit(self.header_img.surface, (0, 0))
 
-        if self.state is State.PACMAN:
-            self.pacman_frame.draw_maze()
+    def display_game(self) -> None:
+        level = self.game.level
 
-            super = set(
-                pg for pg in self.game.level.pacgums
-                if pg in self.game.level.maze.corners
-            )
-            self.pacman_frame.draw_multiple_pacgums(
-                super, super=True)
-            self.pacman_frame.draw_multiple_pacgums(
-                self.game.level.pacgums - super)
+        self.pacman_frame.draw_maze()
 
-            self.pacman_frame.display_entities(
-                self.timer.elapsed_time, self.game.level.entities)
-            self.screen.blit(self.pacman_frame.surface, (0, self.header))
+        self.pacman_frame.draw_multiple_pacgums(level.pacgums)
 
-        if self.state is State.MAIN_MENU:
-            self.menu.draw_menu()
-            self.screen.blit(self.menu.frame.surface, (0, self.header))
+        self.pacman_frame.draw_multiple_pacgums(level.super_pacgums, True)
+
+        self.pacman_frame.draw_entities(level.entities)
+
+        self.screen.blit(self.pacman_frame.surface, (0, self.header))
+
+    def display_menu(self) -> None:
+        self.menu.draw_menu()
+
+        self.screen.blit(self.menu.frame.surface, (0, self.header))
+
+    def display_state(self) -> None:
+
+        self.display_header()
+
+        if self.state is DisplayState.IN_GAME:
+            self.display_game()
+
+        if self.state is DisplayState.MENU:
+            self.display_menu()
 
         pygame.display.flip()
 
     def ending_animation(self) -> None:
-        if not self.game.level.player.is_alive or self.game.level.is_completed:
-            self.counter_ending_animation += 1
+        if self.game.state in {GameState.HAS_LOSE_A_LIFE, GameState.HAS_COMPLETED_LEVEL}:
+            self.counter_ending_animation += self.timer.elapsed_time
 
         if self.counter_ending_animation >= self.timer.elapsed_time:
-            self.state = self.game.ending_level()
 
             self.pacman_frame.update_maze(self.game.level.maze)
 
             self.counter_ending_animation = 0
 
-        if self.game.game_over or self.game.has_beaten_the_game:
-            self.state = State.ENTER_YOUR_NAME
+        if self.game.state in {GameState.GAME_OVER, GameState.HAS_BEATEN_THE_GAME}:
+            self.scorer.save(self.game.player_state)
+
+    def check_game_state(self) -> None:
+        match self.game.state:
+            case GameState.IN_GAME:
+                self.state = DisplayState.IN_GAME
+            case GameState.START_NEW_GAME:
+                self.state = DisplayState.MENU
+            case GameState.PAUSE:
+                self.state = DisplayState.MENU
+            case GameState.HAS_LOSE_A_LIFE:
+                self.state = DisplayState.PRESS_SPACE_TO_RESUME
+            case GameState.HAS_COMPLETED_LEVEL:
+                self.state = DisplayState.PRESS_SPACE_TO_RESUME
+            case GameState.GAME_OVER:
+                self.state = DisplayState.ENTER_YOUR_NAME
+            case GameState.HAS_BEATEN_THE_GAME:
+                self.state = DisplayState.ENTER_YOUR_NAME
 
     def main_loop(self) -> None:
-
         while self.running:
 
             self.timer.tick(self.clock)
 
-            self.check_events()
+            self.game.running()
 
-            if self.state is State.PACMAN:
-                self.game.running()
+            self.check_game_state()
+
+            self.check_user_events()
+
+            self.display_state()
 
             elif self.state is State.ENTER_YOUR_NAME:
                 self.player_frame.render()
@@ -225,6 +241,7 @@ class Monitor:
                     self.player_frame.frame.surface, (0, self.header))
 
             self.ending_animation()
-            self.display()
+
+            print(f'{self.state}: {self.game.state}')
 
         pygame.quit()
