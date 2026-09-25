@@ -10,6 +10,7 @@ from .game import PacmanGame, GameState
 from ..utils import DisplayState, KEY_DIRECTION, Timer
 from ..drawing.pacman_drawer import PacManDrawer
 from ..drawing.basic_drawer import Drawer, print_life, print_title
+from ..drawing.utils_drawing import PlayerScore
 
 
 class Monitor:
@@ -41,6 +42,8 @@ class Monitor:
         self.menu.set_screen_origin((0, self.header))
         self.state = DisplayState.MENU
 
+        self.player_frame = PlayerScore((w, h - self.header), self.timer)
+
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
             self.screen_size, pygame.RESIZABLE
@@ -53,7 +56,7 @@ class Monitor:
     def check_exit(self, event: Any) -> None:
         if event.type == pygame.QUIT:
             self.running = False
-        if self.state == DisplayState.MENU and\
+        if self.state in {DisplayState.MENU, DisplayState.ENTER_YOUR_NAME} and\
                 event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.running = False
 
@@ -114,11 +117,35 @@ class Monitor:
         for event in pygame.event.get():
             self.check_exit(event)
 
+            if self.state == State.ENTER_YOUR_NAME:
+                self.check_alpha(event)
+
             self.check_keydown(event)
 
             self.check_resize(event)
 
             self.check_buttons()
+
+    def check_alpha(self, event) -> None:
+        if event.type == pygame.KEYDOWN:
+            if pygame.K_a <= event.key <= pygame.K_z:
+                self.player_frame.jsp(event)
+
+            elif pygame.K_0 <= event.key <= pygame.K_9:
+                self.player_frame.jsp(event)
+
+            elif event.key in [
+                pygame.K_UP,
+                pygame.K_DOWN,
+                pygame.K_LEFT,
+                pygame.K_RIGHT,
+                pygame.K_BACKSPACE,
+                pygame.K_SPACE
+            ]:
+                self.player_frame.jsp(event)
+
+            else:
+                self.player_frame.jsp(None)
 
     def display_header(self) -> None:
         self.header_img.fill(theme.TITLE_BG.value)
@@ -207,6 +234,11 @@ class Monitor:
             self.check_user_events()
 
             self.display_state()
+
+            elif self.state is State.ENTER_YOUR_NAME:
+                self.player_frame.render()
+                self.screen.blit(
+                    self.player_frame.frame.surface, (0, self.header))
 
             self.ending_animation()
 
