@@ -25,10 +25,6 @@ class Menu:
 
         self.buttons = [self.play_button, self.settings, self.clic, self.exit]
 
-        self.button = pygame.image.load(
-            "assets/button/button.png")
-        self.button_pressed = pygame.image.load(
-            "assets/button/button_pressed.png")
         self.update_size()
         self.draw_menu()
 
@@ -54,17 +50,17 @@ class Menu:
             button.set_screen_origin(origin)
 
     def render_leaderboard(self) -> None:
-        w, _ = self.frame.size
+        w, h = self.frame.size
+        r = h / (w / 2)
 
         self.scorers_rendered = []
-        self.font_name = pygame.font.Font(
-            "assets/font/leaderboard.ttf", w // 25)
+        self.font_name = pygame.font.Font("assets/font/leaderboard.ttf", w // 25)
 
         self.max_width_user = 0
         self.max_width_score = 0
 
         for i, (key, value) in enumerate(self.scorer.scores.items()):
-            if i >= 10:
+            if i >= r * 10:
                 return None
 
             if len(key) > 15:

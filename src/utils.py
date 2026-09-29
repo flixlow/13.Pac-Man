@@ -1,7 +1,7 @@
 
 from enum import Enum, auto
 from pygame import K_UP, K_w, K_RIGHT, K_d, K_DOWN, K_s, K_LEFT, K_a, time
-
+from typing import Any
 
 class Timer:
     def __init__(self) -> None:
@@ -9,9 +9,16 @@ class Timer:
         self.total_spend_time = 0
         self.crazy_mode_elapsed_time = 0
 
-    def tick(self, clock: time.Clock) -> None:
+    def tick(self, clock: time.Clock, state: Enum) -> None:
+        from .engine.monitor import GameState
         self.elapsed_time = clock.tick(60)
         self.total_spend_time += self.elapsed_time
+
+        if state is GameState.IN_GAME:
+            self.game_time += self.elapsed_time
+    
+    def new_game(self):
+        self.game_time = 0
 
 
 class Paths:

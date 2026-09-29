@@ -9,8 +9,8 @@ from ..parsing import parsing, Config
 from .game import PacmanGame, GameState
 from ..utils import DisplayState, KEY_DIRECTION, Timer
 from ..drawing.pacman_drawer import PacManDrawer
-from ..drawing.basic_drawer import Drawer, print_life, print_title
-from ..drawing.utils_drawing import PlayerScore
+from ..drawing.basic_drawer import Drawer, print_life, print_title, print_score, print_timer
+from ..drawing.player_name import PlayerName
 
 
 class Monitor:
@@ -35,14 +35,14 @@ class Monitor:
         )
         w, h = self.screen_size
         self.header: int = h // 5
-        self.header_img = Drawer((w, h // 5))
-        self.header_img.fill(theme.TITLE_BG.value)
+        self.header_frame = Drawer((w, h // 5))
+        self.header_frame.fill(theme.TITLE_BG.value)
 
         self.menu = Menu((w, h - self.header), self.scorer)
         self.menu.set_screen_origin((0, self.header))
         self.state = DisplayState.MENU
 
-        self.player_frame = PlayerScore((w, h - self.header), self.timer)
+        self.player_frame = PlayerName((w, h - self.header), self.timer)
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
@@ -53,6 +53,8 @@ class Monitor:
             (w, h - self.header), self.game.level.maze, self.timer
         )
 
+    #def check_time(self, )
+
     def check_exit(self, event: Any) -> None:
         if event.type == pygame.QUIT:
             self.running = False
@@ -62,12 +64,18 @@ class Monitor:
 
     def check_alpha(self, event) -> None:
         if self.state != DisplayState.ENTER_YOUR_NAME:
-            return
+            return None
+
         if event.type == pygame.KEYDOWN:
-            if pygame.K_a <= event.key <= pygame.K_z:
+            if event.unicode == " ":
+                return
+            if (
+                "a" <= event.unicode <= "z" or
+                "A" <= event.unicode <= "Z"
+            ):
                 self.player_frame.jsp(event)
 
-            elif pygame.K_0 <= event.key <= pygame.K_9:
+            elif "0" <= event.unicode <= "9":
                 self.player_frame.jsp(event)
 
             elif event.key in [
@@ -81,8 +89,10 @@ class Monitor:
                 self.player_frame.jsp(event)
 
             elif event.key is pygame.K_RETURN:
-                self.game.player_state.name = "".join(self.player_frame.name)
-                self.scorer.save(self.game.player_state)
+                name = "".join(self.player_frame.name)
+                self.game.player_state.name = name
+                if name != "":
+                    self.scorer.save(self.game.player_state, self.game.level.score)
                 self.game._init_new_game()
 
             else:
@@ -93,6 +103,10 @@ class Monitor:
             if event.key == pygame.K_ESCAPE:
                 self.game.state = GameState.PAUSE
 
+            if event.key == pygame.K_t:
+                print(self.game.state)
+                theme.cycle()
+
             if event.key == pygame.K_SPACE:
 
                 if self.state == DisplayState.MENU:
@@ -101,9 +115,10 @@ class Monitor:
                 elif self.state == DisplayState.PRESS_SPACE_TO_RESUME:
                     self.game.state = GameState.IN_GAME
 
-                elif self.state == DisplayState.ENTER_YOUR_NAME:
-                    self.state = DisplayState.MENU
-                    self.game._init_new_game()
+                if self.state == DisplayState.ENTER_YOUR_NAME:
+                    pass
+                    #self.state = DisplayState.MENU
+                    #self.game._init_new_game()
 
                 elif self.state == DisplayState.GAME_OVER:
                     self.state = DisplayState.ENTER_YOUR_NAME
@@ -123,9 +138,10 @@ class Monitor:
             self.menu.frame.update_size((w, h - self.header))
             self.menu.update_size()
             self.menu.set_screen_origin((0, self.header))
-            self.header_img.update_size((w, self.header))
+            self.player_frame.frame.update_size((w, h - self.header))
+            self.header_frame.update_size((w, self.header))
 
-            self.header_img.fill(theme.TITLE_BG.value)
+            self.header_frame.fill(theme.TITLE_BG.value)
 
     def check_buttons(self) -> None:
         if self.state != DisplayState.MENU:
@@ -157,19 +173,29 @@ class Monitor:
             self.check_buttons()
 
     def display_header(self) -> None:
-        self.header_img.fill(theme.TITLE_BG.value)
+        self.header_frame.fill(theme.TITLE_BG.value)
 
-        print_title(self.header_img)
+        w, h = self.header_frame.size
+        title_font = pygame.font.Font("assets/font/title.otf", w // 20)
+        font = pygame.font.Font("assets/font/title.otf", w // 40)
+
+        print_title(self.header_frame, title_font)
 
         print_life(
-            self.header_img, (0, 0),
+            self.header_frame, (0, 0),
             self.pacman_frame.alive.get_width(),
             self.game.player_state.lives,
             self.pacman_frame.alive,
             self.pacman_frame.dead
         )
 
-        self.screen.blit(self.header_img.surface, (0, 0))
+        text_size = print_score(self.header_frame, font, self.game.level.score)
+
+        print_timer(
+            self.header_frame, font, text_size, self.timer, 180 * 1000
+        )
+
+        self.screen.blit(self.header_frame.surface, (0, 0))
 
     def display_game(self) -> None:
         level = self.game.level
@@ -181,6 +207,13 @@ class Monitor:
         self.pacman_frame.draw_multiple_pacgums(level.super_pacgums, True)
 
         self.pacman_frame.draw_entities(level.entities)
+
+        if self.game.state is GameState.HAS_COMPLETED_LEVEL:
+            self.pacman_frame.press_space_to_restart("Press SPACE to continue...")
+
+        if self.game.state is GameState.HAS_LOSE_A_LIFE:
+            self.pacman_frame.press_space_to_restart("Press SPACE to restart...")
+        
 
         self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
@@ -235,7 +268,7 @@ class Monitor:
 
         if self.game.state\
                 in {GameState.GAME_OVER, GameState.HAS_BEATEN_THE_GAME}:
-            self.scorer.save(self.game.player_state)
+            self.scorer.save(self.game.player_state, self.game.level.score)
 
     def check_game_state(self) -> None:
         match self.game.state:
@@ -261,7 +294,7 @@ class Monitor:
     def main_loop(self) -> None:
         while self.running:
 
-            self.timer.tick(self.clock)
+            self.timer.tick(self.clock, self.game.state)
 
             self.game.running()
 

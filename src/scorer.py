@@ -29,10 +29,11 @@ class Scorer:
                 f"(line {e.lineno})."
             )
 
-    def save(self, player_state: PlayerState) -> None:
+    def save(self, player_state: PlayerState, score: int) -> None:
+        entered_name = player_state.name.strip()
         last = self.scores.get(player_state.name, -1)
 
-        self.scores[player_state.name] = max(player_state.score, last)
+        self.scores[player_state.name] = max(score, last)
 
         try:
             with open(self.file, 'w') as f:

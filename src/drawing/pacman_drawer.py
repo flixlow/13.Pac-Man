@@ -1,68 +1,36 @@
 
 import pygame
-from random import choice
+from random import randint
 
 from ..engine.maze import Maze
 from ..entity import Ghost, Entity
 from .maze_drawer import MazeDrawer
 from ..color_utils import theme
 from ..utils import GhostColor, Parameters, Direction, Timer
+from ..assetloader import AssetLoader
 
 
 class PacManDrawer(MazeDrawer):
     def __init__(self, size: tuple[int, int], maze: Maze, t: Timer) -> None:
         super().__init__(size, maze)
 
-        self.fruit_n = choice([0, 1, 2])
         self.timer = t
         self.last_pacman_direction: Direction = Direction.START
 
-        self.ghosts_img_copy = {
-            GhostColor.RED: [pygame.image.load(
-                f"assets/ghosts/red/{i+1}.png").convert_alpha()
-                for i in range(8)],
-            GhostColor.BLUE: [pygame.image.load(
-                f"assets/ghosts/blue/{i+1}.png").convert_alpha()
-                for i in range(8)],
-            GhostColor.ORANGE: [pygame.image.load(
-                f"assets/ghosts/orange/{i+1}.png").convert_alpha()
-                for i in range(8)],
-            GhostColor.PINK: [pygame.image.load(
-                f"assets/ghosts/pink/{i+1}.png").convert_alpha()
-                for i in range(8)],
-            GhostColor.SECRET: [pygame.image.load(
-                f"assets/ghosts/red/{i+1}.png").convert_alpha()
-                for i in range(8)],
-            GhostColor.CRAZY: [
-                pygame.image.load(
-                    f"assets/ghosts/crazyman/{i+1}.png").convert_alpha()
-                for i in range(4)]
-        }
+        # Assets
+        self.ghosts_img_copy = AssetLoader.load_ghosts()
+        self.pacman_img_copy: list[pygame.Surface] = AssetLoader.load_pacman()
+        self.dead_copy, self.alive_copy = AssetLoader.load_life()
+        self.fruit_copy = AssetLoader.load_fruit()
+        self.bg_msg_copy: pygame.Surface = AssetLoader.load_buttons()[0]
 
-        self.alive_copy = pygame.image.load(
-            "assets/icon/heart.png").convert_alpha()
-        self.dead_copy = pygame.image.load(
-            "assets/icon/dead_heart.png").convert_alpha()
+        self.chosen_fruit = randint(0, len(self.fruit_copy) - 1)
 
-        self.pacman_img_copy = [
-            pygame.image.load(f"assets/pacman/{i}.png").convert_alpha()
-            for i in range(5)
-        ]
-
-        self.fruit_copy = [
-            pygame.image.load(
-                f"assets/fruit/{i+1}.png"
-            ).convert_alpha() for i in range(3)
-        ]
-
+        # Time
         self.velocity = Parameters.PLAYER_VELOCITY
         self.movement_interval_ms: int = max(1, 1000 // self.velocity)
         self.player_move_elapsed_ms: int = 0
         self.animation_elapsed_ms: int = 0
-
-        self.ghosts_img = self.ghosts_img_copy.copy()
-        self.fruit = self.fruit_copy.copy()
-        self.pacman_img: list[pygame.Surface] = self.pacman_img_copy.copy()
 
         PacManDrawer.update_size(self, size)
 
@@ -111,10 +79,10 @@ class PacManDrawer(MazeDrawer):
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
         if super:
-            fruit_size = self.fruit[self.fruit_n].get_width()
+            fruit_size = self.fruit[self.chosen_fruit].get_width()
             self.put_image(
                 (x1 + fruit_size // 2, y1 + fruit_size // 2),
-                self.fruit[self.fruit_n]
+                self.fruit[self.chosen_fruit]
             )
         else:
             nc = (self.timer.elapsed_time) % 2000
@@ -259,9 +227,20 @@ class PacManDrawer(MazeDrawer):
         super().update_size(new_size)
         w, h = new_size
 
-        for color, images in self.ghosts_img.items():
+        # Font
+        self.font_press = pygame.font.Font("assets/font/title.otf", w // 25)
+        w_text, h_text = self.font_press.size("Press Space to restart...")
+        self.padding_x, self.padding_y = w // 15, h // 15
+        self.bg_msg = pygame.transform.scale(
+            self.bg_msg_copy,
+            (w_text + self.padding_x, h_text + self.padding_y)
+        )
+
+        self.ghosts_img: dict[GhostColor, pygame.Surface] = {}
+
+        for color, images in self.ghosts_img_copy.items():
             lst = []
-            for image in images:
+            for i, image in enumerate(images):
                 scaled = pygame.transform.scale(
                     image, (self.cell_size, self.cell_size)
                 )
@@ -271,15 +250,15 @@ class PacManDrawer(MazeDrawer):
         self.pacman_img = [
             pygame.transform.scale(
                 img, (self.cell_size * 0.9, self.cell_size * 0.9))
-            for img in self.pacman_img
+            for img in self.pacman_img_copy
         ]
 
         self.alive = pygame.transform.scale(
-            self.alive_copy, (h // 10, h // 10)
+            self.alive_copy, (w // 20, w // 20)
         )
 
         self.dead = pygame.transform.scale(
-            self.dead_copy, (h // 10, h // 10)
+            self.dead_copy, (w // 20, w // 20)
         )
 
         self.fruit = [
@@ -287,3 +266,19 @@ class PacManDrawer(MazeDrawer):
                 fruit_img, (self.cell_size // 2, self.cell_size // 2))
             for fruit_img in self.fruit_copy
         ]
+
+
+    def press_space_to_restart(self, msg: str) -> None:
+        w, h = self.size
+
+        rendered = self.font_press.render(msg, True, (255, 255, 255))
+        w_text, h_text = rendered.get_size()
+        self.put_image(
+            (
+                w // 2 - w_text // 2 - self.padding_x // 2,
+                h // 2 - h_text // 2 - self.padding_y // 2
+            ), self.bg_msg)
+
+        self.surface.blit(
+            rendered, (w // 2 - w_text // 2, h // 2 - h_text // 2)
+        )
