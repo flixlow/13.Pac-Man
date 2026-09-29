@@ -1,6 +1,7 @@
 import pygame
 
 from .drawing.basic_drawer import Drawer
+from.assetloader import AssetLoader
 
 
 class Button:
@@ -17,12 +18,10 @@ class Button:
         w, h = self.frame.size
         self.padding_x, self.padding_y = w // 20, h // 10
 
-        self.button_original = pygame.image.load("assets/button/button.png")
-        self.button_pressed_original = pygame.image.load(
-            "assets/button/button_pressed.png"
-        )
-        self.button = self.button_original
-        self.button_pressed = self.button_pressed_original
+        normal, pressed = AssetLoader.load_buttons()
+
+        self.button_original: pygame.Surface = normal
+        self.button_pressed_original: pygame.Surface = pressed
 
     def update_size(self) -> None:
 

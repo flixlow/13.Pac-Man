@@ -1,6 +1,7 @@
 import pygame
 
 from ..color_utils import theme
+from ..utils import Timer
 
 
 class Drawer:
@@ -54,7 +55,8 @@ class Drawer:
 
 def print_life(
         frame: Drawer, a: tuple[int, int], gap: int,
-        life: int, alive: pygame.Surface, dead: pygame.Surface):
+        life: int, alive: pygame.Surface, dead: pygame.Surface
+    ):
 
     LIFE = 3
 
@@ -66,14 +68,42 @@ def print_life(
             frame.put_image((x + i * gap, y), dead)
 
 
-def print_title(frame: Drawer):
+def print_title(frame: Drawer, font: pygame.font.Font) -> None:
     w, h = frame.size
-    title_font = pygame.font.Font("assets/font/title.otf", h // 2)
 
-    rendered_title = title_font.render("PAC-MAN", True, theme.TITLE.value)
+    rendered = font.render("PAC-MAN", True, theme.TITLE.value)
 
-    w_text, h_text = rendered_title.get_size()
+    w_text, h_text = rendered.get_size()
     frame.surface.blit(
-        rendered_title,
-        (w // 2 - w_text // 2, h // 2 - h_text // 2),
+        rendered, (w // 2 - w_text // 2, h // 2 - h_text // 2),
+    )
+
+def print_score(frame: Drawer, font: pygame.font.Font, score: int) -> int:
+    w, h = frame.size
+    padding_x, padding_y = w // 30, h // 20
+
+    rendered = font.render(f"Score: {score}", True, (255, 255, 255))
+    w_text, h_text = rendered.get_size()
+    frame.surface.blit(
+        rendered, (w - w_text - padding_x, padding_y)
+    )
+
+    return w_text, h_text
+
+def print_timer(
+        frame: Drawer, font: pygame.font.Font,
+        score_text_size: tuple[int, int],
+        timer: Timer, max_time: int
+    ) -> None:
+
+    w, h = frame.size
+    padding_x, padding_y = w // 30, h // 20
+    _, last_h_text = score_text_size
+
+    time = max_time - timer.game_time
+
+    rendered = font.render(f"Time: {time // 1000}.{(time % 1000) // 10}", True, (255, 255, 255))
+    w_text, _ = rendered.get_size()
+    frame.surface.blit(
+        rendered, (w - w_text - padding_x, padding_y + last_h_text)
     )

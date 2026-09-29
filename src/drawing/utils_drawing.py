@@ -110,7 +110,7 @@ class PlayerScore:
             self.cursor = max(0, self.cursor - 1)
             print("entire name: ", self.name)
         else:
-            if len(self.name) < 20:
+            if len(self.name) < 10:
                 self.name.insert(self.cursor, event.unicode)
                 self.cursor += 1
 
