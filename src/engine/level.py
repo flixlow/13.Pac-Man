@@ -35,10 +35,11 @@ class Level:
             for y in range(self.maze.h):
                 if self.maze.maze_map[y][x] == 15:
                     continue
-            self.pacgums.add((x, y))
+
+        self.pacgums.add((0, 1))
 
     def _init_ghosts(self) -> None:
-        ghost_classes: list[Callable] = [Blue, Red, Orange, Pink]
+        ghost_classes: list[Callable] = [Blue]#[Blue, Red, Orange, Pink]
 
         shuffle(ghost_classes)
 

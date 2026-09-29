@@ -107,3 +107,4 @@ def print_timer(
     frame.surface.blit(
         rendered, (w - w_text - padding_x, padding_y + last_h_text)
     )
+

@@ -5,7 +5,7 @@ from .basic_drawer import Drawer
 from ..utils import Timer
 
 
-class PlayerScore:
+class PlayerName:
     def __init__(self, size: tuple[int, int], timer: Timer) -> None:
         w, _ = size
 

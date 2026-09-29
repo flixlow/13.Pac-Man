@@ -10,7 +10,7 @@ from .game import PacmanGame, GameState
 from ..utils import DisplayState, KEY_DIRECTION, Timer
 from ..drawing.pacman_drawer import PacManDrawer
 from ..drawing.basic_drawer import Drawer, print_life, print_title, print_score, print_timer
-from ..drawing.utils_drawing import PlayerScore
+from ..drawing.player_name import PlayerName
 
 
 class Monitor:
@@ -42,7 +42,7 @@ class Monitor:
         self.menu.set_screen_origin((0, self.header))
         self.state = DisplayState.MENU
 
-        self.player_frame = PlayerScore((w, h - self.header), self.timer)
+        self.player_frame = PlayerName((w, h - self.header), self.timer)
 
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode(
@@ -53,6 +53,8 @@ class Monitor:
             (w, h - self.header), self.game.level.maze, self.timer
         )
 
+    #def check_time(self, )
+
     def check_exit(self, event: Any) -> None:
         if event.type == pygame.QUIT:
             self.running = False
@@ -62,12 +64,18 @@ class Monitor:
 
     def check_alpha(self, event) -> None:
         if self.state != DisplayState.ENTER_YOUR_NAME:
-            return
+            return None
+
         if event.type == pygame.KEYDOWN:
-            if pygame.K_a <= event.key <= pygame.K_z:
+            if event.unicode == " ":
+                return
+            if (
+                "a" <= event.unicode <= "z" or
+                "A" <= event.unicode <= "Z"
+            ):
                 self.player_frame.jsp(event)
 
-            elif pygame.K_0 <= event.key <= pygame.K_9:
+            elif "0" <= event.unicode <= "9":
                 self.player_frame.jsp(event)
 
             elif event.key in [
@@ -81,8 +89,10 @@ class Monitor:
                 self.player_frame.jsp(event)
 
             elif event.key is pygame.K_RETURN:
-                self.game.player_state.name = "".join(self.player_frame.name)
-                self.scorer.save(self.game.player_state, self.game.level.score)
+                name = "".join(self.player_frame.name)
+                self.game.player_state.name = name
+                if name != "":
+                    self.scorer.save(self.game.player_state, self.game.level.score)
                 self.game._init_new_game()
 
             else:
@@ -94,6 +104,7 @@ class Monitor:
                 self.game.state = GameState.PAUSE
 
             if event.key == pygame.K_t:
+                print(self.game.state)
                 theme.cycle()
 
             if event.key == pygame.K_SPACE:
@@ -124,6 +135,7 @@ class Monitor:
             self.menu.frame.update_size((w, h - self.header))
             self.menu.update_size()
             self.menu.set_screen_origin((0, self.header))
+            self.player_frame.frame.update_size((w, h - self.header))
             self.header_frame.update_size((w, self.header))
 
             self.header_frame.fill(theme.TITLE_BG.value)
@@ -192,6 +204,13 @@ class Monitor:
         self.pacman_frame.draw_multiple_pacgums(level.super_pacgums, True)
 
         self.pacman_frame.draw_entities(level.entities)
+
+        if self.game.state is GameState.HAS_COMPLETED_LEVEL:
+            self.pacman_frame.press_space_to_restart("Press SPACE to continue...")
+
+        if self.game.state is GameState.HAS_LOSE_A_LIFE:
+            self.pacman_frame.press_space_to_restart("Press SPACE to restart...")
+        
 
         self.screen.blit(self.pacman_frame.surface, (0, self.header))
 

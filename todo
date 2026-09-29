@@ -18,20 +18,25 @@ draft:
 [x] bug deplacement pas fluide
 [x] bug lorsque le dernier pacgum est pris en meme temps que le fait de mourir
 [x] bug new game si jamais le next level n'a plus de level
-[x] bug vies lorsque le niveau change et la taille aussi
 [X] demander le nom du joueur en fin de partie
+[x] bug vies lorsque le niveau change et la taille aussi
 
 [X] AssetLoader
 [X] displayer le score et le timer
-[ ] {'badge': 'felix'} : highscore can take only alphanumeric
-[ ] display "press space to restart
+[X] {'badge': 'felix'} : highscore can take only alphanumeric
+[X] leaderboard qui se rescale pour afficher plus de noms
+[X] bug update size enter your name
+[X] display "press space to restart"
+[ ] timer work
+[ ] j
 [ ] class Color pour les params
 [ ] cheat mode
 [ ] animation teleportation
 [ ] bug fin d'animation
+[ ] bug chelou des fois quand ca change de map et quon peut entrer dans le 42
 [ ] flag : --own_function for draw rectangle
 [ ] docstring
-[ ] leaderboard qui se rescale pour afficher plus de noms
+[ ] Changer les polices d'ecriture
 
 ![alt text](image.png)
 
