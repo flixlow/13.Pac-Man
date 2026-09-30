@@ -3,6 +3,7 @@ import pygame
 from .drawing.basic_drawer import Drawer
 from.assetloader import AssetLoader
 
+from typing import Any
 
 class Button:
     def __init__(self, frame: Drawer, a: tuple[int, int],
@@ -10,10 +11,10 @@ class Button:
         self.pos = a
         self.frame = frame
         self.screen_origin = (0, 0)
+        self._pressed = False
         self.i = i + 1
         self.size = size
         self.text = text
-        self.font = pygame.font.Font("assets/font/title.otf", 25)
 
         w, h = self.frame.size
         self.padding_x, self.padding_y = w // 20, h // 10
@@ -24,9 +25,9 @@ class Button:
         self.button_pressed_original: pygame.Surface = pressed
 
     def update_size(self) -> None:
-
         w, h = self.frame.size
-        self.font = pygame.font.Font("assets/font/title.otf", w // 25)
+
+        self.font = pygame.font.Font("assets/font/title.otf", w // 30)
         self.padding_x, self.padding_y = w // 20, h // 10
         self.pos = (w // 2 + self.padding_x, self.i * self.padding_y)
 
@@ -43,10 +44,10 @@ class Button:
         )
 
     def draw(self) -> None:
-        if not self.is_clicked():
-            self.frame.put_image(self.pos, self.button)
-        else:
+        if self._pressed:
             self.frame.put_image(self.pos, self.button_pressed)
+        else:
+            self.frame.put_image(self.pos, self.button)
 
         mid = (
             self.pos[0] + self.button.get_width() // 2,
@@ -60,8 +61,20 @@ class Button:
     def set_screen_origin(self, origin: tuple[int, int]) -> None:
         self.screen_origin = origin
 
-    def is_clicked(self) -> bool:
-        mouse_x, mouse_y = pygame.mouse.get_pos()
+    def is_clicked(self, event: Any) -> bool:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            self._pressed = self._contains(event.pos)
+            return False
+
+        if event.type != pygame.MOUSEBUTTONUP or event.button != 1:
+            return False
+
+        clicked = self._pressed and self._contains(event.pos)
+        self._pressed = False
+        return clicked
+
+    def _contains(self, point: tuple[int, int]) -> bool:
+        mouse_x, mouse_y = point
         origin_x, origin_y = self.screen_origin
         button_rect = pygame.Rect(
             self.pos[0],
@@ -69,8 +82,4 @@ class Button:
             self.button.get_width(),
             self.button.get_height(),
         )
-
-        return (
-            button_rect.collidepoint(mouse_x - origin_x, mouse_y - origin_y)
-            and pygame.mouse.get_pressed()[0]
-        )
+        return button_rect.collidepoint(mouse_x - origin_x, mouse_y - origin_y)

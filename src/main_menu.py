@@ -18,14 +18,19 @@ class Menu:
         self.scorers_rendered: list[tuple[int, Surface, Surface]] = []
 
         pos = (w // 2 + w // 10, 0 + h // 10)
-        self.play_button = Button(self.frame, pos, 0, 2, "PLAY")
-        self.settings = Button(self.frame, pos, 2, 2, "SETTINGS")
-        self.clic = Button(self.frame, pos, 4, 2, "CLIC HERE")
-        self.exit = Button(self.frame, pos, 6, 2, "EXIT")
+        self.play_button = Button(self.frame, pos, 0, 2.5, "Play")
+        self.clear_lb = Button(self.frame, pos, 3, 1.5, "Clear Leaderboard")
+        self.change_theme = Button(self.frame, pos, 5, 1.5, "Change Theme")
+        self.exit = Button(self.frame, pos, 7, 1.5, "Exit")
 
-        self.buttons = [self.play_button, self.settings, self.clic, self.exit]
+        self.buttons = [self.play_button, self.clear_lb, self.change_theme, self.exit]
 
         self.update_size()
+        self.draw_menu()
+
+    def clear_leaderboard(self) -> None:
+        self.scorer.clear()
+        self.scorer.scores = self.scorer.load()
         self.draw_menu()
 
     def draw_menu(self) -> None:
@@ -59,7 +64,7 @@ class Menu:
         self.max_width_user = 0
         self.max_width_score = 0
 
-        for i, (key, value) in enumerate(self.scorer.scores.items()):
+        for i, (key, value) in enumerate(list(self.scorer.scores.items())[:10]):
             if i >= r * 10:
                 return None
 
@@ -79,10 +84,10 @@ class Menu:
 
             self.scorers_rendered.append((value, user, score))
 
-    def check_buttons(self) -> list[int]:
+    def check_buttons(self, event: pygame.event) -> list[int]:
         return [
             idx for idx, button
-            in enumerate(self.buttons) if button.is_clicked()
+            in enumerate(self.buttons) if button.is_clicked(event)
         ]
 
     def print_leaderboard(self) -> None:

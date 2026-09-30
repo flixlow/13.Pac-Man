@@ -85,15 +85,19 @@ class PacManDrawer(MazeDrawer):
                 self.fruit[self.chosen_fruit]
             )
         else:
-            nc = (self.timer.elapsed_time) % 2000
-            diff = 1000 - abs(1000 - nc) // 150 - 1000
+            nc = (self.timer.total_spend_time) % 2000
+            diff = (1000 - abs(1000 - nc) // 100 - 1000) * 20
+
+            print(diff)
 
             xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
 
+            color = tuple(min(255, max(c + diff, 0)) for c in theme.PACGUM.value)
+
             self.draw_rect(
-                (xc - self.cell_size // 15, yc - self.cell_size // 15 + diff),
-                (xc + self.cell_size // 15, yc + self.cell_size // 15 + diff),
-                theme.PACGUM.value
+                (xc - self.cell_size // 15, yc - self.cell_size // 15),
+                (xc + self.cell_size // 15, yc + self.cell_size // 15),
+                color
             )
 
     def draw_multiple_pacgums(
@@ -227,15 +231,6 @@ class PacManDrawer(MazeDrawer):
         super().update_size(new_size)
         w, h = new_size
 
-        # Font
-        self.font_press = pygame.font.Font("assets/font/title.otf", w // 25)
-        w_text, h_text = self.font_press.size("Press Space to restart...")
-        self.padding_x, self.padding_y = w // 15, h // 15
-        self.bg_msg = pygame.transform.scale(
-            self.bg_msg_copy,
-            (w_text + self.padding_x, h_text + self.padding_y)
-        )
-
         self.ghosts_img: dict[GhostColor, pygame.Surface] = {}
 
         for color, images in self.ghosts_img_copy.items():
@@ -270,6 +265,14 @@ class PacManDrawer(MazeDrawer):
 
     def press_space_to_restart(self, msg: str) -> None:
         w, h = self.size
+
+        self.font_press = pygame.font.Font("assets/font/title.otf", w // 25)
+        w_text, h_text = self.font_press.size(msg)
+        self.padding_x, self.padding_y = w // 15, h // 15
+        self.bg_msg = pygame.transform.scale(
+            self.bg_msg_copy,
+            (w_text + self.padding_x, h_text + self.padding_y)
+        )
 
         rendered = self.font_press.render(msg, True, (255, 255, 255))
         w_text, h_text = rendered.get_size()

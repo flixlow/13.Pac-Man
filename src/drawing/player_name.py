@@ -22,6 +22,10 @@ class PlayerName:
 
         self.render()
 
+    def clear(self) -> None:
+        self.cursor = 0
+        self.name = []
+
     def _get_font_size(self, text: str, font_path: str,
                        max_width: int, max_height: int,
                        ref_size: int = 100) -> int:

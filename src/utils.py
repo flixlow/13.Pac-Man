@@ -5,6 +5,8 @@ from typing import Any
 
 class Timer:
     def __init__(self) -> None:
+        self.time_per_game = 50000 # constant
+
         self.elapsed_time = 0
         self.total_spend_time = 0
         self.crazy_mode_elapsed_time = 0
@@ -15,10 +17,16 @@ class Timer:
         self.total_spend_time += self.elapsed_time
 
         if state is GameState.IN_GAME:
-            self.game_time += self.elapsed_time
-    
-    def new_game(self):
+            self.game_time = min(
+                self.game_time + self.elapsed_time,
+                self.time_per_game
+            )
+
+    def new_game(self) -> None:
         self.game_time = 0
+
+    def time_is_over(self) -> bool:
+        return self.time_per_game == self.game_time
 
 
 class Paths:

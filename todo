@@ -27,16 +27,170 @@ draft:
 [X] leaderboard qui se rescale pour afficher plus de noms
 [X] bug update size enter your name
 [X] display "press space to restart"
-[ ] timer work
-[ ] j
-[ ] class Color pour les params
+[X] timer work
+[X] regler size et pos buttons
+[X] clear leaderboard
+[X] 10 max pour le leaderboard
+[X] fix bug leaderboard invisible name ??????????????????????????????
+[X] Changer les polices d'ecriture
+[X] Asset secret ghost
+[X] prendre levent sur le release pour les boutons
 [ ] cheat mode
+    [ ] wallhack
+    [ ] vision trajectoire fantomes
+    [ ] godmode
+    [ ] add life
+[ ] class Color pour les params
 [ ] animation teleportation
 [ ] bug fin d'animation
-[ ] bug chelou des fois quand ca change de map et quon peut entrer dans le 42
 [ ] flag : --own_function for draw rectangle
 [ ] docstring
-[ ] Changer les polices d'ecriture
+[ ] Mieux gerer les collisions 🥶🥶🥶🥶
+    [ ] Les derniers pacgums
+    [ ] Les comportements chelou quand un fantome kill mais loin
+[ ] bug chelou des fois quand ca change de map et quon peut entrer dans le 42 🥶🥶🥶🥶
+
+
+Pour les couleurs
+
+```
+{
+  "labyrinthe": {
+    "cases": {
+      "fond": "",
+      "mur_nord": "",
+      "mur_sud": "",
+      "mur_est": "",
+      "mur_ouest": ""
+    },
+    "case_speciale": {
+      "logo": "",
+      "fond_clignotement": "",
+      "murs_clignotement": {
+        "nord": "",
+        "sud": "",
+        "est": "",
+        "ouest": ""
+      }
+    }
+  },
+
+  "objets": {
+    "pac_gommes": {
+      "couleur": ""
+    },
+    "fruits_bonus": {
+      "couleur": ""
+    }
+  },
+
+  "personnages": {
+    "pac_man": {
+      "couleur": ""
+    },
+    "fantomes": {
+      "rouge": {
+        "couleur": ""
+      },
+      "bleu": {
+        "couleur": ""
+      },
+      "rose": {
+        "couleur": ""
+      },
+      "orange": {
+        "couleur": ""
+      },
+      "secret": {
+        "couleur": ""
+      },
+      "mode_fou": {
+        "couleur": ""
+      }
+    }
+  },
+
+  "vies": {
+    "coeur_plein": {
+      "couleur": ""
+    },
+    "coeur_vide": {
+      "couleur": ""
+    }
+  },
+
+  "menu": {
+    "fond": "",
+    "tableau_scores": {
+      "fond": "",
+      "noms_joueurs": {
+        "couleur": ""
+      },
+      "scores": {
+        "couleur": ""
+      }
+    }
+  },
+
+  "boutons": {
+    "fond_normal": "",
+    "fond_enfonce": "",
+    "texte": ""
+  },
+
+  "en_tete": {
+    "fond": "",
+    "titre_pac_man": {
+      "couleur": ""
+    },
+    "score": {
+      "couleur": ""
+    },
+    "chronometre": {
+      "couleur": ""
+    }
+  },
+
+  "saisie_nom": {
+    "fond_ecran": "",
+    "titre": {
+      "couleur": ""
+    },
+    "texte_saisi": {
+      "couleur": ""
+    },
+    "contour_zone_saisie": {
+      "couleur": ""
+    },
+    "curseur": {
+      "couleur": ""
+    }
+  },
+
+  "messages_jeu": {
+    "fond": "",
+    "texte": {
+      "couleur": ""
+    },
+    "messages": [
+      "Game Over",
+      "Press SPACE...",
+      "..."
+    ]
+  },
+
+  "arriere_plans": {
+    "general": "",
+    "labyrinthe": "",
+    "ecran_menu": "",
+    "ecran_scores": "",
+    "ecran_saisie_nom": "",
+    "ecrans_specifiques": {
+      "autre": ""
+    }
+  }
+}
+```
 
 ![alt text](image.png)
 
