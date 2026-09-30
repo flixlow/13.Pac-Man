@@ -227,15 +227,6 @@ class PacManDrawer(MazeDrawer):
         super().update_size(new_size)
         w, h = new_size
 
-        # Font
-        self.font_press = pygame.font.Font("assets/font/title.otf", w // 25)
-        w_text, h_text = self.font_press.size("Press Space to restart...")
-        self.padding_x, self.padding_y = w // 15, h // 15
-        self.bg_msg = pygame.transform.scale(
-            self.bg_msg_copy,
-            (w_text + self.padding_x, h_text + self.padding_y)
-        )
-
         self.ghosts_img: dict[GhostColor, pygame.Surface] = {}
 
         for color, images in self.ghosts_img_copy.items():
@@ -270,6 +261,14 @@ class PacManDrawer(MazeDrawer):
 
     def press_space_to_restart(self, msg: str) -> None:
         w, h = self.size
+
+        self.font_press = pygame.font.Font("assets/font/title.otf", w // 25)
+        w_text, h_text = self.font_press.size(msg)
+        self.padding_x, self.padding_y = w // 15, h // 15
+        self.bg_msg = pygame.transform.scale(
+            self.bg_msg_copy,
+            (w_text + self.padding_x, h_text + self.padding_y)
+        )
 
         rendered = self.font_press.render(msg, True, (255, 255, 255))
         w_text, h_text = rendered.get_size()

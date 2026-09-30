@@ -16,6 +16,7 @@ from ..drawing.player_name import PlayerName
 class Monitor:
     def __init__(self, config_file: str) -> None:
         self.timer: Timer = Timer()
+
         self.config: Config = parsing(config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[Maze] = self.config.generate_all_maze()
@@ -53,7 +54,10 @@ class Monitor:
             (w, h - self.header), self.game.level.maze, self.timer
         )
 
-    #def check_time(self, )
+    def check_time(self):
+        if self.timer.time_is_over():
+            self.game.state = GameState.GAME_OVER
+            self.state = DisplayState.PRESS_SPACE_TO_RESUME
 
     def check_exit(self, event: Any) -> None:
         if event.type == pygame.QUIT:
@@ -93,6 +97,7 @@ class Monitor:
                 self.game.player_state.name = name
                 if name != "":
                     self.scorer.save(self.game.player_state, self.game.level.score)
+                self.player_frame.clear()
                 self.game._init_new_game()
 
             else:
@@ -114,11 +119,6 @@ class Monitor:
 
                 if self.state == DisplayState.PRESS_SPACE_TO_RESUME:
                     self.game.state = GameState.IN_GAME
-
-                if self.state == DisplayState.ENTER_YOUR_NAME:
-                    pass
-                    #self.state = DisplayState.MENU
-                    #self.game._init_new_game()
 
             elif self.state == DisplayState.IN_GAME\
                     and event.key in KEY_DIRECTION:
@@ -151,7 +151,7 @@ class Monitor:
                 self.game.state = GameState.IN_GAME
 
         if 1 in pressed:
-            pass
+            self.menu.clear_leaderboard()
         if 2 in pressed:
             theme.cycle()
         if 3 in pressed:
@@ -168,6 +168,7 @@ class Monitor:
             self.check_resize(event)
 
             self.check_buttons()
+
 
     def display_header(self) -> None:
         self.header_frame.fill(theme.TITLE_BG.value)
@@ -189,7 +190,7 @@ class Monitor:
         text_size = print_score(self.header_frame, font, self.game.level.score)
 
         print_timer(
-            self.header_frame, font, text_size, self.timer, 180 * 1000
+            self.header_frame, font, text_size, self.timer, self.timer.time_per_game
         )
 
         self.screen.blit(self.header_frame.surface, (0, 0))
@@ -205,12 +206,14 @@ class Monitor:
 
         self.pacman_frame.draw_entities(level.entities)
 
+        if self.game.state is GameState.HAS_LOSE_A_LIFE:
+            self.pacman_frame.press_space_to_restart("Press SPACE to restart...")
+
         if self.game.state is GameState.HAS_COMPLETED_LEVEL:
             self.pacman_frame.press_space_to_restart("Press SPACE to continue...")
 
-        if self.game.state is GameState.HAS_LOSE_A_LIFE:
-            self.pacman_frame.press_space_to_restart("Press SPACE to restart...")
-        
+        if self.game.state is GameState.GAME_OVER:
+            self.pacman_frame.press_space_to_restart("Game Over")
 
         self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
@@ -222,9 +225,6 @@ class Monitor:
     def display_enter_your_name(self) -> None:
         self.player_frame.render()
         self.screen.blit(self.player_frame.frame.surface, (0, self.header))
-
-    def display_press_to_resume(self) -> None:
-        self.display_game()
 
     def display_state(self) -> None:
 
@@ -240,7 +240,7 @@ class Monitor:
             self.display_enter_your_name()
 
         if self.state is DisplayState.PRESS_SPACE_TO_RESUME:
-            self.display_press_to_resume()
+            self.display_game()
 
         pygame.display.flip()
 
@@ -255,9 +255,10 @@ class Monitor:
 
             self.counter_ending_animation = 0
 
-        if self.game.state\
-                in {GameState.GAME_OVER, GameState.HAS_BEATEN_THE_GAME}:
-            self.scorer.save(self.game.player_state, self.game.level.score)
+        # Bug de la string vide dans le fichier json
+        # if self.game.state\
+        #         in {GameState.GAME_OVER, GameState.HAS_BEATEN_THE_GAME}:
+        #     self.scorer.save(self.game.player_state, self.game.level.score)
 
     def check_game_state(self) -> None:
         match self.game.state:
@@ -286,6 +287,8 @@ class Monitor:
             self.check_game_state()
 
             self.check_user_events()
+
+            self.check_time()
 
             self.display_state()
 

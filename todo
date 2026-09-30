@@ -27,16 +27,23 @@ draft:
 [X] leaderboard qui se rescale pour afficher plus de noms
 [X] bug update size enter your name
 [X] display "press space to restart"
-[ ] timer work
-[ ] j
+[X] timer work
+[X] regler size et pos buttons
+[X] clear leaderboard
+[X] 10 max pour le leaderboard
+[X] fix bug leaderboard invisible name ??????????????????????????????
+[ ] Asset secret ghost
+[ ] prendre levent sur le release pour les boutons
 [ ] class Color pour les params
 [ ] cheat mode
 [ ] animation teleportation
 [ ] bug fin d'animation
-[ ] bug chelou des fois quand ca change de map et quon peut entrer dans le 42
 [ ] flag : --own_function for draw rectangle
 [ ] docstring
 [ ] Changer les polices d'ecriture
+[ ] Mieux gerer les collisions 🥶🥶🥶🥶
+[ ] bug chelou des fois quand ca change de map et quon peut entrer dans le 42 🥶🥶🥶🥶
+
 
 ![alt text](image.png)
 
