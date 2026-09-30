@@ -32,15 +32,19 @@ draft:
 [X] clear leaderboard
 [X] 10 max pour le leaderboard
 [X] fix bug leaderboard invisible name ??????????????????????????????
+[X] Changer les polices d'ecriture
+[ ] cheat mode
+    [ ] wallhack
+    [ ] vision trajectoire fantomes
+    [ ] godmode
+    [ ] add life
 [ ] Asset secret ghost
 [ ] prendre levent sur le release pour les boutons
 [ ] class Color pour les params
-[ ] cheat mode
 [ ] animation teleportation
 [ ] bug fin d'animation
 [ ] flag : --own_function for draw rectangle
 [ ] docstring
-[ ] Changer les polices d'ecriture
 [ ] Mieux gerer les collisions 🥶🥶🥶🥶
 [ ] bug chelou des fois quand ca change de map et quon peut entrer dans le 42 🥶🥶🥶🥶
 

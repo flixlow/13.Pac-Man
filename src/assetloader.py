@@ -19,7 +19,7 @@ class AssetLoader:
                 f"assets/ghosts/pink/{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.SECRET: [pygame.image.load(
-                f"assets/ghosts/red/{i+1}.png").convert_alpha()
+                f"assets/ghosts/secret/{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.CRAZY: [
                 pygame.image.load(
