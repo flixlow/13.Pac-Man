@@ -140,11 +140,11 @@ class Monitor:
 
             self.header_frame.fill(theme.TITLE_BG.value)
 
-    def check_buttons(self) -> None:
+    def check_buttons(self, event: pygame.event) -> None:
         if self.state != DisplayState.MENU:
             return
 
-        pressed = self.menu.check_buttons()
+        pressed = self.menu.check_buttons(event)
 
         if 0 in pressed:
             if self.state is DisplayState.MENU:
@@ -167,7 +167,7 @@ class Monitor:
 
             self.check_resize(event)
 
-            self.check_buttons()
+            self.check_buttons(event)
 
 
     def display_header(self) -> None:

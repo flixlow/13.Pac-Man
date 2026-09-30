@@ -84,10 +84,10 @@ class Menu:
 
             self.scorers_rendered.append((value, user, score))
 
-    def check_buttons(self) -> list[int]:
+    def check_buttons(self, event: pygame.event) -> list[int]:
         return [
             idx for idx, button
-            in enumerate(self.buttons) if button.is_clicked()
+            in enumerate(self.buttons) if button.is_clicked(event)
         ]
 
     def print_leaderboard(self) -> None:

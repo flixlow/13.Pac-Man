@@ -85,15 +85,19 @@ class PacManDrawer(MazeDrawer):
                 self.fruit[self.chosen_fruit]
             )
         else:
-            nc = (self.timer.elapsed_time) % 2000
-            diff = 1000 - abs(1000 - nc) // 150 - 1000
+            nc = (self.timer.total_spend_time) % 2000
+            diff = (1000 - abs(1000 - nc) // 100 - 1000) * 20
+
+            print(diff)
 
             xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
 
+            color = tuple(min(255, max(c + diff, 0)) for c in theme.PACGUM.value)
+
             self.draw_rect(
-                (xc - self.cell_size // 15, yc - self.cell_size // 15 + diff),
-                (xc + self.cell_size // 15, yc + self.cell_size // 15 + diff),
-                theme.PACGUM.value
+                (xc - self.cell_size // 15, yc - self.cell_size // 15),
+                (xc + self.cell_size // 15, yc + self.cell_size // 15),
+                color
             )
 
     def draw_multiple_pacgums(
