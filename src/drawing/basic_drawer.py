@@ -1,6 +1,6 @@
 import pygame
 
-from ..color_utils import theme
+from ..color_utils import Theme
 from ..utils import Timer
 
 
@@ -67,22 +67,23 @@ def print_life(
         else:
             frame.put_image((x + i * gap, y), dead)
 
+Color = tuple[int, int, int]
 
-def print_title(frame: Drawer, font: pygame.font.Font) -> None:
+def print_title(frame: Drawer, font: pygame.font.Font, color: Color) -> None:
     w, h = frame.size
 
-    rendered = font.render("PAC-MAN", True, theme.TITLE.value)
+    rendered = font.render("PAC-MAN", True, color)
 
     w_text, h_text = rendered.get_size()
     frame.surface.blit(
         rendered, (w // 2 - w_text // 2, h // 2 - h_text // 2),
     )
 
-def print_score(frame: Drawer, font: pygame.font.Font, score: int) -> int:
+def print_score(frame: Drawer, font: pygame.font.Font, score: int, color: Color) -> int:
     w, h = frame.size
     padding_x, padding_y = w // 30, h // 20
 
-    rendered = font.render(f"Score: {score}", True, (255, 255, 255))
+    rendered = font.render(f"Score: {score}", True, color)
     w_text, h_text = rendered.get_size()
     frame.surface.blit(
         rendered, (w - w_text - padding_x, padding_y)
@@ -93,7 +94,8 @@ def print_score(frame: Drawer, font: pygame.font.Font, score: int) -> int:
 def print_timer(
         frame: Drawer, font: pygame.font.Font,
         score_text_size: tuple[int, int],
-        timer: Timer, max_time: int
+        timer: Timer, max_time: int,
+        color: Color
     ) -> None:
 
     w, h = frame.size
@@ -102,7 +104,7 @@ def print_timer(
 
     time = max_time - timer.game_time
 
-    rendered = font.render(f"Time: {time // 1000}.{(time % 1000) // 10}", True, (255, 255, 255))
+    rendered = font.render(f"Time: {time // 1000}.{(time % 1000) // 10}", True, color)
     w_text, _ = rendered.get_size()
     frame.surface.blit(
         rendered, (w - w_text - padding_x, padding_y + last_h_text)

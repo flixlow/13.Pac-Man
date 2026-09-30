@@ -1,7 +1,7 @@
 import pygame
 
 from .drawing.basic_drawer import Drawer
-from.assetloader import AssetLoader
+from .assetloader import AssetLoader
 
 from typing import Any
 

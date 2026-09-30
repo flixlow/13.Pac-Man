@@ -1,0 +1,48 @@
+{
+    "name": "halloween_night",
+    "maze": {
+        "walls": {
+            "north": [255, 117, 24],
+            "west": [138, 43, 226],
+            "south": [255, 117, 24],
+            "east": [138, 43, 226]
+        },
+        "background": [15, 10, 20],
+        "forty_two_logo": [255, 117, 24]
+    },
+    "crazy_maze": {
+        "walls": {
+            "north": [57, 255, 20],
+            "west": [57, 255, 20],
+            "south": [57, 255, 20],
+            "east": [57, 255, 20]
+        },
+        "background": [30, 0, 40],
+        "forty_two_logo": [255, 117, 24]
+    },
+    "interface": {
+        "header": {
+            "title": [255, 117, 24],
+            "score": [57, 255, 20],
+            "timer": [186, 85, 255],
+            "background": [10, 5, 15]
+        },
+        "menu": {
+            "leaderboard": {
+                "background": [45, 25, 60],
+                "username": [255, 117, 24],
+                "score": [57, 255, 20]
+            },
+            "buttons": {
+                "background": [255, 117, 24],
+                "text": [15, 10, 20]
+            }
+        },
+        "background": [25, 15, 35]
+    },
+    "config": {
+        "crazy_animation": true,
+        "pacgum_animation": true
+    },
+    "pacgum": [255, 240, 150]
+}

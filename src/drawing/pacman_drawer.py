@@ -5,14 +5,14 @@ from random import randint
 from ..engine.maze import Maze
 from ..entity import Ghost, Entity
 from .maze_drawer import MazeDrawer
-from ..color_utils import theme
+from ..color_utils import ThemeSelection
 from ..utils import GhostColor, Parameters, Direction, Timer
 from ..assetloader import AssetLoader
 
 
 class PacManDrawer(MazeDrawer):
-    def __init__(self, size: tuple[int, int], maze: Maze, t: Timer) -> None:
-        super().__init__(size, maze)
+    def __init__(self, size: tuple[int, int], maze: Maze, t: Timer, theme_selection: ThemeSelection) -> None:
+        super().__init__(size, maze, theme_selection)
 
         self.timer = t
         self.last_pacman_direction: Direction = Direction.START
@@ -60,7 +60,7 @@ class PacManDrawer(MazeDrawer):
             self.fill(tuple(int(c * progress) for c in target_color))
             bg = (255, 0, 0)
         else:
-            self.fill(theme.BACKGROUND.value)
+            self.fill(self.theme.background)
             bg = None
 
         for y in range(self.maze_height):
@@ -92,7 +92,7 @@ class PacManDrawer(MazeDrawer):
 
             xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
 
-            color = tuple(min(255, max(c + diff, 0)) for c in theme.PACGUM.value)
+            color = tuple(min(255, max(c + diff, 0)) for c in self.theme.theme.pacgum)
 
             self.draw_rect(
                 (xc - self.cell_size // 15, yc - self.cell_size // 15),

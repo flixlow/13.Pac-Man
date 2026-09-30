@@ -1,19 +1,24 @@
 from .basic_drawer import Drawer
 from ..engine.maze import Maze
-from ..color_utils import theme
+from ..color_utils import ThemeSelection
 
 
 class MazeDrawer(Drawer):
-    def __init__(self, size: tuple[int, int], maze: Maze) -> None:
+    def __init__(self, size: tuple[int, int], maze: Maze, theme_selection: ThemeSelection) -> None:
         super().__init__(size)
 
         self.maze = maze.maze_map
         self.maze_height = maze.h
         self.maze_width = maze.w
+        self.theme_selection = theme_selection
 
         MazeDrawer.update_size(self, size)
 
         MazeDrawer.draw_maze(self)
+
+    @property
+    def theme(self):
+        return self.theme_selection.current_theme
 
     def update_maze(self, maze: Maze) -> None:
         self.maze = maze.maze_map
@@ -41,7 +46,7 @@ class MazeDrawer(Drawer):
         Render the full maze grid, including start and end cells.
         """
 
-        self.fill(theme.MAZE_BG.value)
+        self.fill(self.theme.maze.background)
 
         for y in range(self.maze_height):
             for x in range(self.maze_width):
@@ -64,10 +69,10 @@ class MazeDrawer(Drawer):
         x2, y2 = px + self.cell_size, py + self.cell_size
 
         colors = (
-            [theme.NORTH.value, (255, 255, 255)],
-            [theme.WEST.value, (100, 100, 100)],
-            [theme.SOUTH.value, (255, 255, 255)],
-            [theme.EAST.value, (100, 100, 100)]
+            [self.theme.maze.walls.north , self.theme.crazy_maze.walls.north],
+            [self.theme.maze.walls.west, self.theme.crazy_maze.walls.west],
+            [self.theme.maze.walls.south , self.theme.crazy_maze.walls.south],
+            [self.theme.maze.walls.east, self.theme.crazy_maze.walls.east]
         )
 
         top, left, bottom, right = (
@@ -78,10 +83,11 @@ class MazeDrawer(Drawer):
 
         if progress is not None:
             progress = 1.0 - progress
+            r, g, b = self.theme.crazy_maze.background
             bg = (
-                int(theme.MAZE_BG.value[0] * progress),
-                int(theme.MAZE_BG.value[1] * progress),
-                int(theme.MAZE_BG.value[2] * progress),
+                int(r * progress),
+                int(g * progress),
+                int(b * progress),
             )
 
         if bg is not None:
@@ -94,9 +100,9 @@ class MazeDrawer(Drawer):
             self.draw_rect(
                 (x1, y1),
                 (x2, y2),
-                theme.MAZE_BG.value
+                self.theme.maze.background
             )
-        logo_color = theme.FOURTY_TWO.value if progress is None else (0, 0, 50)
+        logo_color = self.theme.maze.forty_two_logo if progress is None else self.theme.crazy_maze.forty_two_logo
 
         if value == 15:
             self.draw_rect(

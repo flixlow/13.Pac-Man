@@ -4,7 +4,7 @@ from typing import Any
 from .maze import Maze
 from ..scorer import Scorer
 from ..main_menu import Menu
-from ..color_utils import theme
+from ..color_utils import Theme, ThemeSelection
 from ..parsing import parsing, Config
 from .game import PacmanGame, GameState
 from ..utils import DisplayState, KEY_DIRECTION, Timer
@@ -17,6 +17,9 @@ class Monitor:
     def __init__(self, config_file: str) -> None:
         self.timer: Timer = Timer()
 
+        self.theme_selection: ThemeSelection = ThemeSelection()
+        self.theme_selection.load_all_themes()
+
         self.config: Config = parsing(config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[Maze] = self.config.generate_all_maze()
@@ -26,6 +29,9 @@ class Monitor:
         self.time: int = 0
         self.running: bool = True
         self.counter_ending_animation: int = 0
+
+    def get_theme(self):
+        return self.theme_selection.get_selected()
 
     def _init_pygame(self) -> None:
         pygame.init()
@@ -37,9 +43,9 @@ class Monitor:
         w, h = self.screen_size
         self.header: int = h // 5
         self.header_frame = Drawer((w, h // 5))
-        self.header_frame.fill(theme.TITLE_BG.value)
+        self.header_frame.fill(self.get_theme().header.background)
 
-        self.menu = Menu((w, h - self.header), self.scorer)
+        self.menu = Menu((w, h - self.header), self.scorer, self.theme_selection)
         self.menu.set_screen_origin((0, self.header))
         self.state = DisplayState.MENU
 
@@ -51,7 +57,8 @@ class Monitor:
         )
 
         self.pacman_frame = PacManDrawer(
-            (w, h - self.header), self.game.level.maze, self.timer
+            (w, h - self.header), self.game.level.maze, self.timer,
+            self.theme_selection
         )
 
     def check_time(self):
@@ -110,7 +117,9 @@ class Monitor:
 
             if event.key == pygame.K_t:
                 print(self.game.state)
-                theme.cycle()
+                print(self.get_theme())
+                self.theme_selection.cycle()
+                print(self.get_theme())
 
             if event.key == pygame.K_SPACE:
 
@@ -138,7 +147,7 @@ class Monitor:
             self.player_frame.frame.update_size((w, h - self.header))
             self.header_frame.update_size((w, self.header))
 
-            self.header_frame.fill(theme.TITLE_BG.value)
+            self.header_frame.fill(self.get_theme().header.background)
 
     def check_buttons(self, event: pygame.event) -> None:
         if self.state != DisplayState.MENU:
@@ -153,7 +162,7 @@ class Monitor:
         if 1 in pressed:
             self.menu.clear_leaderboard()
         if 2 in pressed:
-            theme.cycle()
+            self.theme_selection.cycle()
         if 3 in pressed:
             self.running = False
 
@@ -171,13 +180,13 @@ class Monitor:
 
 
     def display_header(self) -> None:
-        self.header_frame.fill(theme.TITLE_BG.value)
+        self.header_frame.fill(self.get_theme().header.background)
 
         w, h = self.header_frame.size
         title_font = pygame.font.Font("assets/font/title.otf", w // 20)
         font = pygame.font.Font("assets/font/title.otf", w // 40)
 
-        print_title(self.header_frame, title_font)
+        print_title(self.header_frame, title_font, self.get_theme().header.title)
 
         print_life(
             self.header_frame, (0, 0),
@@ -187,10 +196,12 @@ class Monitor:
             self.pacman_frame.dead
         )
 
-        text_size = print_score(self.header_frame, font, self.game.level.score)
+        text_size = print_score(
+            self.header_frame, font, self.game.level.score, self.get_theme().header.score
+        )
 
         print_timer(
-            self.header_frame, font, text_size, self.timer, self.timer.time_per_game
+            self.header_frame, font, text_size, self.timer, self.timer.time_per_game, self.get_theme().header.timer
         )
 
         self.screen.blit(self.header_frame.surface, (0, 0))

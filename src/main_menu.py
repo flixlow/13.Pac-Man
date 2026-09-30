@@ -1,5 +1,5 @@
 from .drawing.basic_drawer import Drawer
-from .color_utils import theme
+from .color_utils import ThemeSelection
 from .scorer import Scorer
 from .button import Button
 
@@ -8,12 +8,13 @@ from pygame import Surface
 
 
 class Menu:
-    def __init__(self, size, scorer: Scorer) -> None:
+    def __init__(self, size, scorer: Scorer, theme_selection: ThemeSelection) -> None:
         self.frame = Drawer(size)
         # self.frame.fill((0, 0, 0))
         w, h = self.frame.size
 
         self.scorer: Scorer = scorer
+        self.theme_selection = theme_selection
 
         self.scorers_rendered: list[tuple[int, Surface, Surface]] = []
 
@@ -28,13 +29,17 @@ class Menu:
         self.update_size()
         self.draw_menu()
 
+    @property
+    def theme(self):
+        return self.theme_selection.current_theme
+
     def clear_leaderboard(self) -> None:
         self.scorer.clear()
         self.scorer.scores = self.scorer.load()
         self.draw_menu()
 
     def draw_menu(self) -> None:
-        self.frame.fill(theme.MENU_BG.value)
+        self.frame.fill(self.theme.buttons.background)
         self.render_leaderboard()
         self.print_leaderboard()
         self.print_buttons()
@@ -72,11 +77,11 @@ class Menu:
                 key = key[:15] + "..."
 
             user = self.font_name.render(
-                f"{i + 1}: {key}   ", True, theme.USERNAME.value
+                f"{i + 1}: {key}   ", True, self.theme.leaderboard.username
             )
 
             score = self.font_name.render(
-                f"{value}", True, theme.SCORE.value
+                f"{value}", True, self.theme.leaderboard.score
             )
 
             self.max_width_user = max(self.max_width_user, user.get_width())
@@ -92,7 +97,7 @@ class Menu:
 
     def print_leaderboard(self) -> None:
         w, h = self.frame.size
-        self.frame.draw_rect((0, 0), (w // 2, h), theme.HIGHSCORE_BG.value)
+        self.frame.draw_rect((0, 0), (w // 2, h), self.theme.leaderboard.background)
 
         px, py = self.frame.size
         ox, oy = (
