@@ -1,4 +1,3 @@
-from enum import Enum
 from pathlib import Path
 import json
 from pydantic import BaseModel, ConfigDict
@@ -65,12 +64,14 @@ class JSONTheme(StrictModel):
     config: Config
     pacgum: Color
 
+
 def load_theme(filename: Path) -> JSONTheme:
     print("successfully loaded", filename)
     with open(filename, "r") as f:
         content = json.load(f)
 
     return JSONTheme.model_validate(content)
+
 
 class Theme:
     def __init__(self, theme: JSONTheme) -> None:
@@ -93,17 +94,17 @@ class Theme:
         self.crazy_animation = self.theme.config.crazy_animation
         self.pacgum_animation = self.theme.config.pacgum_animation
 
+
 class ThemeSelection:
     def __init__(self) -> None:
         self.themes: list[Theme] = []
         self.selected_index = 0
 
-
     @property
     def current_theme(self):
         return self.get_selected()
 
-    def load_all_themes(self) -> None:
+    def load_all_themes(self) -> bool:
         default_directory = Path("assets/default_theme/")
         user_directory = Path("themes/")
 
@@ -111,7 +112,7 @@ class ThemeSelection:
         for theme in default_directory.glob("*.json"):
             try:
                 raw = load_theme(theme)
-            except (OSError, json.JSONDecodeError) as e:
+            except (OSError, json.JSONDecodeError):
                 print(f"warning! {theme} is not valid")
             else:
                 clean = Theme(raw)
@@ -121,11 +122,15 @@ class ThemeSelection:
         for theme in user_directory.glob("*.json"):
             try:
                 raw = load_theme(theme)
-            except (OSError, json.JSONDecodeError) as e:
+            except (OSError, json.JSONDecodeError):
                 print(f"warning! {theme} is not valid")
             else:
                 clean = Theme(raw)
                 self.themes.append(clean)
+
+        if not self.themes:
+            return False
+        return True
 
     def get_selected(self):
         return self.themes[self.selected_index]

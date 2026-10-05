@@ -97,7 +97,6 @@ class PlayerName:
 
     def jsp(self, event: Any) -> None:
         if event is None:
-            print("bad key !")
             return False
 
         if event.key == pygame.K_UP:
@@ -112,7 +111,6 @@ class PlayerName:
             if self.name and self.cursor:
                 self.name.pop(self.cursor - 1)
             self.cursor = max(0, self.cursor - 1)
-            print("entire name: ", self.name)
         else:
             if len(self.name) < 10:
                 self.name.insert(self.cursor, event.unicode)

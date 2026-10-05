@@ -11,7 +11,8 @@ from ..assetloader import AssetLoader
 
 
 class PacManDrawer(MazeDrawer):
-    def __init__(self, size: tuple[int, int], maze: Maze, t: Timer, theme_selection: ThemeSelection) -> None:
+    def __init__(self, size: tuple[int, int], maze: Maze,
+                 t: Timer, theme_selection: ThemeSelection) -> None:
         super().__init__(size, maze, theme_selection)
 
         self.timer = t
@@ -88,11 +89,10 @@ class PacManDrawer(MazeDrawer):
             nc = (self.timer.total_spend_time) % 2000
             diff = (1000 - abs(1000 - nc) // 100 - 1000) * 20
 
-            print(diff)
-
             xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
 
-            color = tuple(min(255, max(c + diff, 0)) for c in self.theme.theme.pacgum)
+            color = tuple(
+                min(255, max(c + diff, 0)) for c in self.theme.theme.pacgum)
 
             self.draw_rect(
                 (xc - self.cell_size // 15, yc - self.cell_size // 15),
@@ -261,7 +261,6 @@ class PacManDrawer(MazeDrawer):
                 fruit_img, (self.cell_size // 2, self.cell_size // 2))
             for fruit_img in self.fruit_copy
         ]
-
 
     def press_space_to_restart(self, msg: str) -> None:
         w, h = self.size

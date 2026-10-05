@@ -4,12 +4,13 @@ from typing import Any
 from .maze import Maze
 from ..scorer import Scorer
 from ..main_menu import Menu
-from ..color_utils import Theme, ThemeSelection
+from ..color_utils import ThemeSelection
 from ..parsing import parsing, Config
 from .game import PacmanGame, GameState
 from ..utils import DisplayState, KEY_DIRECTION, Timer
 from ..drawing.pacman_drawer import PacManDrawer
-from ..drawing.basic_drawer import Drawer, print_life, print_title, print_score, print_timer
+from ..drawing.basic_drawer import Drawer, print_life, print_title
+from ..drawing.basic_drawer import print_score, print_timer, print_theme
 from ..drawing.player_name import PlayerName
 
 
@@ -18,7 +19,8 @@ class Monitor:
         self.timer: Timer = Timer()
 
         self.theme_selection: ThemeSelection = ThemeSelection()
-        self.theme_selection.load_all_themes()
+        if not self.theme_selection.load_all_themes():
+            raise FileNotFoundError("Theme not found !")
 
         self.config: Config = parsing(config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
@@ -45,7 +47,8 @@ class Monitor:
         self.header_frame = Drawer((w, h // 5))
         self.header_frame.fill(self.get_theme().header.background)
 
-        self.menu = Menu((w, h - self.header), self.scorer, self.theme_selection)
+        self.menu = Menu((w, h - self.header), self.scorer,
+                         self.theme_selection)
         self.menu.set_screen_origin((0, self.header))
         self.state = DisplayState.MENU
 
@@ -103,7 +106,9 @@ class Monitor:
                 name = "".join(self.player_frame.name)
                 self.game.player_state.name = name
                 if name != "":
-                    self.scorer.save(self.game.player_state, self.game.level.score)
+                    self.scorer.save(
+                        self.game.player_state, self.game.level.score
+                    )
                 self.player_frame.clear()
                 self.game._init_new_game()
 
@@ -178,7 +183,6 @@ class Monitor:
 
             self.check_buttons(event)
 
-
     def display_header(self) -> None:
         self.header_frame.fill(self.get_theme().header.background)
 
@@ -186,7 +190,9 @@ class Monitor:
         title_font = pygame.font.Font("assets/font/title.otf", w // 20)
         font = pygame.font.Font("assets/font/title.otf", w // 40)
 
-        print_title(self.header_frame, title_font, self.get_theme().header.title)
+        prev = print_title(self.header_frame,
+                           title_font, self.get_theme().header.title)
+        print_theme(self.header_frame, self.get_theme(), font, prev // 3)
 
         print_life(
             self.header_frame, (0, 0),
@@ -197,11 +203,13 @@ class Monitor:
         )
 
         text_size = print_score(
-            self.header_frame, font, self.game.level.score, self.get_theme().header.score
+            self.header_frame, font,
+            self.game.level.score, self.get_theme().header.score
         )
 
         print_timer(
-            self.header_frame, font, text_size, self.timer, self.timer.time_per_game, self.get_theme().header.timer
+            self.header_frame, font, text_size, self.timer,
+            self.timer.time_per_game, self.get_theme().header.timer
         )
 
         self.screen.blit(self.header_frame.surface, (0, 0))
@@ -218,10 +226,12 @@ class Monitor:
         self.pacman_frame.draw_entities(level.entities)
 
         if self.game.state is GameState.HAS_LOSE_A_LIFE:
-            self.pacman_frame.press_space_to_restart("Press SPACE to restart...")
+            self.pacman_frame.press_space_to_restart(
+                "Press SPACE to restart...")
 
         if self.game.state is GameState.HAS_COMPLETED_LEVEL:
-            self.pacman_frame.press_space_to_restart("Press SPACE to continue...")
+            self.pacman_frame.press_space_to_restart(
+                "Press SPACE to continue...")
 
         if self.game.state is GameState.GAME_OVER:
             self.pacman_frame.press_space_to_restart("Game Over")

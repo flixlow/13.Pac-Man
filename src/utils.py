@@ -1,11 +1,15 @@
 
 from enum import Enum, auto
 from pygame import K_UP, K_w, K_RIGHT, K_d, K_DOWN, K_s, K_LEFT, K_a, time
-from typing import Any
+
+Color = tuple[int, int, int]
+Pos = tuple[int, int]
+Size = tuple[int, int]
+
 
 class Timer:
     def __init__(self) -> None:
-        self.time_per_game = 50000 # constant
+        self.time_per_game = 50000  # constant, in ms
 
         self.elapsed_time = 0
         self.total_spend_time = 0

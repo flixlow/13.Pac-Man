@@ -35,20 +35,28 @@ draft:
 [X] Changer les polices d'ecriture
 [X] Asset secret ghost
 [X] prendre levent sur le release pour les boutons
-[ ] class Color pour les params # PRESQUE !!!!!!!!!
+[X] class Color pour les params # PRESQUE !!!!!!!!!
+[ ] Game over bug at the end of the last level
 [ ] cheat mode
     [ ] wallhack
     [ ] vision trajectoire fantomes
     [ ] godmode
     [ ] add life
-[ ] animation teleportation
 [ ] bug fin d'animation
 [ ] flag : --own_function for draw rectangle
-[ ] docstring
 [ ] Mieux gerer les collisions 🥶🥶🥶🥶
     [ ] Les derniers pacgums
     [ ] Les comportements chelou quand un fantome kill mais loin
 [ ] bug chelou des fois quand ca change de map et quon peut entrer dans le 42 🥶🥶🥶🥶
+[ ] docstring
+
+
+Forbidden Behavior from pygame:
+[ ] Custom font with manipulation of size
+[ ] Image tranformation (scale, rotate)
+[ ] Rescalable Image
+[ ] FPS cap with pygame.time.Clock.tick(60)
+[ ] draw rect
 
 
 Pour les couleurs

@@ -32,7 +32,7 @@ class Scorer:
         last = self.scores.get(player_state.name, -1)
         print(self.scores)
 
-        self.scores[player_state.name] = max(score, last)
+        self.scores[entered_name] = max(score, last)
 
         try:
             with open(self.file, 'w') as f:
@@ -44,9 +44,8 @@ class Scorer:
         try:
             with open(self.file, "w") as f:
                 json.dump({}, f, indent=4)
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, OSError):
             print("Warning: json clear is not possible")
             return False
         else:
             return True
-

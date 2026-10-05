@@ -10,8 +10,10 @@ def main() -> None:
         raise ParsingError(
             "It must take exactly one argument: a configuration file."
         )
-
-    Monitor(argv[1]).main_loop()
+    try:
+        Monitor(argv[1]).main_loop()
+    except FileNotFoundError:
+        print("Theme not found !")
 
 
 if __name__ == "__main__":
