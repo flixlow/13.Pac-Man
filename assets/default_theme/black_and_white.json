@@ -44,5 +44,5 @@
         "crazy_animation": true,
         "pacgum_animation": true
     },
-    "pacgum": [255, 255, 255]
+    "pacgum": [255, 0, 0]
 }

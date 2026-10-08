@@ -4,7 +4,8 @@ from ..color_utils import ThemeSelection
 
 
 class MazeDrawer(Drawer):
-    def __init__(self, size: tuple[int, int], maze: Maze, theme_selection: ThemeSelection) -> None:
+    def __init__(self, size: tuple[int, int],
+                 maze: Maze, theme_selection: ThemeSelection) -> None:
         super().__init__(size)
 
         self.maze = maze.maze_map
@@ -69,9 +70,9 @@ class MazeDrawer(Drawer):
         x2, y2 = px + self.cell_size, py + self.cell_size
 
         colors = (
-            [self.theme.maze.walls.north , self.theme.crazy_maze.walls.north],
+            [self.theme.maze.walls.north, self.theme.crazy_maze.walls.north],
             [self.theme.maze.walls.west, self.theme.crazy_maze.walls.west],
-            [self.theme.maze.walls.south , self.theme.crazy_maze.walls.south],
+            [self.theme.maze.walls.south, self.theme.crazy_maze.walls.south],
             [self.theme.maze.walls.east, self.theme.crazy_maze.walls.east]
         )
 
@@ -102,7 +103,11 @@ class MazeDrawer(Drawer):
                 (x2, y2),
                 self.theme.maze.background
             )
-        logo_color = self.theme.maze.forty_two_logo if progress is None else self.theme.crazy_maze.forty_two_logo
+
+        if progress is None:
+            logo_color = self.theme.maze.forty_two_logo
+        else:
+            logo_color = self.theme.crazy_maze.forty_two_logo
 
         if value == 15:
             self.draw_rect(

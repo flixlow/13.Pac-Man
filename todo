@@ -38,10 +38,10 @@ draft:
 [X] class Color pour les params # PRESQUE !!!!!!!!!
 [ ] Game over bug at the end of the last level
 [ ] cheat mode
-    [ ] wallhack
+    [ ] noclip
     [ ] vision trajectoire fantomes
     [ ] godmode
-    [ ] add life
+
 [ ] bug fin d'animation
 [ ] flag : --own_function for draw rectangle
 [ ] Mieux gerer les collisions 🥶🥶🥶🥶
@@ -49,7 +49,7 @@ draft:
     [ ] Les comportements chelou quand un fantome kill mais loin
 [ ] bug chelou des fois quand ca change de map et quon peut entrer dans le 42 🥶🥶🥶🥶
 [ ] docstring
-
+[ ] Enelever crazy mode enre chaque game
 
 Forbidden Behavior from pygame:
 [ ] Custom font with manipulation of size

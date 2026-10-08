@@ -93,6 +93,12 @@ class DisplayState(Enum):
     MENU = auto()
 
 
+class CheatMode(Enum):
+    NOCLIP = auto()
+    GODMODE = auto()
+    ULTRA_VISION = auto()
+
+
 KEY_DIRECTION: dict[int, Direction] = {
         K_UP: Direction.NORTH,
         K_w: Direction.NORTH,

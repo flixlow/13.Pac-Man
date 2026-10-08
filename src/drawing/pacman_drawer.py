@@ -9,6 +9,9 @@ from ..color_utils import ThemeSelection
 from ..utils import GhostColor, Parameters, Direction, Timer
 from ..assetloader import AssetLoader
 
+Pos = tuple[int, int]
+Color = tuple[int, int, int]
+
 
 class PacManDrawer(MazeDrawer):
     def __init__(self, size: tuple[int, int], maze: Maze,
@@ -284,3 +287,19 @@ class PacManDrawer(MazeDrawer):
         self.surface.blit(
             rendered, (w // 2 - w_text // 2, h // 2 - h_text // 2)
         )
+
+    def draw_ghost_path(self, color: GhostColor, path: list[Pos]) -> None:
+        color_match: dict[GhostColor, Color] = {
+            GhostColor.BLUE: (0, 0, 255),
+            GhostColor.ORANGE: (255, 127, 0),
+            GhostColor.RED: (255, 0, 0),
+            GhostColor.PINK: (255, 127, 127),
+            GhostColor.SECRET: (0, 0, 0)
+        }
+
+        for i, (x, y) in enumerate(path):
+            progress = i / len(path)
+            selected = list(color_match[color])
+            for i in range(len(selected)):
+                selected[i] = min(255, max(0, progress * selected[i]))
+            self.draw_cell(self.maze[y][x], (x, y), bg=selected)
