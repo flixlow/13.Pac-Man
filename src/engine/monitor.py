@@ -93,7 +93,15 @@ class Monitor:
         if event.type == pygame.KEYDOWN:
             if event is None or event.unicode == " ":
                 return
-            if event.unicode.isascii() or event.unicode.isnumeric():
+            if event.unicode == " ":
+                return
+            if (
+                "a" <= event.unicode <= "z" or
+                "A" <= event.unicode <= "Z"
+            ):
+                self.player_frame.jsp(event)
+
+            elif "0" <= event.unicode <= "9":
                 self.player_frame.jsp(event)
 
             elif event.key in [
@@ -116,9 +124,6 @@ class Monitor:
                 self.player_frame.clear()
                 self.game._init_new_game()
                 self.pacman_frame.update_maze(self.game.level.maze)
-
-            else:
-                self.player_frame.jsp(None)
 
     def check_keydown(self, event: Any) -> None:
         if self.game.state is GameState.ENTER_YOUR_NAME:
@@ -233,7 +238,7 @@ class Monitor:
                 sequence = list(reversed(sequence))
                 self.pacman_frame.draw_ghost_path(color, sequence)
 
-        self.pacman_frame.draw_multiple_pacgums(level.pacgums)
+        self.pacman_frame.draw_multiple_pacgums(level.pacgums, False)
 
         self.pacman_frame.draw_multiple_pacgums(level.super_pacgums, True)
 
@@ -246,6 +251,8 @@ class Monitor:
                 self.pacman_frame.press_space("Press SPACE to continue...")
             case GameState.GAME_OVER:
                 self.pacman_frame.press_space("Game Over")
+            case GameState.HAS_BEATEN_THE_GAME:
+                self.pacman_frame.press_space("You finished the Game !")
 
         self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
@@ -275,9 +282,9 @@ class Monitor:
                 self.display_game()
             case GameState.GAME_OVER:
                 self.display_game()
-            case GameState.ENTER_YOUR_NAME:
-                self.display_enter_your_name()
             case GameState.HAS_BEATEN_THE_GAME:
+                self.display_game()
+            case GameState.ENTER_YOUR_NAME:
                 self.display_enter_your_name()
 
         pygame.display.flip()

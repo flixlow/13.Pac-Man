@@ -30,6 +30,7 @@ class Level:
     def _init_pacgums(self) -> None:
         self.pacgums: set[tuple[int, int]] = set()
         self.super_pacgums: set[tuple[int, int]] = set(self.maze.corners)
+        self.pacgums.update(self.super_pacgums)
 
         for x in range(self.maze.w):
             for y in range(self.maze.h):

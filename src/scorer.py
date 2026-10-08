@@ -9,18 +9,19 @@ from .errors import ScorerFileError
 class Scorer:
     def __init__(self, score_filename: str) -> None:
         self.file: str = score_filename
-        self.scores: dict[str, int] = self.load()
+        self.scores: dict[str, int] = self._load()
 
-    def sort(self, content: dict[str, int]) -> dict[str, int]:
-        return dict(sorted(content.items(), key=lambda x: x[1], reverse=True))
+    def sort(self) -> None:
+        self.scores = dict(
+            sorted(self.scores.items(), key=lambda x: x[1], reverse=True)
+        )
 
-    def load(self) -> dict[str, int]:
+    def _load(self) -> dict[str, int]:
         try:
             if not Path(self.file).exists():
-                return {}
+                self.scores = {}
             with open(self.file, encoding="utf-8") as f:
-                content: dict[str, int] = json.load(f)
-                return self.sort(content)
+                return json.load(f)
 
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
@@ -35,6 +36,8 @@ class Scorer:
         last = self.scores.get(player_state.name, -1)
 
         self.scores[entered_name] = max(score, last)
+
+        self.sort()
 
         try:
             with open(self.file, 'w') as f:

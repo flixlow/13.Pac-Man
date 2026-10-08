@@ -5,7 +5,7 @@ import pygame
 
 class AssetLoader:
     @staticmethod
-    def load_ghosts() -> dict[GhostColor, pygame.Surface]:
+    def load_ghosts() -> dict[GhostColor, list[pygame.Surface]]:
         ghosts_img = {
             GhostColor.RED: [pygame.image.load(
                 f"assets/ghosts/red/{i+1}.png").convert_alpha()
@@ -40,7 +40,7 @@ class AssetLoader:
         return pacman_img_copy
 
     @staticmethod
-    def load_life() -> tuple[pygame.Surface]:
+    def load_life() -> tuple[pygame.Surface, pygame.Surface]:
         alive = pygame.image.load(
                     "assets/icon/heart.png").convert_alpha()
 
@@ -60,7 +60,7 @@ class AssetLoader:
         return fruit
 
     @staticmethod
-    def load_buttons() -> tuple[pygame.Surface]:
+    def load_buttons() -> tuple[pygame.Surface, pygame.Surface]:
         normal = pygame.image.load("assets/button/button.png")
         pressed = pygame.image.load("assets/button/button_pressed.png")
 

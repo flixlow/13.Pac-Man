@@ -2,9 +2,9 @@
 from enum import Enum, auto
 from pygame import K_UP, K_w, K_RIGHT, K_d, K_DOWN, K_s, K_LEFT, K_a, time
 
-Color = tuple[int, int, int]
 Pos = tuple[int, int]
 Size = tuple[int, int]
+Color = tuple[int, int, int]
 
 
 class GameState(Enum):
@@ -70,12 +70,12 @@ class PlayerState:
 
 
 class GhostColor(Enum):
-    RED = auto()
-    BLUE = auto()
-    PINK = auto()
-    ORANGE = auto()
-    CRAZY = auto()
-    SECRET = auto()
+    RED = (255, 0, 0)
+    BLUE = (0, 0, 255)
+    PINK = (255, 127, 127)
+    ORANGE = (255, 127, 0)
+    CRAZY = (255, 255, 255)
+    SECRET = (0, 0, 0)
 
 
 class Direction(Enum):
