@@ -276,7 +276,7 @@ class PacManDrawer(MazeDrawer):
             (w_text + self.padding_x, h_text + self.padding_y)
         )
 
-        rendered = self.font_press.render(msg, True, (255, 255, 255))
+        rendered = self.font_press.render(msg, True, (0, 0, 0))
         w_text, h_text = rendered.get_size()
         self.put_image(
             (

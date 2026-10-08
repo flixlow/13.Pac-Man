@@ -17,21 +17,18 @@ from ..drawing.basic_drawer import print_score, print_timer, print_theme
 class Monitor:
     def __init__(self, config_file: str) -> None:
         self.timer: Timer = Timer()
-
-        self.theme_selection: ThemeSelection = ThemeSelection()
-        if not self.theme_selection.load_all_themes():
-            raise FileNotFoundError("Theme not found !")
-
-        self.active_cheatmode: set[CheatMode] = set()
         self.config: Config = parsing(config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[Maze] = self.config.generate_all_maze()
         self.game: PacmanGame = PacmanGame(self.config, self.mazes, self.timer)
+        self.theme_selection: ThemeSelection = ThemeSelection()
+        if not self.theme_selection.load_all_themes():
+            raise FileNotFoundError("Theme not found !")
 
         self._init_pygame()
-        self.time: int = 0
         self.running: bool = True
         self.counter_ending_animation: int = 0
+        self.active_cheatmode: set[CheatMode] = set()
 
     def get_theme(self):
         return self.theme_selection.get_selected()
@@ -72,20 +69,31 @@ class Monitor:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
 
+    def check_cheat_mode(self, event: Any) -> None:
+        if event.key == pygame.K_F1:
+            if CheatMode.ULTRA_VISION in self.active_cheatmode:
+                self.active_cheatmode.remove(CheatMode.ULTRA_VISION)
+            else:
+                self.active_cheatmode.add(CheatMode.ULTRA_VISION)
+        if event.key == pygame.K_F2:
+            if CheatMode.ULTRA_VISION in self.active_cheatmode:
+                self.active_cheatmode.remove(CheatMode.GODMODE)
+            else:
+                self.active_cheatmode.add(CheatMode.GODMODE)
+        if event.key == pygame.K_F3:
+            if CheatMode.ULTRA_VISION in self.active_cheatmode:
+                self.active_cheatmode.remove(CheatMode.NOCLIP)
+            else:
+                self.active_cheatmode.add(CheatMode.NOCLIP)
+
     def check_alpha(self, event: Any) -> None:
         if self.game.state != GameState.ENTER_YOUR_NAME:
             return
 
         if event.type == pygame.KEYDOWN:
-            if event.unicode == " ":
+            if event is None or event.unicode == " ":
                 return
-            if (
-                "a" <= event.unicode <= "z" or
-                "A" <= event.unicode <= "Z"
-            ):
-                self.player_frame.jsp(event)
-
-            elif "0" <= event.unicode <= "9":
+            if event.unicode.isascii() or event.unicode.isnumeric():
                 self.player_frame.jsp(event)
 
             elif event.key in [
@@ -130,7 +138,10 @@ class Monitor:
                 }:
                     self.game.state = GameState.IN_GAME
 
-                if self.game.state is GameState.GAME_OVER:
+                if self.game.state in {
+                    GameState.GAME_OVER,
+                    GameState.HAS_BEATEN_THE_GAME
+                }:
                     self.game.state = GameState.ENTER_YOUR_NAME
 
             elif self.game.state == GameState.IN_GAME\
@@ -231,10 +242,8 @@ class Monitor:
         match self.game.state:
             case GameState.HAS_LOSE_A_LIFE:
                 self.pacman_frame.press_space("Press SPACE to restart...")
-
             case GameState.HAS_COMPLETED_LEVEL:
                 self.pacman_frame.press_space("Press SPACE to continue...")
-
             case GameState.GAME_OVER:
                 self.pacman_frame.press_space("Game Over")
 
@@ -249,7 +258,7 @@ class Monitor:
         self.player_frame.render()
         self.screen.blit(self.player_frame.frame.surface, (0, self.header))
 
-    def display_state(self) -> None:
+    def display(self) -> None:
 
         self.display_header()
 
@@ -284,23 +293,6 @@ class Monitor:
 
             self.counter_ending_animation = 0
 
-    def check_cheat_mode(self, event: Any) -> None:
-        if event.key == pygame.K_F1:
-            if CheatMode.ULTRA_VISION in self.active_cheatmode:
-                self.active_cheatmode.remove(CheatMode.ULTRA_VISION)
-            else:
-                self.active_cheatmode.add(CheatMode.ULTRA_VISION)
-        if event.key == pygame.K_F2:
-            if CheatMode.ULTRA_VISION in self.active_cheatmode:
-                self.active_cheatmode.remove(CheatMode.GODMODE)
-            else:
-                self.active_cheatmode.add(CheatMode.GODMODE)
-        if event.key == pygame.K_F3:
-            if CheatMode.ULTRA_VISION in self.active_cheatmode:
-                self.active_cheatmode.remove(CheatMode.NOCLIP)
-            else:
-                self.active_cheatmode.add(CheatMode.NOCLIP)
-
     def main_loop(self) -> None:
         while self.running:
 
@@ -310,7 +302,7 @@ class Monitor:
 
             self.check_user_events()
 
-            self.display_state()
+            self.display()
 
             self.ending_animation()
 

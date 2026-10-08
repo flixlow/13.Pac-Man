@@ -96,9 +96,6 @@ class PlayerName:
             self.display_cursor()
 
     def jsp(self, event: Any) -> None:
-        if event is None:
-            return False
-
         if event.key == pygame.K_UP:
             self.cursor = 0
         elif event.key == pygame.K_DOWN:
