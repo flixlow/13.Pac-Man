@@ -11,14 +11,17 @@ class Scorer:
         self.file: str = score_filename
         self.scores: dict[str, int] = self.load()
 
+    def sort(self, content: dict[str, int]) -> dict[str, int]:
+        return dict(sorted(content.items(), key=lambda x: x[1], reverse=True))
+
     def load(self) -> dict[str, int]:
         try:
             if not Path(self.file).exists():
                 return {}
             with open(self.file, encoding="utf-8") as f:
-                content = json.load(f)
-                return dict(sorted(
-                    content.items(), key=lambda x: x[1], reverse=True))
+                content: dict[str, int] = json.load(f)
+                return self.sort(content)
+
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
         except json.JSONDecodeError as e:
@@ -30,7 +33,6 @@ class Scorer:
     def save(self, player_state: PlayerState, score: int) -> None:
         entered_name = player_state.name.strip()
         last = self.scores.get(player_state.name, -1)
-        print(self.scores)
 
         self.scores[entered_name] = max(score, last)
 

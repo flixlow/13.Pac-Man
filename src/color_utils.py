@@ -66,7 +66,6 @@ class JSONTheme(StrictModel):
 
 
 def load_theme(filename: Path) -> JSONTheme:
-    print("successfully loaded", filename)
     with open(filename, "r") as f:
         content = json.load(f)
 

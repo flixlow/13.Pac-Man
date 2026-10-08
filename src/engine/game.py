@@ -38,6 +38,7 @@ class PacmanGame:
         if self.level.is_completed:
             self.state = GameState.HAS_COMPLETED_LEVEL
             self.next_level()
+            self.level.set_crazy_mode(False)
         elif not self.level.player.is_alive:
             self.state = GameState.HAS_LOSE_A_LIFE
             self.level.player.is_alive = True
