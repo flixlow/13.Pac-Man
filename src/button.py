@@ -4,10 +4,12 @@ from .drawing.basic_drawer import Drawer
 from .assetloader import AssetLoader
 
 from typing import Any
+Color = tuple[int, int, int]
+
 
 class Button:
     def __init__(self, frame: Drawer, a: tuple[int, int],
-                 i: int, size: int, text: str) -> None:
+                 i: int, size: int, text: str, color: Any) -> None:
         self.pos = a
         self.frame = frame
         self.screen_origin = (0, 0)
@@ -15,6 +17,8 @@ class Button:
         self.i = i + 1
         self.size = size
         self.text = text
+        self.bg_color = color.background
+        self.text_color = color.text
 
         w, h = self.frame.size
         self.padding_x, self.padding_y = w // 20, h // 10
@@ -24,6 +28,13 @@ class Button:
         self.button_original: pygame.Surface = normal
         self.button_pressed_original: pygame.Surface = pressed
 
+    def set_new_color(self, new_color: Any) -> None:
+        self.bg_color = new_color.background
+        self.text_color = new_color.text
+        self.update_size()
+        self.button.fill(self.bg_color, special_flags=pygame.BLEND_RGBA_MULT)
+        self.button_pressed.fill(self.bg_color, special_flags=pygame.BLEND_RGBA_MULT)
+
     def update_size(self) -> None:
         w, h = self.frame.size
 
@@ -31,7 +42,7 @@ class Button:
         self.padding_x, self.padding_y = w // 20, h // 10
         self.pos = (w // 2 + self.padding_x, self.i * self.padding_y)
 
-        self.rendered_text = self.font.render(self.text, False, (100, 80, 0))
+        self.rendered_text = self.font.render(self.text, False, self.text_color)
 
         size = (
             max(1, w // 2 - self.padding_x * 2),
@@ -42,6 +53,8 @@ class Button:
         self.button_pressed = pygame.transform.scale(
             self.button_pressed_original, size
         )
+        self.button.fill(self.bg_color, special_flags=pygame.BLEND_RGBA_MULT)
+        self.button_pressed.fill(self.bg_color, special_flags=pygame.BLEND_RGBA_MULT)
 
     def draw(self) -> None:
         if self._pressed:
