@@ -93,7 +93,7 @@ def print_title(frame: Drawer, font: pygame.font.Font, color: Color) -> int:
 
 
 def print_score(frame: Drawer, font: pygame.font.Font, score: int,
-                color: Color) -> int:
+                color: Color) -> tuple[int, int]:
     w, h = frame.size
     padding_x, padding_y = w // 30, h // 20
 
