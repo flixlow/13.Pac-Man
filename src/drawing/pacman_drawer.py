@@ -265,7 +265,7 @@ class PacManDrawer(MazeDrawer):
             for fruit_img in self.fruit_copy
         ]
 
-    def press_space_to_restart(self, msg: str) -> None:
+    def press_space(self, msg: str) -> None:
         w, h = self.size
 
         self.font_press = pygame.font.Font("assets/font/title.otf", w // 25)
