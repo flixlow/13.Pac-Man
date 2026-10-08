@@ -2,8 +2,8 @@
     "name": "neon_arcade",
     "maze": {
         "walls": {
-            "north": [0, 255, 255],
-            "west": [255, 0, 255],
+            "north": [255, 0, 255],
+            "west": [0, 255, 255],
             "south": [0, 255, 255],
             "east": [255, 0, 255]
         },
@@ -12,13 +12,13 @@
     },
     "crazy_maze": {
         "walls": {
-            "north": [255, 0, 110],
-            "west": [255, 0, 110],
-            "south": [255, 0, 110],
-            "east": [255, 0, 110]
+            "north": [255, 127, 0],
+            "west": [0, 255, 255],
+            "south": [255, 127, 0],
+            "east": [0, 255, 255]
         },
-        "background": [20, 0, 40],
-        "forty_two_logo": [0, 255, 200]
+        "background": [255, 255, 255],
+        "forty_two_logo": [0, 255, 255]
     },
     "interface": {
         "header": {
