@@ -25,6 +25,9 @@ class Drawer:
 
         pygame.draw.line(self.surface, color, a, b, width)
 
+    def putpixel(self, a: Pos, color: Color = (0, 0, 0)) -> None:
+        self.surface.set_at(a, color)
+
     def draw_rect(self, a: Pos, b: Pos, color: Color = (0, 0, 0)) -> None:
 
         pygame.draw.rect(self.surface, color, (*a, b[0] - a[0], b[1] - a[1]))
