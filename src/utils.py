@@ -7,16 +7,30 @@ Pos = tuple[int, int]
 Size = tuple[int, int]
 
 
+class GameState(Enum):
+    START_NEW_GAME = auto()
+    IN_GAME = auto()
+    PAUSE = auto()
+    HAS_LOSE_A_LIFE = auto()
+    HAS_COMPLETED_LEVEL = auto()
+    GAME_OVER = auto()
+    HAS_BEATEN_THE_GAME = auto()
+    ENTER_YOUR_NAME = auto()
+
+
 class Timer:
     def __init__(self) -> None:
         self.time_per_game = 50000  # constant, in ms
 
-        self.elapsed_time = 0
-        self.total_spend_time = 0
-        self.crazy_mode_elapsed_time = 0
+        self.game_time: int = 0
+        self.elapsed_time: int = 0
+        self.total_spend_time: int = 0
+        self.crazy_mode_elapsed_time: int = 0
 
-    def tick(self, clock: time.Clock, state: Enum) -> None:
-        from .engine.monitor import GameState
+    def set_time_per_game(self, time_per_game) -> None:
+        self.time_per_game = time_per_game
+
+    def tick(self, clock: time.Clock, state: GameState) -> None:
         self.elapsed_time = clock.tick(60)
         self.total_spend_time += self.elapsed_time
 
@@ -29,7 +43,7 @@ class Timer:
     def new_game(self) -> None:
         self.game_time = 0
 
-    def time_is_over(self) -> bool:
+    def is_over(self) -> bool:
         return self.time_per_game == self.game_time
 
 

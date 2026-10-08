@@ -4,14 +4,14 @@ from typing import Any
 from .maze import Maze
 from ..scorer import Scorer
 from ..main_menu import Menu
-from ..color_utils import ThemeSelection
 from ..parsing import parsing, Config
 from .game import PacmanGame, GameState
-from ..utils import DisplayState, KEY_DIRECTION, Timer
+from ..color_utils import ThemeSelection
+from ..utils import Timer, KEY_DIRECTION
+from ..drawing.player_name import PlayerName
 from ..drawing.pacman_drawer import PacManDrawer
 from ..drawing.basic_drawer import Drawer, print_life, print_title
 from ..drawing.basic_drawer import print_score, print_timer, print_theme
-from ..drawing.player_name import PlayerName
 
 
 class Monitor:
@@ -50,7 +50,6 @@ class Monitor:
         self.menu = Menu((w, h - self.header), self.scorer,
                          self.theme_selection)
         self.menu.set_screen_origin((0, self.header))
-        self.state = DisplayState.MENU
 
         self.player_frame = PlayerName((w, h - self.header), self.timer)
 
@@ -64,21 +63,19 @@ class Monitor:
             self.theme_selection
         )
 
-    def check_time(self):
-        if self.timer.time_is_over():
-            self.game.state = GameState.GAME_OVER
-            self.state = DisplayState.PRESS_SPACE_TO_RESUME
-
     def check_exit(self, event: Any) -> None:
         if event.type == pygame.QUIT:
             self.running = False
-        if self.state in {DisplayState.MENU, DisplayState.ENTER_YOUR_NAME} and\
-                event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            self.running = False
+        if self.game.state in {GameState.PAUSE, GameState.START_NEW_GAME}:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
 
-    def check_alpha(self, event) -> None:
-        if self.state != DisplayState.ENTER_YOUR_NAME:
-            return None
+    def check_alpha(self, event: Any) -> None:
+        if self.game.state != GameState.ENTER_YOUR_NAME:
+            return
+
+        print("ok")
 
         if event.type == pygame.KEYDOWN:
             if event.unicode == " ":
@@ -116,6 +113,8 @@ class Monitor:
                 self.player_frame.jsp(None)
 
     def check_keydown(self, event: Any) -> None:
+        if self.game.state is GameState.ENTER_YOUR_NAME:
+            return
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.game.state = GameState.PAUSE
@@ -128,13 +127,16 @@ class Monitor:
 
             if event.key == pygame.K_SPACE:
 
-                if self.state == DisplayState.MENU:
+                if self.game.state in {
+                    GameState.START_NEW_GAME, GameState.HAS_LOSE_A_LIFE,
+                    GameState.PAUSE, GameState.HAS_COMPLETED_LEVEL
+                }:
                     self.game.state = GameState.IN_GAME
 
-                if self.state == DisplayState.PRESS_SPACE_TO_RESUME:
-                    self.game.state = GameState.IN_GAME
+                if self.game.state is GameState.GAME_OVER:
+                    self.game.state = GameState.ENTER_YOUR_NAME
 
-            elif self.state == DisplayState.IN_GAME\
+            elif self.game.state == GameState.IN_GAME\
                     and event.key in KEY_DIRECTION:
                 self.game.level.change_direction(KEY_DIRECTION[event.key])
 
@@ -154,22 +156,18 @@ class Monitor:
 
             self.header_frame.fill(self.get_theme().header.background)
 
-    def check_buttons(self, event: pygame.event) -> None:
-        if self.state != DisplayState.MENU:
-            return
+    def check_buttons(self, event: Any) -> None:
+        if self.game.state in {GameState.PAUSE, GameState.START_NEW_GAME}:
+            pressed = self.menu.check_buttons(event)
 
-        pressed = self.menu.check_buttons(event)
-
-        if 0 in pressed:
-            if self.state is DisplayState.MENU:
+            if 0 in pressed:
                 self.game.state = GameState.IN_GAME
-
-        if 1 in pressed:
-            self.menu.clear_leaderboard()
-        if 2 in pressed:
-            self.theme_selection.cycle()
-        if 3 in pressed:
-            self.running = False
+            if 1 in pressed:
+                self.menu.clear_leaderboard()
+            if 2 in pressed:
+                self.theme_selection.cycle()
+            if 3 in pressed:
+                self.running = False
 
     def check_user_events(self) -> None:
         for event in pygame.event.get():
@@ -230,16 +228,15 @@ class Monitor:
 
         self.pacman_frame.draw_entities(level.entities)
 
-        if self.game.state is GameState.HAS_LOSE_A_LIFE:
-            self.pacman_frame.press_space_to_restart(
-                "Press SPACE to restart...")
+        match self.game.state:
+            case GameState.HAS_LOSE_A_LIFE:
+                self.pacman_frame.press_space("Press SPACE to restart...")
 
-        if self.game.state is GameState.HAS_COMPLETED_LEVEL:
-            self.pacman_frame.press_space_to_restart(
-                "Press SPACE to continue...")
+            case GameState.HAS_COMPLETED_LEVEL:
+                self.pacman_frame.press_space("Press SPACE to continue...")
 
-        if self.game.state is GameState.GAME_OVER:
-            self.pacman_frame.press_space_to_restart("Game Over")
+            case GameState.GAME_OVER:
+                self.pacman_frame.press_space("Game Over")
 
         self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
@@ -256,17 +253,23 @@ class Monitor:
 
         self.display_header()
 
-        if self.state is DisplayState.IN_GAME:
-            self.display_game()
-
-        if self.state is DisplayState.MENU:
-            self.display_menu()
-
-        if self.state is DisplayState.ENTER_YOUR_NAME:
-            self.display_enter_your_name()
-
-        if self.state is DisplayState.PRESS_SPACE_TO_RESUME:
-            self.display_game()
+        match self.game.state:
+            case GameState.IN_GAME:
+                self.display_game()
+            case GameState.START_NEW_GAME:
+                self.display_menu()
+            case GameState.PAUSE:
+                self.display_menu()
+            case GameState.HAS_LOSE_A_LIFE:
+                self.display_game()
+            case GameState.HAS_COMPLETED_LEVEL:
+                self.display_game()
+            case GameState.GAME_OVER:
+                self.display_game()
+            case GameState.ENTER_YOUR_NAME:
+                self.display_enter_your_name()
+            case GameState.HAS_BEATEN_THE_GAME:
+                self.display_enter_your_name()
 
         pygame.display.flip()
 
@@ -281,27 +284,9 @@ class Monitor:
 
             self.counter_ending_animation = 0
 
-        # Bug de la string vide dans le fichier json
         # if self.game.state\
         #         in {GameState.GAME_OVER, GameState.HAS_BEATEN_THE_GAME}:
         #     self.scorer.save(self.game.player_state, self.game.level.score)
-
-    def check_game_state(self) -> None:
-        match self.game.state:
-            case GameState.IN_GAME:
-                self.state = DisplayState.IN_GAME
-            case GameState.START_NEW_GAME:
-                self.state = DisplayState.MENU
-            case GameState.PAUSE:
-                self.state = DisplayState.MENU
-            case GameState.HAS_LOSE_A_LIFE:
-                self.state = DisplayState.PRESS_SPACE_TO_RESUME
-            case GameState.HAS_COMPLETED_LEVEL:
-                self.state = DisplayState.PRESS_SPACE_TO_RESUME
-            case GameState.GAME_OVER:
-                self.state = DisplayState.ENTER_YOUR_NAME
-            case GameState.HAS_BEATEN_THE_GAME:
-                self.state = DisplayState.ENTER_YOUR_NAME
 
     def main_loop(self) -> None:
         while self.running:
@@ -310,16 +295,11 @@ class Monitor:
 
             self.game.running()
 
-            self.check_game_state()
-
             self.check_user_events()
-
-            self.check_time()
 
             self.display_state()
 
             self.ending_animation()
-
-            # print(f'{self.state}: {self.game.state}')
+            print(self.game.state)
 
         pygame.quit()
