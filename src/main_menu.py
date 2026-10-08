@@ -20,10 +20,10 @@ class Menu:
         self.scorers_rendered: list[tuple[int, Surface, Surface]] = []
 
         pos = (w // 2 + w // 10, 0 + h // 10)
-        self.play_button = Button(self.frame, pos, 0, 2.5, "Play")
-        self.clear_lb = Button(self.frame, pos, 3, 1.5, "Clear Leaderboard")
-        self.change_theme = Button(self.frame, pos, 5, 1.5, "Change Theme")
-        self.exit = Button(self.frame, pos, 7, 1.5, "Exit")
+        self.play_button = Button(self.frame, pos, 0, 2.5, "Play", self.theme.buttons)
+        self.clear_lb = Button(self.frame, pos, 3, 1.5, "Clear Leaderboard", self.theme.buttons)
+        self.change_theme = Button(self.frame, pos, 5, 1.5, "Change Theme", self.theme.buttons)
+        self.exit = Button(self.frame, pos, 7, 1.5, "Exit", self.theme.buttons)
 
         self.buttons = [
             self.play_button, self.clear_lb, self.change_theme, self.exit
@@ -42,6 +42,9 @@ class Menu:
         self.draw_menu()
 
     def draw_menu(self) -> None:
+        for button in self.buttons:
+            button.set_new_color(self.theme.buttons)
+
         self.frame.fill(self.theme.buttons.background)
         self.render_leaderboard()
         self.print_leaderboard()
