@@ -1,5 +1,5 @@
 from .drawing.basic_drawer import Drawer
-from .color_utils import ThemeSelection
+from .color_utils import ThemeSelection, Theme
 from .scorer import Scorer
 from .button import Button
 
@@ -9,10 +9,10 @@ from pygame import Surface
 
 
 class Menu:
-    def __init__(self, size, scorer: Scorer,
+    def __init__(self, size: tuple[int, int], scorer: Scorer,
                  theme_selection: ThemeSelection) -> None:
         self.frame = Drawer(size)
-        # self.frame.fill((0, 0, 0))
+
         w, h = self.frame.size
 
         self.scorer: Scorer = scorer
@@ -42,12 +42,11 @@ class Menu:
         self.draw_menu()
 
     @property
-    def theme(self):
+    def theme(self) -> Theme:
         return self.theme_selection.current_theme
 
     def clear_leaderboard(self) -> None:
         self.scorer.clear()
-        self.scorer.scores = self.scorer._load()
         self.draw_menu()
 
     def draw_menu(self) -> None:

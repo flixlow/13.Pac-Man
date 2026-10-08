@@ -1,6 +1,6 @@
 from .basic_drawer import Drawer
 from ..engine.maze import Maze
-from ..color_utils import ThemeSelection
+from ..color_utils import ThemeSelection, Theme
 
 
 class MazeDrawer(Drawer):
@@ -17,8 +17,14 @@ class MazeDrawer(Drawer):
 
         MazeDrawer.draw_maze(self)
 
+    @staticmethod
+    def _as_rgb(color: tuple[int, ...]) -> tuple[int, int, int]:
+        if len(color) != 3:
+            raise ValueError(f"Expected RGB color, got {color!r}")
+        return color[0], color[1], color[2]
+
     @property
-    def theme(self):
+    def theme(self) -> Theme:
         return self.theme_selection.current_theme
 
     def update_maze(self, maze: Maze) -> None:
@@ -81,6 +87,11 @@ class MazeDrawer(Drawer):
             else tuple(int(c * progress) for c in color[1])
             for color in colors
         )
+
+        top = MazeDrawer._as_rgb(top)
+        left = MazeDrawer._as_rgb(left)
+        bottom = MazeDrawer._as_rgb(bottom)
+        right = MazeDrawer._as_rgb(right)
 
         if progress is not None:
             progress = 1.0 - progress

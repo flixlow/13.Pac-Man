@@ -3,24 +3,36 @@ from .entity.ghosts import GhostColor
 import pygame
 
 
+class Paths:
+    ASSETS = "assets/"
+    GHOSTS = ASSETS + "ghosts/"
+    PACMAN = ASSETS + "pacman/"
+    SECRET = GHOSTS + "secret/"
+    ORANGE = GHOSTS + "orange/"
+    CRAZY = GHOSTS + "crazyman/"
+    PINK = GHOSTS + "pink/"
+    BLUE = GHOSTS + "blue/"
+    RED = GHOSTS + "red/"
+
+
 class AssetLoader:
     @staticmethod
     def load_ghosts() -> dict[GhostColor, list[pygame.Surface]]:
         ghosts_img = {
             GhostColor.RED: [pygame.image.load(
-                f"assets/ghosts/red/{i+1}.png").convert_alpha()
+                f"{Paths.RED}{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.BLUE: [pygame.image.load(
-                f"assets/ghosts/blue/{i+1}.png").convert_alpha()
+                f"{Paths.BLUE}{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.ORANGE: [pygame.image.load(
-                f"assets/ghosts/orange/{i+1}.png").convert_alpha()
+                f"{Paths.ORANGE}{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.PINK: [pygame.image.load(
-                f"assets/ghosts/pink/{i+1}.png").convert_alpha()
+                f"{Paths.PINK}{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.SECRET: [pygame.image.load(
-                f"assets/ghosts/secret/{i+1}.png").convert_alpha()
+                f"{Paths.SECRET}{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.CRAZY: [
                 pygame.image.load(

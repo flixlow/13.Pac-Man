@@ -53,7 +53,7 @@ class Drawer:
 
 
 def print_theme(frame: Drawer, theme: Theme, font: pygame.font.Font,
-                prev_bottom: int):
+                prev_bottom: int) -> None:
     w, h = frame.size
 
     rendered = font.render(theme.name, True, theme.header.title)
@@ -67,7 +67,7 @@ def print_theme(frame: Drawer, theme: Theme, font: pygame.font.Font,
 
 def print_life(
         frame: Drawer, a: Pos, gap: int,
-        life: int, alive: pygame.Surface, dead: pygame.Surface):
+        life: int, alive: pygame.Surface, dead: pygame.Surface) -> None:
 
     LIFE = 3
 

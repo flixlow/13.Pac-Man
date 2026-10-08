@@ -29,15 +29,15 @@ class Level:
 
     def _init_pacgums(self) -> None:
         self.pacgums: set[tuple[int, int]] = set()
-        self.super_pacgums: set[tuple[int, int]] = set(self.maze.corners)
-        self.pacgums.update(self.super_pacgums)
+        self.super_pacgums: set[tuple[int, int]] = set()
 
         for x in range(self.maze.w):
             for y in range(self.maze.h):
                 if self.maze.maze_map[y][x] == 15:
                     continue
-                # self.pacgums.add((x, y))
-        self.pacgums.add((1, 1))
+                if (x, y) in self.maze.corners:
+                    self.super_pacgums.add((x, y))
+                self.pacgums.add((x, y))
 
     def _init_ghosts(self) -> None:
         ghost_classes: list[Callable] = [Blue, Red, Orange, Pink]

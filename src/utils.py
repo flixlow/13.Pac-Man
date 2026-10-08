@@ -27,7 +27,7 @@ class Timer:
         self.total_spend_time: int = 0
         self.crazy_mode_elapsed_time: int = 0
 
-    def set_time_per_game(self, time_per_game) -> None:
+    def set_time_per_game(self, time_per_game: int) -> None:
         self.time_per_game = time_per_game
 
     def tick(self, clock: time.Clock, state: GameState) -> None:
@@ -47,26 +47,9 @@ class Timer:
         return self.time_per_game == self.game_time
 
 
-class Paths:
-    ASSETS = "assets/"
-    GHOSTS = ASSETS + "ghosts/"
-    PACMAN = ASSETS + "pacman/pacman.png"
-    SECRET = GHOSTS + "secret_ghost.png"
-    ORANGE = GHOSTS + "orange_ghost.png"
-    GREEN = GHOSTS + "green_ghost.png"
-    BLUE = GHOSTS + "blue_ghost.png"
-    RED = GHOSTS + "red_ghost.png"
-
-
 class Parameters:
     PLAYER_VELOCITY = 5
     GHOST_VELOCITY = 3
-
-
-class PlayerState:
-    lives: int = 3
-    score: int = 0
-    name: str = ""
 
 
 class GhostColor(Enum):

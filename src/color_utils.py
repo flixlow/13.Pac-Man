@@ -100,7 +100,7 @@ class ThemeSelection:
         self.selected_index = 0
 
     @property
-    def current_theme(self):
+    def current_theme(self) -> Theme:
         return self.get_selected()
 
     def load_all_themes(self) -> bool:
@@ -131,10 +131,10 @@ class ThemeSelection:
             return False
         return True
 
-    def get_selected(self):
+    def get_selected(self) -> Theme:
         return self.themes[self.selected_index]
 
-    def cycle(self):
+    def cycle(self) -> Theme:
         self.selected_index += 1
         self.selected_index %= (len(self.themes))
         return self.get_selected()

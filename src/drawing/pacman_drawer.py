@@ -49,7 +49,7 @@ class PacManDrawer(MazeDrawer):
             start_y + (end_y - start_y) * progress,
         )
 
-    def draw_maze(self):
+    def draw_maze(self) -> None:
         target_color = (150, 150, 150)
         elapsed = self.timer.crazy_mode_elapsed_time
 
@@ -58,7 +58,12 @@ class PacManDrawer(MazeDrawer):
             progress = 1.0 - progress
 
         if progress:
-            self.fill(tuple(int(c * progress) for c in target_color))
+            tinted_background: tuple[int, int, int] = (
+                int(target_color[0] * progress),
+                int(target_color[1] * progress),
+                int(target_color[2] * progress),
+            )
+            self.fill(tinted_background)
             bg = (255, 0, 0)
         else:
             self.fill(self.theme.background)
@@ -91,8 +96,12 @@ class PacManDrawer(MazeDrawer):
 
             xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
 
-            color = tuple(
-                min(255, max(c + diff, 0)) for c in self.theme.theme.pacgum)
+            r, g, b = self.theme.theme.pacgum
+            color: tuple[int, int, int] = (
+                min(255, max(r + diff, 0)),
+                min(255, max(g + diff, 0)),
+                min(255, max(b + diff, 0)),
+            )
 
             self.draw_rect(
                 (xc - self.cell_size // 15, yc - self.cell_size // 15),
@@ -141,7 +150,7 @@ class PacManDrawer(MazeDrawer):
         py = int(y * self.cell_size + self.offset_y)
 
         x1, y1 = px, py
-        is_jsp = self.timer.total_spend_time % 500 < 500 // 2
+        is_first_sprite = self.timer.total_spend_time % 500 < 500 // 2
 
         if color is GhostColor.CRAZY:
             offset = 0
@@ -151,29 +160,29 @@ class PacManDrawer(MazeDrawer):
             ):
                 offset = 2
 
-            if is_jsp:
+            if is_first_sprite:
                 img = self.ghosts_img[GhostColor.CRAZY][0 + offset]
             else:
                 img = self.ghosts_img[GhostColor.CRAZY][1 + offset]
         else:
             match direction:
                 case Direction.SOUTH:
-                    if is_jsp:
+                    if is_first_sprite:
                         img = self.ghosts_img[color][0]
                     else:
                         img = self.ghosts_img[color][2]
                 case Direction.NORTH:
-                    if is_jsp:
+                    if is_first_sprite:
                         img = self.ghosts_img[color][1]
                     else:
                         img = self.ghosts_img[color][3]
                 case Direction.WEST:
-                    if is_jsp:
+                    if is_first_sprite:
                         img = self.ghosts_img[color][4]
                     else:
                         img = self.ghosts_img[color][6]
                 case Direction.EAST:
-                    if is_jsp:
+                    if is_first_sprite:
                         img = self.ghosts_img[color][5]
                     else:
                         img = self.ghosts_img[color][7]

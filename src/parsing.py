@@ -3,7 +3,7 @@ from hashlib import sha256
 from random import seed, shuffle
 from pydantic import BaseModel, Field
 from json import loads, JSONDecodeError
-from mazegenerator import MazeGenerator  # type: ignore
+from mazegenerator import MazeGenerator
 
 from .errors import GenerationError, ParsingError
 from .engine.maze import Maze

@@ -3,11 +3,11 @@ from typing import Any
 
 from .maze import Maze
 from ..scorer import Scorer
-from ..main_menu import Menu
+from ..menu import Menu
 from ..parsing import parsing, Config
 from .game import PacmanGame, GameState
-from ..color_utils import ThemeSelection
 from ..drawing.player_name import PlayerName
+from ..color_utils import ThemeSelection, Theme
 from ..drawing.pacman_drawer import PacManDrawer
 from ..utils import Timer, KEY_DIRECTION, CheatMode
 from ..drawing.basic_drawer import Drawer, print_life, print_title
@@ -21,6 +21,7 @@ class Monitor:
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[Maze] = self.config.generate_all_maze()
         self.game: PacmanGame = PacmanGame(self.config, self.mazes, self.timer)
+
         self.theme_selection: ThemeSelection = ThemeSelection()
         if not self.theme_selection.load_all_themes():
             raise FileNotFoundError("Theme not found !")
@@ -30,7 +31,7 @@ class Monitor:
         self.counter_ending_animation: int = 0
         self.active_cheatmode: set[CheatMode] = set()
 
-    def get_theme(self):
+    def get_theme(self) -> Theme:
         return self.theme_selection.get_selected()
 
     def _init_pygame(self) -> None:
@@ -99,10 +100,10 @@ class Monitor:
                 "a" <= event.unicode <= "z" or
                 "A" <= event.unicode <= "Z"
             ):
-                self.player_frame.jsp(event)
+                self.player_frame.handle_player_name_input(event)
 
             elif "0" <= event.unicode <= "9":
-                self.player_frame.jsp(event)
+                self.player_frame.handle_player_name_input(event)
 
             elif event.key in [
                 pygame.K_UP,
@@ -112,15 +113,14 @@ class Monitor:
                 pygame.K_BACKSPACE,
                 pygame.K_SPACE
             ]:
-                self.player_frame.jsp(event)
+                self.player_frame.handle_player_name_input(event)
 
             elif event.key is pygame.K_RETURN:
                 name = "".join(self.player_frame.name)
-                self.game.player_state.name = name
-                if name != "":
-                    self.scorer.save(
-                        self.game.player_state, self.game.level.score
-                    )
+                if name == "":
+                    return
+
+                self.scorer.save(name, self.game.score)
                 self.player_frame.clear()
                 self.game._init_new_game()
                 self.pacman_frame.update_maze(self.game.level.maze)
@@ -210,14 +210,14 @@ class Monitor:
         print_life(
             self.header_frame, (0, 0),
             self.pacman_frame.alive.get_width(),
-            self.game.player_state.lives,
+            self.game.lives,
             self.pacman_frame.alive,
             self.pacman_frame.dead
         )
 
         text_size = print_score(
             self.header_frame, font,
-            self.game.level.score, self.get_theme().header.score
+            self.game.score, self.get_theme().header.score
         )
 
         print_timer(
