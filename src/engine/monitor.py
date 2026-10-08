@@ -219,6 +219,11 @@ class Monitor:
 
         self.pacman_frame.draw_maze()
 
+        for ghost in self.game.level.ghosts:
+            color, sequence = ghost.color, ghost.sequence
+            sequence = list(reversed(sequence))
+            self.pacman_frame.draw_ghost_path(color, sequence)
+
         self.pacman_frame.draw_multiple_pacgums(level.pacgums)
 
         self.pacman_frame.draw_multiple_pacgums(level.super_pacgums, True)

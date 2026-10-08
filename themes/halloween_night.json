@@ -1,48 +1,48 @@
 {
-    "name": "halloween_night",
+    "name": "tasty_crousty",
     "maze": {
         "walls": {
-            "north": [255, 117, 24],
-            "west": [138, 43, 226],
-            "south": [255, 117, 24],
-            "east": [138, 43, 226]
+            "north": [255, 145, 35],
+            "west": [214, 65, 45],
+            "south": [255, 145, 35],
+            "east": [214, 65, 45]
         },
-        "background": [15, 10, 20],
-        "forty_two_logo": [255, 117, 24]
+        "background": [28, 18, 12],
+        "forty_two_logo": [255, 145, 35]
     },
     "crazy_maze": {
         "walls": {
-            "north": [57, 255, 20],
-            "west": [57, 255, 20],
-            "south": [57, 255, 20],
-            "east": [57, 255, 20]
+            "north": [255, 75, 45],
+            "west": [255, 190, 70],
+            "south": [255, 75, 45],
+            "east": [255, 190, 70]
         },
-        "background": [30, 0, 40],
-        "forty_two_logo": [255, 117, 24]
+        "background": [45, 15, 10],
+        "forty_two_logo": [255, 145, 35]
     },
     "interface": {
         "header": {
-            "title": [255, 117, 24],
-            "score": [57, 255, 20],
-            "timer": [186, 85, 255],
-            "background": [10, 5, 15]
+            "title": [255, 145, 35],
+            "score": [255, 210, 100],
+            "timer": [255, 95, 60],
+            "background": [20, 12, 8]
         },
         "menu": {
             "leaderboard": {
-                "background": [45, 25, 60],
-                "username": [255, 117, 24],
-                "score": [57, 255, 20]
+                "background": [55, 30, 18],
+                "username": [255, 190, 80],
+                "score": [255, 110, 55]
             },
             "buttons": {
-                "background": [255, 117, 24],
-                "text": [15, 10, 20]
+                "background": [255, 145, 35],
+                "text": [35, 18, 10]
             }
         },
-        "background": [25, 15, 35]
+        "background": [35, 20, 12]
     },
     "config": {
         "crazy_animation": true,
         "pacgum_animation": true
     },
-    "pacgum": [255, 240, 150]
+    "pacgum": [255, 225, 255]
 }

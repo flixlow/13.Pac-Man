@@ -2,6 +2,7 @@ from .entity.ghosts import GhostColor
 
 import pygame
 
+
 class AssetLoader:
     @staticmethod
     def load_ghosts() -> dict[GhostColor, pygame.Surface]:
@@ -38,12 +39,11 @@ class AssetLoader:
 
         return pacman_img_copy
 
-
     @staticmethod
     def load_life() -> tuple[pygame.Surface]:
         alive = pygame.image.load(
                     "assets/icon/heart.png").convert_alpha()
-        
+
         dead = pygame.image.load(
             "assets/icon/dead_heart.png").convert_alpha()
 
@@ -58,7 +58,7 @@ class AssetLoader:
         ]
 
         return fruit
-    
+
     @staticmethod
     def load_buttons() -> tuple[pygame.Surface]:
         normal = pygame.image.load("assets/button/button.png")

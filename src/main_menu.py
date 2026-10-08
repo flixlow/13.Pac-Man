@@ -8,7 +8,8 @@ from pygame import Surface
 
 
 class Menu:
-    def __init__(self, size, scorer: Scorer, theme_selection: ThemeSelection) -> None:
+    def __init__(self, size, scorer: Scorer,
+                 theme_selection: ThemeSelection) -> None:
         self.frame = Drawer(size)
         # self.frame.fill((0, 0, 0))
         w, h = self.frame.size
@@ -24,7 +25,9 @@ class Menu:
         self.change_theme = Button(self.frame, pos, 5, 1.5, "Change Theme")
         self.exit = Button(self.frame, pos, 7, 1.5, "Exit")
 
-        self.buttons = [self.play_button, self.clear_lb, self.change_theme, self.exit]
+        self.buttons = [
+            self.play_button, self.clear_lb, self.change_theme, self.exit
+        ]
 
         self.update_size()
         self.draw_menu()
@@ -64,12 +67,14 @@ class Menu:
         r = h / (w / 2)
 
         self.scorers_rendered = []
-        self.font_name = pygame.font.Font("assets/font/leaderboard.ttf", w // 25)
+        self.font_name = pygame.font.Font(
+            "assets/font/leaderboard.ttf", w // 25)
 
         self.max_width_user = 0
         self.max_width_score = 0
 
-        for i, (key, value) in enumerate(list(self.scorer.scores.items())[:10]):
+        for i, (key, value) in enumerate(
+                list(self.scorer.scores.items())[:10]):
             if i >= r * 10:
                 return None
 
@@ -97,7 +102,9 @@ class Menu:
 
     def print_leaderboard(self) -> None:
         w, h = self.frame.size
-        self.frame.draw_rect((0, 0), (w // 2, h), self.theme.leaderboard.background)
+        self.frame.draw_rect(
+            (0, 0), (w // 2, h), self.theme.leaderboard.background
+        )
 
         px, py = self.frame.size
         ox, oy = (

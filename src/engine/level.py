@@ -37,9 +37,8 @@ class Level:
                     continue
                 self.pacgums.add((x, y))
 
-
     def _init_ghosts(self) -> None:
-        ghost_classes: list[Callable] = [Blue]#[Blue, Red, Orange, Pink]
+        ghost_classes: list[Callable] = [Blue, Red, Orange, Pink]
 
         shuffle(ghost_classes)
 
