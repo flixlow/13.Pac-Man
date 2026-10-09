@@ -60,7 +60,7 @@ class AssetLoader:
         return pacman_img_copy
 
     @staticmethod
-    def load_life() -> tuple[pygame.Surface, pygame.Surface]:
+    def load_life() -> tuple[pygame.Surface, pygame.Surface, pygame.Surface]:
         alive = pygame.image.load(Paths.ALIVE).convert_alpha()
 
         dead = pygame.image.load(Paths.DEAD).convert_alpha()

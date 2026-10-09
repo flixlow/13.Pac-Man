@@ -25,12 +25,12 @@ class Ghost(Entity):
         ...
 
     def respawn(self) -> None:
+        self.sequence = []
         self.is_alive = False
         self.respawn_timer = 0
         self.crazy_mode = False
         self.coords = self.starting_coords
         self.previous_coords = self.starting_coords
-        self.sequence = []
 
     def pathfinding(self, end: tuple[int, int], n: int | None) -> None:
         queue: list[tuple[int, int]] = [self.coords]

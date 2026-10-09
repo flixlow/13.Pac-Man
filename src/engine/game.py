@@ -39,7 +39,6 @@ class GameEngine:
         match mode:
             case CheatMode.NOCLIP:
                 self.level.player.noclip = not self.level.player.noclip
-                print("noclip")
 
             case CheatMode.ULTRA_VISION:
                 self.ultra_vision = not self.ultra_vision
@@ -60,6 +59,7 @@ class GameEngine:
 
         elif not self.level.player.is_alive:
             self.state = GameState.HAS_LOSE_A_LIFE
+            self.level.set_crazy_mode(False)
             self.level.player.is_alive = True
             self.lives -= 1
             self.level._init_entities()
