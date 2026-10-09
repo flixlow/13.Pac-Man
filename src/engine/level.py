@@ -88,12 +88,30 @@ class Level:
         for g in self.ghosts:
             if not g.is_alive:
                 continue
-            if g.coords == self.player.coords:
+            player_pos = self._render_position(self.player)
+            ghost_pos = self._render_position(g)
+            # Entities are drawn with cell-sized sprites. Compare their visible
+            # positions so a newly updated logical cell cannot cause an early hit.
+            if (abs(player_pos[0] - ghost_pos[0]) < 1
+                    and abs(player_pos[1] - ghost_pos[1]) < 1):
                 if self.on_crazy_mode:
                     self.score += 200
                     g.respawn()
                 else:
                     self.player.is_alive = False
+
+    @staticmethod
+    def _render_position(entity: Entity) -> tuple[float, float]:
+        progress = min(
+            entity.animation_elapsed_ms / max(1, entity.movement_interval_ms),
+            1.0,
+        )
+        start_x, start_y = entity.previous_coords
+        end_x, end_y = entity.coords
+        return (
+            start_x + (end_x - start_x) * progress,
+            start_y + (end_y - start_y) * progress,
+        )
 
     def is_pacgum_here(self) -> None:
         if self.player.coords in self.pacgums:
@@ -114,10 +132,9 @@ class Level:
         self.check_crazy_mode()
 
         self.player.moving()
-
-        self.check_collision()
-
         for g in self.ghosts:
             g.moving()
+
+        self.check_collision()
 
         self.is_pacgum_here()
