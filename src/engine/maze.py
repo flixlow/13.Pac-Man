@@ -1,12 +1,12 @@
 
 from pydantic import BaseModel
 
-from ..utils import Direction
+from ..utils import Direction, Pos
 
 
 class Maze(BaseModel):
     maze_map: list[list[int]]
-    corners: list[tuple[int, int]]
+    corners: list[Pos]
     seed: int
     w: int
     h: int
@@ -19,13 +19,17 @@ class Maze(BaseModel):
     def y_max(self) -> int:
         return self.h - 1
 
+    def is_in_maze(self, x: int, y: int) -> bool:
+        return 0 <= x < self.w and 0 <= y < self.h
+
     def get_cell_walls(self, x: int, y: int) -> int:
+        if not self.is_in_maze(x, y):
+            return False
         return self.maze_map[y][x]
 
-    def get_neighbour_cells(
-            self, pos: tuple[int, int], radius: int) -> set[tuple[int, int]]:
+    def get_neighbour_cells(self, pos: Pos, radius: int) -> set[Pos]:
         pos_x, pos_y = pos
-        neightbour_cells: set[tuple[int, int]] = set()
+        neightbour_cells: set[Pos] = set()
 
         for x in range(self.w):
             for y in range(self.h):
@@ -37,9 +41,8 @@ class Maze(BaseModel):
                         neightbour_cells.add((x, y))
         return neightbour_cells
 
-    def get_available_coords(
-            self, last_coords: tuple[int, int]) -> list[tuple[int, int]]:
-        coords: list[tuple[int, int]] = []
+    def get_available_coords(self, last_coords: Pos) -> list[Pos]:
+        coords: list[Pos] = []
         x, y = last_coords
 
         cell = self.get_cell_walls(*last_coords)
@@ -54,12 +57,12 @@ class Maze(BaseModel):
 
         return coords
 
-    def get_border_cells(self) -> list[tuple[int, int]]:
-        border_cells: list[tuple[int, int]] = []
+    def get_border_cells(self) -> set[Pos]:
+        border_cells: set[Pos] = set()
 
         for x in range(self.w):
             for y in range(self.h):
                 if x in {0, self.x_max} or y in {0, self.y_max}:
-                    border_cells.append((x, y))
+                    border_cells.add((x, y))
 
         return border_cells

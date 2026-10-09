@@ -17,7 +17,7 @@ class GameEngine:
     def _init_new_game(self) -> None:
         self.lives: int = 3
         self.score: int = 0
-        self.active_cheatmode: set[CheatMode] = set()
+        self.ultra_vision: bool = False
         self.state: GameState = GameState.START_NEW_GAME
         self.maze_interator: Iterator[Maze] = iter(self.mazes)
         self.next_level()
@@ -34,6 +34,18 @@ class GameEngine:
         if self.level.score:
             self.score += self.level.score
             self.level.score = 0
+
+    def toggle_cheat_mode(self, mode: CheatMode) -> None:
+        match mode:
+            case CheatMode.NOCLIP:
+                self.level.player.noclip = not self.level.player.noclip
+                print("noclip")
+
+            case CheatMode.ULTRA_VISION:
+                self.ultra_vision = not self.ultra_vision
+
+            case CheatMode.GODMODE:
+                self.level.on_godmode = not self.level.on_godmode
 
     def update_game_state(self) -> None:
         self.save_level_score()

@@ -86,20 +86,13 @@ class Monitor:
         if event.type != pygame.KEYDOWN:
             return
         if event.key == pygame.K_F1:
-            if CheatMode.ULTRA_VISION in self.game.active_cheatmode:
-                self.game.active_cheatmode.remove(CheatMode.ULTRA_VISION)
-            else:
-                self.game.active_cheatmode.add(CheatMode.ULTRA_VISION)
+            self.game.toggle_cheat_mode(CheatMode.ULTRA_VISION)
+            print("ultravision")
         if event.key == pygame.K_F2:
-            if CheatMode.GODMODE in self.game.active_cheatmode:
-                self.game.active_cheatmode.remove(CheatMode.GODMODE)
-            else:
-                self.game.active_cheatmode.add(CheatMode.GODMODE)
+            self.game.toggle_cheat_mode(CheatMode.GODMODE)
+            print("godmode")
         if event.key == pygame.K_F3:
-            if CheatMode.NOCLIP in self.game.active_cheatmode:
-                self.game.active_cheatmode.remove(CheatMode.NOCLIP)
-            else:
-                self.game.active_cheatmode.add(CheatMode.NOCLIP)
+            self.game.toggle_cheat_mode(CheatMode.NOCLIP)
 
     def check_alpha(self, event: Any) -> None:
         if self.game.state != GameState.ENTER_YOUR_NAME:
@@ -234,11 +227,22 @@ class Monitor:
         self.screen.blit(self.header_frame.surface, (0, 0))
 
     def display_ultra_vision(self) -> None:
-        if CheatMode.ULTRA_VISION in self.game.active_cheatmode:
+        if self.game.ultra_vision:
             for ghost in self.game.level.ghosts:
                 color, sequence = ghost.color, ghost.sequence
                 sequence = list(reversed(sequence))
                 self.pacman_frame.draw_ghost_path(color, sequence)
+
+    def display_state(self) -> None:
+        match self.game.state:
+            case GameState.HAS_LOSE_A_LIFE:
+                self.pacman_frame.press_space("Press SPACE to restart...")
+            case GameState.HAS_COMPLETED_LEVEL:
+                self.pacman_frame.press_space("Press SPACE to continue...")
+            case GameState.GAME_OVER:
+                self.pacman_frame.press_space("Game Over.")
+            case GameState.HAS_BEATEN_THE_GAME:
+                self.pacman_frame.press_space("You finished the Game !")
 
     def display_game(self) -> None:
         level = self.game.level
@@ -253,15 +257,7 @@ class Monitor:
 
         self.pacman_frame.draw_entities(level.entities)
 
-        match self.game.state:
-            case GameState.HAS_LOSE_A_LIFE:
-                self.pacman_frame.press_space("Press SPACE to restart...")
-            case GameState.HAS_COMPLETED_LEVEL:
-                self.pacman_frame.press_space("Press SPACE to continue...")
-            case GameState.GAME_OVER:
-                self.pacman_frame.press_space("Game Over.")
-            case GameState.HAS_BEATEN_THE_GAME:
-                self.pacman_frame.press_space("You finished the Game !")
+        self.display_state()
 
         self.screen.blit(self.pacman_frame.surface, (0, self.header))
 

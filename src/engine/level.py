@@ -20,6 +20,7 @@ class Level:
         self.timer: Timer = t
 
         self.score: int = 0
+        self.on_godmode: bool = False
         self.is_completed: bool = False
         self.on_crazy_mode: bool = False
 
@@ -91,7 +92,7 @@ class Level:
             if not g.is_alive:
                 continue
             if g.coords == self.player.coords:
-                if self.on_crazy_mode:
+                if self.on_godmode or self.on_crazy_mode:
                     self.score += 200
                     g.respawn()
                 else:
@@ -115,7 +116,10 @@ class Level:
     def update(self) -> None:
         self.check_crazy_mode()
 
-        self.player.moving()
+        if self.player.noclip:
+            self.player.moving_on_noclip()
+        else:
+            self.player.moving()
 
         self.check_collision()
 
