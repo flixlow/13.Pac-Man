@@ -2,9 +2,9 @@
 from enum import Enum, auto
 from pygame import K_UP, K_w, K_RIGHT, K_d, K_DOWN, K_s, K_LEFT, K_a, time
 
-Color = tuple[int, int, int]
 Pos = tuple[int, int]
 Size = tuple[int, int]
+Color = tuple[int, int, int]
 
 
 class GameState(Enum):
@@ -27,7 +27,7 @@ class Timer:
         self.total_spend_time: int = 0
         self.crazy_mode_elapsed_time: int = 0
 
-    def set_time_per_game(self, time_per_game) -> None:
+    def set_time_per_game(self, time_per_game: int) -> None:
         self.time_per_game = time_per_game
 
     def tick(self, clock: time.Clock, state: GameState) -> None:
@@ -47,35 +47,18 @@ class Timer:
         return self.time_per_game == self.game_time
 
 
-class Paths:
-    ASSETS = "assets/"
-    GHOSTS = ASSETS + "ghosts/"
-    PACMAN = ASSETS + "pacman/pacman.png"
-    SECRET = GHOSTS + "secret_ghost.png"
-    ORANGE = GHOSTS + "orange_ghost.png"
-    GREEN = GHOSTS + "green_ghost.png"
-    BLUE = GHOSTS + "blue_ghost.png"
-    RED = GHOSTS + "red_ghost.png"
-
-
 class Parameters:
     PLAYER_VELOCITY = 5
     GHOST_VELOCITY = 3
 
 
-class PlayerState:
-    lives: int = 3
-    score: int = 0
-    name: str = ""
-
-
 class GhostColor(Enum):
-    RED = auto()
-    BLUE = auto()
-    PINK = auto()
-    ORANGE = auto()
-    CRAZY = auto()
-    SECRET = auto()
+    RED = (255, 0, 0)
+    BLUE = (0, 0, 255)
+    PINK = (255, 127, 127)
+    ORANGE = (255, 127, 0)
+    CRAZY = (255, 255, 255)
+    SECRET = (0, 0, 0)
 
 
 class Direction(Enum):

@@ -1,6 +1,5 @@
 
 from random import shuffle, random
-from typing import Callable
 
 from .maze import Maze
 from ..utils import Direction, Timer
@@ -29,16 +28,18 @@ class Level:
 
     def _init_pacgums(self) -> None:
         self.pacgums: set[tuple[int, int]] = set()
-        self.super_pacgums: set[tuple[int, int]] = set(self.maze.corners)
+        self.super_pacgums: set[tuple[int, int]] = set()
 
         for x in range(self.maze.w):
             for y in range(self.maze.h):
                 if self.maze.maze_map[y][x] == 15:
                     continue
+                if (x, y) in self.maze.corners:
+                    self.super_pacgums.add((x, y))
                 self.pacgums.add((x, y))
 
     def _init_ghosts(self) -> None:
-        ghost_classes: list[Callable] = [Blue, Red, Orange, Pink]
+        ghost_classes: list[type[Ghost]] = [Blue, Red, Orange, Pink]
 
         shuffle(ghost_classes)
 

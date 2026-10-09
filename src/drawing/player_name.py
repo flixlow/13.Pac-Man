@@ -95,10 +95,7 @@ class PlayerName:
         if self.name and is_displayed:
             self.display_cursor()
 
-    def jsp(self, event: Any) -> None:
-        if event is None:
-            return False
-
+    def handle_player_name_input(self, event: Any) -> None:
         if event.key == pygame.K_UP:
             self.cursor = 0
         elif event.key == pygame.K_DOWN:

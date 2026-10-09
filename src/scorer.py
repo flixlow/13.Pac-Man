@@ -1,53 +1,55 @@
 
+from typing import Any
 from pathlib import Path
-import json
+from json import JSONDecodeError, load, dump
 
-from .utils import PlayerState
 from .errors import ScorerFileError
 
 
 class Scorer:
     def __init__(self, score_filename: str) -> None:
         self.file: str = score_filename
-        self.scores: dict[str, int] = self.load()
+        self.scores: dict[str, int] = self._load()
 
-    def sort(self, content: dict[str, int]) -> dict[str, int]:
-        return dict(sorted(content.items(), key=lambda x: x[1], reverse=True))
+    def sort(self) -> None:
+        self.scores = dict(
+            sorted(self.scores.items(), key=lambda x: x[1], reverse=True)
+        )
 
-    def load(self) -> dict[str, int]:
+    def _load(self) -> Any:
         try:
             if not Path(self.file).exists():
-                return {}
+                self.scores = {}
             with open(self.file, encoding="utf-8") as f:
-                content: dict[str, int] = json.load(f)
-                return self.sort(content)
+                return load(f)
 
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
-        except json.JSONDecodeError as e:
+        except JSONDecodeError as e:
             raise ScorerFileError(
                 f"Error occurs while reading {self.file}."
                 f"(line {e.lineno})."
             )
 
-    def save(self, player_state: PlayerState, score: int) -> None:
-        entered_name = player_state.name.strip()
-        last = self.scores.get(player_state.name, -1)
+    def save(self, name: str, score: int) -> None:
+        entered_name = name.strip()
+
+        last = self.scores.get(entered_name, -1)
 
         self.scores[entered_name] = max(score, last)
 
+        self.sort()
+
         try:
             with open(self.file, 'w') as f:
-                json.dump(self.scores, f, indent=4)
+                dump(self.scores, f, indent=4)
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
 
-    def clear(self) -> bool:
+    def clear(self) -> None:
+        self.scores = {}
         try:
             with open(self.file, "w") as f:
-                json.dump({}, f, indent=4)
-        except (json.JSONDecodeError, OSError):
-            print("Warning: json clear is not possible")
-            return False
-        else:
-            return True
+                dump(self.scores, f, indent=4)
+        except (JSONDecodeError, OSError):
+            raise ScorerFileError("Can't clear leaderboard.")
