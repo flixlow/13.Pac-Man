@@ -25,6 +25,12 @@ class Entity(ABC):
     def moving(self) -> None:
         ...
 
+    @property
+    def progress(self) -> float:
+        return min(
+            self.animation_elapsed_ms / max(1, self.movement_interval_ms), 1.0
+        )
+
     def get_direction(self) -> Direction:
         diff = (
             self.coords[0] - self.previous_coords[0],
@@ -43,10 +49,4 @@ class Entity(ABC):
                 return Direction.START
 
     def can_it_move(self) -> bool:
-        self.entity_move_elapsed_ms += self.timer.elapsed_time
-
-        if self.entity_move_elapsed_ms < self.movement_interval_ms:
-            return False
-
-        self.entity_move_elapsed_ms -= self.movement_interval_ms
-        return True
+        return self.progress == 1

@@ -23,13 +23,10 @@ class Player(Entity):
         return bool(cell & direction.value)
 
     def reverse(self, new_direction: Direction) -> None:
-        progress = min(
-            self.animation_elapsed_ms / max(1, self.movement_interval_ms), 1.0
-        )
 
         self.previous_coords, self.coords = self.coords, self.previous_coords
         self.animation_elapsed_ms = int(
-            self.movement_interval_ms * (1 - progress)
+            self.movement_interval_ms * (1 - self.progress)
         )
 
         self.entity_move_elapsed_ms = self.animation_elapsed_ms
