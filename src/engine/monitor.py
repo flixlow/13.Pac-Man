@@ -4,7 +4,7 @@ from typing import Any
 from .maze import Maze
 from ..menu import Menu
 from ..scorer import Scorer
-from .game import PacmanGame
+from .game import GameEngine
 from ..parsing import parsing, Config
 from ..drawing.player_name import PlayerName
 from ..color_utils import ThemeSelection, Theme
@@ -20,7 +20,7 @@ class Monitor:
         self.config: Config = parsing(config_file)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[Maze] = self.config.generate_all_maze()
-        self.game: PacmanGame = PacmanGame(self.config, self.mazes, self.timer)
+        self.game: GameEngine = GameEngine(self.config, self.mazes, self.timer)
 
         self.theme_selection: ThemeSelection = ThemeSelection()
         if not self.theme_selection.load_all_themes():
@@ -29,10 +29,6 @@ class Monitor:
         self._init_pygame()
         self.running: bool = True
         self.counter_ending_animation: int = 0
-        self.active_cheatmode: set[CheatMode] = set()
-
-    def get_theme(self) -> Theme:
-        return self.theme_selection.get_selected()
 
     def _init_pygame(self) -> None:
         pygame.init()
@@ -62,6 +58,22 @@ class Monitor:
             self.theme_selection
         )
 
+    def get_theme(self) -> Theme:
+        return self.theme_selection.get_selected()
+
+    def space_pressed(self) -> None:
+        if self.game.state in {
+            GameState.START_NEW_GAME, GameState.HAS_LOSE_A_LIFE,
+            GameState.PAUSE, GameState.HAS_COMPLETED_LEVEL
+        }:
+            self.game.state = GameState.IN_GAME
+
+        elif self.game.state in {
+            GameState.GAME_OVER,
+            GameState.HAS_BEATEN_THE_GAME
+        }:
+            self.game.state = GameState.ENTER_YOUR_NAME
+
     def check_exit(self, event: Any) -> None:
         if event.type == pygame.QUIT:
             self.running = False
@@ -71,21 +83,16 @@ class Monitor:
                     self.running = False
 
     def check_cheat_mode(self, event: Any) -> None:
+        if event.type != pygame.KEYDOWN:
+            return
         if event.key == pygame.K_F1:
-            if CheatMode.ULTRA_VISION in self.active_cheatmode:
-                self.active_cheatmode.remove(CheatMode.ULTRA_VISION)
-            else:
-                self.active_cheatmode.add(CheatMode.ULTRA_VISION)
+            self.game.toggle_cheat_mode(CheatMode.ULTRA_VISION)
+            print("ultravision")
         if event.key == pygame.K_F2:
-            if CheatMode.ULTRA_VISION in self.active_cheatmode:
-                self.active_cheatmode.remove(CheatMode.GODMODE)
-            else:
-                self.active_cheatmode.add(CheatMode.GODMODE)
+            self.game.toggle_cheat_mode(CheatMode.GODMODE)
+            print("godmode")
         if event.key == pygame.K_F3:
-            if CheatMode.ULTRA_VISION in self.active_cheatmode:
-                self.active_cheatmode.remove(CheatMode.NOCLIP)
-            else:
-                self.active_cheatmode.add(CheatMode.NOCLIP)
+            self.game.toggle_cheat_mode(CheatMode.NOCLIP)
 
     def check_alpha(self, event: Any) -> None:
         if self.game.state != GameState.ENTER_YOUR_NAME:
@@ -126,34 +133,24 @@ class Monitor:
                 self.pacman_frame.update_maze(self.game.level.maze)
 
     def check_keydown(self, event: Any) -> None:
-        if self.game.state is GameState.ENTER_YOUR_NAME:
+        if event.type != pygame.KEYDOWN:
             return
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+        if event.key is pygame.K_ESCAPE:
+            if self.game.state is GameState.ENTER_YOUR_NAME:
+                self.game.state = GameState.START_NEW_GAME
+                self.game._init_new_game()
+            else:
                 self.game.state = GameState.PAUSE
 
-            if event.key == pygame.K_t:
-                self.theme_selection.cycle()
+        elif event.key is pygame.K_t:
+            self.theme_selection.cycle()
 
-            if event.key == pygame.K_SPACE:
+        elif event.key is pygame.K_SPACE:
+            self.space_pressed()
 
-                if self.game.state in {
-                    GameState.START_NEW_GAME, GameState.HAS_LOSE_A_LIFE,
-                    GameState.PAUSE, GameState.HAS_COMPLETED_LEVEL
-                }:
-                    self.game.state = GameState.IN_GAME
-
-                if self.game.state in {
-                    GameState.GAME_OVER,
-                    GameState.HAS_BEATEN_THE_GAME
-                }:
-                    self.game.state = GameState.ENTER_YOUR_NAME
-
-            elif self.game.state == GameState.IN_GAME\
-                    and event.key in KEY_DIRECTION:
-                self.game.level.change_direction(KEY_DIRECTION[event.key])
-
-            self.check_cheat_mode(event)
+        elif self.game.state is GameState.IN_GAME\
+                and event.key in KEY_DIRECTION:
+            self.game.level.change_direction(KEY_DIRECTION[event.key])
 
     def check_resize(self, event: Any) -> None:
         if event.type == pygame.VIDEORESIZE:
@@ -196,6 +193,8 @@ class Monitor:
 
             self.check_buttons(event)
 
+            self.check_cheat_mode(event)
+
     def display_header(self) -> None:
         self.header_frame.fill(self.get_theme().header.background)
 
@@ -233,6 +232,8 @@ class Monitor:
 
         self.screen.blit(self.header_frame.surface, (0, 0))
 
+    def display_ultra_vision(self) -> None:
+        if self.game.ultra_vision:
     def display_game(self) -> None:
         level = self.game.level
 
@@ -247,21 +248,31 @@ class Monitor:
                 sequence = list(reversed(sequence))
                 self.pacman_frame.draw_ghost_path(color, sequence)
 
-        self.pacman_frame.draw_multiple_pacgums(level.pacgums, False)
-
-        self.pacman_frame.draw_multiple_pacgums(level.super_pacgums, True)
-
-        self.pacman_frame.draw_entities(level.entities)
-
+    def display_state(self) -> None:
         match self.game.state:
             case GameState.HAS_LOSE_A_LIFE:
                 self.pacman_frame.press_space("Press SPACE to restart...")
             case GameState.HAS_COMPLETED_LEVEL:
                 self.pacman_frame.press_space("Press SPACE to continue...")
             case GameState.GAME_OVER:
-                self.pacman_frame.press_space("Game Over")
+                self.pacman_frame.press_space("Game Over.")
             case GameState.HAS_BEATEN_THE_GAME:
                 self.pacman_frame.press_space("You finished the Game !")
+
+    def display_game(self) -> None:
+        level = self.game.level
+
+        self.pacman_frame.draw_maze()
+
+        self.display_ultra_vision()
+
+        self.pacman_frame.draw_multiple_pacgums(level.pacgums, False)
+
+        self.pacman_frame.draw_multiple_pacgums(level.super_pacgums, True)
+
+        self.pacman_frame.draw_entities(level.entities)
+
+        self.display_state()
 
         self.screen.blit(self.pacman_frame.surface, (0, self.header))
 
@@ -299,8 +310,9 @@ class Monitor:
         pygame.display.flip()
 
     def ending_animation(self) -> None:
-        if self.game.state\
-                in {GameState.HAS_LOSE_A_LIFE, GameState.HAS_COMPLETED_LEVEL}:
+        if self.game.state in {
+            GameState.HAS_LOSE_A_LIFE, GameState.HAS_COMPLETED_LEVEL
+        }:
             self.counter_ending_animation += self.timer.elapsed_time
 
         if self.counter_ending_animation >= self.timer.elapsed_time:

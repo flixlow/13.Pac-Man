@@ -39,7 +39,7 @@ draft:
 [ ] Game over bug at the end of the last level
 [ ] cheat mode
     [ ] noclip
-    [ ] vision trajectoire fantomes
+    [x] vision trajectoire fantomes
     [ ] godmode
 
 [ ] bug fin d'animation
@@ -47,9 +47,9 @@ draft:
 [ ] Mieux gerer les collisions 🥶🥶🥶🥶
     [ ] Les derniers pacgums
     [ ] Les comportements chelou quand un fantome kill mais loin
-[ ] bug chelou des fois quand ca change de map et quon peut entrer dans le 42 🥶🥶🥶🥶
+[x] bug chelou des fois quand ca change de map et quon peut entrer dans le 42 🥶🥶🥶🥶
 [ ] docstring
-[ ] Enelever crazy mode enre chaque game
+[x] Enlever crazy mode enre chaque game
 
 Forbidden Behavior from pygame:
 [ ] Custom font with manipulation of size

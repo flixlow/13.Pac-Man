@@ -30,6 +30,7 @@ class Ghost(Entity):
         self.crazy_mode = False
         self.coords = self.starting_coords
         self.previous_coords = self.starting_coords
+        self.sequence = []
 
     def pathfinding(self, end: tuple[int, int], n: int | None) -> None:
         queue: list[tuple[int, int]] = [self.coords]
@@ -140,5 +141,5 @@ class Orange(Ghost):
     default_color = GhostColor.ORANGE
 
     def generate_sequence(self) -> None:
-        cell = choice(self.maze.get_border_cells())
+        cell = choice(list(self.maze.get_border_cells()))
         self.pathfinding(cell, None)

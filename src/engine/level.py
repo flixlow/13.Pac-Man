@@ -20,6 +20,7 @@ class Level:
         self.timer: Timer = t
 
         self.score: int = 0
+        self.on_godmode: bool = False
         self.is_completed: bool = False
         self.on_crazy_mode: bool = False
 
@@ -74,6 +75,8 @@ class Level:
         if self.player.direction != Direction.START\
                 and OPPOSITE.get(self.player.direction) == new_direction:
             self.player.reverse(new_direction)
+        elif self.player.direction == new_direction:
+            return
         else:
             self.player.next_direction = new_direction
 
@@ -88,13 +91,8 @@ class Level:
         for g in self.ghosts:
             if not g.is_alive:
                 continue
-            player_pos = self._render_position(self.player)
-            ghost_pos = self._render_position(g)
-            # Entities are drawn with cell-sized sprites. Compare their visible
-            # positions so a newly updated logical cell cannot cause an early hit.
-            if (abs(player_pos[0] - ghost_pos[0]) < 1
-                    and abs(player_pos[1] - ghost_pos[1]) < 1):
-                if self.on_crazy_mode:
+            if g.coords == self.player.coords:
+                if self.on_godmode or self.on_crazy_mode:
                     self.score += 200
                     g.respawn()
                 else:
@@ -131,7 +129,13 @@ class Level:
     def update(self) -> None:
         self.check_crazy_mode()
 
-        self.player.moving()
+        if self.player.noclip:
+            self.player.moving_on_noclip()
+        else:
+            self.player.moving()
+
+        self.check_collision()
+
         for g in self.ghosts:
             g.moving()
 

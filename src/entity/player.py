@@ -3,7 +3,17 @@ from .entity import Entity
 from ..utils import Direction, Parameters
 
 
+offsets = {
+        Direction.NORTH: (0, -1),
+        Direction.EAST: (1, 0),
+        Direction.SOUTH: (0, 1),
+        Direction.WEST: (-1, 0),
+        Direction.START: (0, 0),
+    }
+
+
 class Player(Entity):
+    noclip: bool = False
     direction: Direction = Direction.START
     next_direction: Direction = Direction.START
     default_velocity: int = Parameters.PLAYER_VELOCITY
@@ -31,11 +41,11 @@ class Player(Entity):
         if not self.is_alive or not super().can_it_move():
             return False
 
-        if (self.next_direction is not Direction.START
-                and not self.is_wall_here(self.next_direction)):
-            self.direction = self.next_direction
-            self.next_direction = Direction.START
-            return True
+        if self.next_direction is not Direction.START:
+            if not self.is_wall_here(self.next_direction):
+                self.direction = self.next_direction
+                self.next_direction = Direction.START
+                return True
 
         return not self.is_wall_here(self.direction)
 
@@ -43,14 +53,28 @@ class Player(Entity):
         if not self.can_it_move():
             return
         x, y = self.coords
+        dx, dy = offsets[self.direction]
         self.previous_coords = self.coords
         self.animation_elapsed_ms = 0
-        match self.direction:
-            case Direction.NORTH:
-                self.coords = (x, y - 1)
-            case Direction.WEST:
-                self.coords = (x - 1, y)
-            case Direction.SOUTH:
-                self.coords = (x, y + 1)
-            case Direction.EAST:
-                self.coords = (x + 1, y)
+        self.coords = x + dx, y + dy
+
+    def moving_on_noclip(self) -> None:
+        if not self.is_alive or not super().can_it_move():
+            return
+
+        if self.next_direction is not Direction.START:
+            self.direction = self.next_direction
+            self.next_direction = Direction.START
+
+        x, y = self.coords
+        dx, dy = offsets[self.direction]
+        next_pos = x + dx, y + dy
+
+        if not self.maze.is_in_maze(*next_pos):
+            return
+        if self.maze.get_cell_walls(*next_pos) == 15:
+            return
+
+        self.previous_coords = self.coords
+        self.animation_elapsed_ms = 0
+        self.coords = next_pos

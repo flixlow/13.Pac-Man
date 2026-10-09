@@ -10,6 +10,7 @@ class Scorer:
     def __init__(self, score_filename: str) -> None:
         self.file: str = score_filename
         self.scores: dict[str, int] = self._load()
+        self.sort()
 
     def sort(self) -> None:
         self.scores = dict(
