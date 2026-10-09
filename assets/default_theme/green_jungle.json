@@ -1,0 +1,49 @@
+{
+    "name": "green_jungle",
+    "maze": {
+        "walls": {
+            "north": [0, 210, 70],
+            "west": [0, 150, 45],
+            "south": [50, 235, 100],
+            "east": [0, 105, 30]
+        },
+        "background": [4, 26, 10],
+        "forty_two_logo": [50, 235, 100]
+    },
+    "crazy_maze": {
+        "walls": {
+            "north": [0, 255, 80],
+            "west": [110, 245, 140],
+            "south": [0, 170, 55],
+            "east": [30, 220, 90]
+        },
+        "background": [6, 45, 16],
+        "forty_two_logo": [110, 245, 140]
+    },
+    "interface": {
+        "header": {
+            "title": [50, 235, 100],
+            "score": [140, 250, 170],
+            "timer": [0, 230, 75],
+            "background": [3, 18, 7],
+            "heart_color": [0, 220, 70]
+        },
+        "menu": {
+            "leaderboard": {
+                "background": [10, 55, 22],
+                "username": [130, 245, 160],
+                "score": [30, 215, 85]
+            },
+            "buttons": {
+                "background": [0, 190, 60],
+                "text": [235, 255, 240]
+            }
+        },
+        "background": [6, 35, 14]
+    },
+    "config": {
+        "crazy_animation": true,
+        "pacgum_animation": true
+    },
+    "pacgum": [190, 255, 205]
+}

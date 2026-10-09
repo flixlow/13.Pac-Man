@@ -238,7 +238,10 @@ class Monitor:
 
         self.pacman_frame.draw_maze()
 
-        if CheatMode.ULTRA_VISION in self.active_cheatmode:
+        if (
+            not self.game.level.on_crazy_mode and
+            CheatMode.ULTRA_VISION in self.active_cheatmode
+        ):
             for ghost in self.game.level.ghosts:
                 color, sequence = ghost.color, ghost.sequence
                 sequence = list(reversed(sequence))

@@ -1,8 +1,21 @@
 from pathlib import Path
 import json
-from pydantic import BaseModel, ConfigDict
+from typing import Annotated
+from pydantic import (
+    AfterValidator, BaseModel, ConfigDict, StrictInt, ValidationError,
+    field_validator,
+)
 
-Color = tuple[int, int, int]
+
+def validate_color(color: tuple[int, int, int]) -> tuple[int, int, int]:
+    if any(not 0 <= component <= 255 for component in color):
+        raise ValueError("RGB color components must be between 0 and 255")
+    return color
+
+
+Color = Annotated[
+    tuple[StrictInt, StrictInt, StrictInt], AfterValidator(validate_color)
+]
 
 
 class StrictModel(BaseModel):
@@ -65,6 +78,14 @@ class JSONTheme(StrictModel):
     config: Config
     pacgum: Color
 
+    @field_validator("name")
+    @classmethod
+    def name_must_not_be_blank(cls, name: str) -> str:
+        name = name.strip()
+        if not name:
+            raise ValueError("Theme name must not be empty")
+        return name
+
 
 def load_theme(filename: Path) -> JSONTheme:
     with open(filename, "r") as f:
@@ -112,7 +133,7 @@ class ThemeSelection:
         for theme in default_directory.glob("*.json"):
             try:
                 raw = load_theme(theme)
-            except (OSError, json.JSONDecodeError):
+            except (OSError, json.JSONDecodeError, ValidationError):
                 print(f"warning! {theme} is not valid")
             else:
                 clean = Theme(raw)
@@ -122,7 +143,7 @@ class ThemeSelection:
         for theme in user_directory.glob("*.json"):
             try:
                 raw = load_theme(theme)
-            except (OSError, json.JSONDecodeError):
+            except (OSError, json.JSONDecodeError, ValidationError):
                 print(f"warning! {theme} is not valid")
             else:
                 clean = Theme(raw)

@@ -50,7 +50,7 @@ class PacManDrawer(MazeDrawer):
         )
 
     def draw_maze(self) -> None:
-        target_color = (150, 150, 150)
+        target_color = self.theme.crazy_maze.background
         elapsed = self.timer.crazy_mode_elapsed_time
 
         if self.theme.crazy_animation:

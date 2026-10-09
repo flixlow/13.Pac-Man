@@ -1,0 +1,49 @@
+{
+    "name": "red_blaze",
+    "maze": {
+        "walls": {
+            "north": [235, 15, 15],
+            "west": [180, 0, 0],
+            "south": [255, 55, 45],
+            "east": [140, 0, 0]
+        },
+        "background": [32, 5, 5],
+        "forty_two_logo": [255, 55, 45]
+    },
+    "crazy_maze": {
+        "walls": {
+            "north": [255, 0, 0],
+            "west": [255, 90, 80],
+            "south": [200, 0, 10],
+            "east": [255, 40, 30]
+        },
+        "background": [55, 8, 8],
+        "forty_two_logo": [255, 90, 80]
+    },
+    "interface": {
+        "header": {
+            "title": [255, 45, 35],
+            "score": [255, 120, 105],
+            "timer": [255, 0, 0],
+            "background": [22, 3, 3],
+            "heart_color": [255, 20, 20]
+        },
+        "menu": {
+            "leaderboard": {
+                "background": [65, 10, 10],
+                "username": [255, 115, 100],
+                "score": [255, 45, 35]
+            },
+            "buttons": {
+                "background": [225, 10, 10],
+                "text": [255, 240, 238]
+            }
+        },
+        "background": [42, 6, 6]
+    },
+    "config": {
+        "crazy_animation": true,
+        "pacgum_animation": true
+    },
+    "pacgum": [255, 190, 185]
+}
