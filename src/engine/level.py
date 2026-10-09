@@ -2,16 +2,8 @@
 from random import shuffle, random
 
 from .maze import Maze
-from ..utils import Direction, Timer
+from ..utils import Direction, Timer, TypeScore, OPPOSITE
 from ..entity import Entity, Ghost, Player, Blue, Red, Pink, Orange, Secret
-
-
-OPPOSITE = {
-    Direction.NORTH: Direction.SOUTH,
-    Direction.SOUTH: Direction.NORTH,
-    Direction.EAST: Direction.WEST,
-    Direction.WEST: Direction.EAST
-}
 
 
 class Level:
@@ -19,13 +11,26 @@ class Level:
         self.maze: Maze = maze
         self.timer: Timer = t
 
-        self.score: int = 0
+        self.eaten: dict[TypeScore, int] = {}
         self.on_godmode: bool = False
         self.is_completed: bool = False
         self.on_crazy_mode: bool = False
 
         self._init_entities()
         self._init_pacgums()
+
+    @staticmethod
+    def _render_position(entity: Entity) -> tuple[float, float]:
+        progress = min(
+            entity.animation_elapsed_ms / max(1, entity.movement_interval_ms),
+            1.0,
+        )
+        start_x, start_y = entity.previous_coords
+        end_x, end_y = entity.coords
+        return (
+            start_x + (end_x - start_x) * progress,
+            start_y + (end_y - start_y) * progress,
+        )
 
     def _init_pacgums(self) -> None:
         self.pacgums: set[tuple[int, int]] = set()
@@ -71,6 +76,9 @@ class Level:
         for e in self.entities:
             e.crazy_mode = status
 
+    def count_eaten(self, score_type: TypeScore) -> None:
+        self.eaten[score_type] = (self.eaten.get(score_type, 0) + 1)
+
     def change_direction(self, new_direction: Direction) -> None:
         if self.player.direction != Direction.START\
                 and OPPOSITE.get(self.player.direction) == new_direction:
@@ -93,33 +101,20 @@ class Level:
                 continue
             if g.coords == self.player.coords:
                 if self.on_godmode or self.on_crazy_mode:
-                    self.score += 200
+                    self.count_eaten(TypeScore.GHOST)
                     g.respawn()
                 else:
                     self.player.is_alive = False
 
-    @staticmethod
-    def _render_position(entity: Entity) -> tuple[float, float]:
-        progress = min(
-            entity.animation_elapsed_ms / max(1, entity.movement_interval_ms),
-            1.0,
-        )
-        start_x, start_y = entity.previous_coords
-        end_x, end_y = entity.coords
-        return (
-            start_x + (end_x - start_x) * progress,
-            start_y + (end_y - start_y) * progress,
-        )
-
     def is_pacgum_here(self) -> None:
         if self.player.coords in self.pacgums:
             if self.player.coords in self.maze.corners:
-                self.score += 200
+                self.count_eaten(TypeScore.SUPER_PACGUM)
                 self.set_crazy_mode(True)
                 self.timer.crazy_mode_elapsed_time = 0
                 self.super_pacgums.remove(self.player.coords)
             else:
-                self.score += 20
+                self.count_eaten(TypeScore.PACGUM)
 
             self.pacgums.remove(self.player.coords)
 
@@ -130,14 +125,14 @@ class Level:
         self.check_crazy_mode()
 
         if self.player.noclip:
-            self.player.moving_on_noclip()
+            self.player.move_with_noclip()
         else:
-            self.player.moving()
+            self.player.move()
 
         self.check_collision()
 
         for g in self.ghosts:
-            g.moving()
+            g.move()
 
         self.check_collision()
 

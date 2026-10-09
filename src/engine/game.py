@@ -15,7 +15,7 @@ class GameEngine:
         self._init_new_game()
 
     def _init_new_game(self) -> None:
-        self.lives: int = 3
+        self.lives: int = self.config.lives
         self.score: int = 0
         self.ultra_vision: bool = False
         self.state: GameState = GameState.START_NEW_GAME
@@ -30,10 +30,12 @@ class GameEngine:
         else:
             self.timer.new_game()
 
-    def save_level_score(self) -> None:
-        if self.level.score:
-            self.score += self.level.score
-            self.level.score = 0
+    def bank_score(self) -> None:
+        self.score += sum(
+            count * self.config.points.__getattribute__(item.value)
+            for item, count in self.level.eaten.items()
+        )
+        self.level.eaten.clear()
 
     def toggle_cheat_mode(self, mode: CheatMode) -> None:
         match mode:
@@ -47,7 +49,7 @@ class GameEngine:
                 self.level.on_godmode = not self.level.on_godmode
 
     def update_game_state(self) -> None:
-        self.save_level_score()
+        self.bank_score()
 
         if self.timer.is_over():
             self.state = GameState.GAME_OVER

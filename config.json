@@ -10,11 +10,12 @@
       "height": 11
     }
   ],
-  "lives": 3,
-  "pacgum": 42,
-  "points_per_pacgum": 10,
-  "points_per_super_pacgum": 50,
-  "points_per_ghost": 200,
-  "seed": 24,
-  "level_max_time": 90
+  "lives": 5,
+  "points": {
+  "per_pacgum": 10,
+  "per_super_pacgum": 50,
+  "per_ghost": 200
+  },
+  "seed": 42,
+  "level_max_time": 60000
 }

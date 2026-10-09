@@ -46,7 +46,7 @@ class Player(Entity):
 
         return not self.is_wall_here(self.direction)
 
-    def moving(self) -> None:
+    def move(self) -> None:
         if not self.can_it_move():
             return
         x, y = self.coords
@@ -55,7 +55,7 @@ class Player(Entity):
         self.animation_elapsed_ms = 0
         self.coords = x + dx, y + dy
 
-    def moving_on_noclip(self) -> None:
+    def move_with_noclip(self) -> None:
         if not self.is_alive or not super().can_it_move():
             return
 

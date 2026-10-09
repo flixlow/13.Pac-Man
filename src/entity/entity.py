@@ -22,7 +22,7 @@ class Entity(ABC):
         self.movement_interval_ms: int = max(1, 1000 // self.velocity)
 
     @abstractmethod
-    def moving(self) -> None:
+    def move(self) -> None:
         ...
 
     @property
