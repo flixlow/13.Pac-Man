@@ -85,12 +85,13 @@ class Monitor:
     def check_cheat_mode(self, event: Any) -> None:
         if event.type != pygame.KEYDOWN:
             return
+
         if event.key == pygame.K_F1:
             self.game.toggle_cheat_mode(CheatMode.ULTRA_VISION)
-            print("ultravision")
+
         if event.key == pygame.K_F2:
             self.game.toggle_cheat_mode(CheatMode.GODMODE)
-            print("godmode")
+
         if event.key == pygame.K_F3:
             self.game.toggle_cheat_mode(CheatMode.NOCLIP)
 
@@ -137,6 +138,7 @@ class Monitor:
 
         if event.type != pygame.KEYDOWN:
             return
+
         if event.key is pygame.K_ESCAPE:
             if state is GameState.ENTER_YOUR_NAME:
                 self.game.state = GameState.START_NEW_GAME

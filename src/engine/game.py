@@ -39,7 +39,6 @@ class GameEngine:
         match mode:
             case CheatMode.NOCLIP:
                 self.level.player.noclip = not self.level.player.noclip
-                print("noclip")
 
             case CheatMode.ULTRA_VISION:
                 self.ultra_vision = not self.ultra_vision
