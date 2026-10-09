@@ -2,14 +2,14 @@ import pygame
 from typing import Any
 
 from .maze import Maze
-from ..scorer import Scorer
 from ..menu import Menu
+from ..scorer import Scorer
+from .game import PacmanGame
 from ..parsing import parsing, Config
-from .game import PacmanGame, GameState
 from ..drawing.player_name import PlayerName
 from ..color_utils import ThemeSelection, Theme
 from ..drawing.pacman_drawer import PacManDrawer
-from ..utils import Timer, KEY_DIRECTION, CheatMode
+from ..utils import Timer, KEY_DIRECTION, CheatMode, GameState
 from ..drawing.basic_drawer import Drawer, print_life, print_title
 from ..drawing.basic_drawer import print_score, print_timer, print_theme
 

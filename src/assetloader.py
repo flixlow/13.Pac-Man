@@ -1,4 +1,4 @@
-from .entity.ghosts import GhostColor
+from .utils import GhostColor
 
 import pygame
 

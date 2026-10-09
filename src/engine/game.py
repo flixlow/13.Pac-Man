@@ -19,7 +19,7 @@ class PacmanGame:
         self.score: int = 0
         self.state: GameState = GameState.START_NEW_GAME
         # self.player_state: PlayerState = PlayerState()
-        self.maze_interator: Iterator = iter(self.mazes)
+        self.maze_interator: Iterator[Maze] = iter(self.mazes)
         self.level: Level = Level(next(self.maze_interator), self.timer)
         self.timer.new_game()
 

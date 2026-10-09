@@ -1,6 +1,5 @@
 
 from random import shuffle, random
-from typing import Callable
 
 from .maze import Maze
 from ..utils import Direction, Timer
@@ -40,7 +39,7 @@ class Level:
                 self.pacgums.add((x, y))
 
     def _init_ghosts(self) -> None:
-        ghost_classes: list[Callable] = [Blue, Red, Orange, Pink]
+        ghost_classes: list[type[Ghost]] = [Blue, Red, Orange, Pink]
 
         shuffle(ghost_classes)
 
