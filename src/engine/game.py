@@ -60,6 +60,7 @@ class GameEngine:
 
         elif not self.level.player.is_alive:
             self.state = GameState.HAS_LOSE_A_LIFE
+            self.level.set_crazy_mode(False)
             self.level.player.is_alive = True
             self.lives -= 1
             self.level._init_entities()

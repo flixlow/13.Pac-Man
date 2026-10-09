@@ -106,7 +106,7 @@ class PacManDrawer(MazeDrawer):
                     min(255, max(b + diff, 0)),
                 )
             else:
-                color: tuple[int, int, int] = (r, g, b)
+                color = (r, g, b)
 
             self.draw_rect(
                 (xc - self.cell_size // 15, yc - self.cell_size // 15),

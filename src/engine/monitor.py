@@ -133,23 +133,24 @@ class Monitor:
                 self.pacman_frame.update_maze(self.game.level.maze)
 
     def check_keydown(self, event: Any) -> None:
+        state = self.game.state
+
         if event.type != pygame.KEYDOWN:
             return
         if event.key is pygame.K_ESCAPE:
-            if self.game.state is GameState.ENTER_YOUR_NAME:
+            if state is GameState.ENTER_YOUR_NAME:
                 self.game.state = GameState.START_NEW_GAME
                 self.game._init_new_game()
             else:
                 self.game.state = GameState.PAUSE
 
-        elif event.key is pygame.K_t:
+        elif state != GameState.ENTER_YOUR_NAME and event.key is pygame.K_t:
             self.theme_selection.cycle()
 
         elif event.key is pygame.K_SPACE:
             self.space_pressed()
 
-        elif self.game.state is GameState.IN_GAME\
-                and event.key in KEY_DIRECTION:
+        elif state is GameState.IN_GAME and event.key in KEY_DIRECTION:
             self.game.level.change_direction(KEY_DIRECTION[event.key])
 
     def check_resize(self, event: Any) -> None:
@@ -233,16 +234,8 @@ class Monitor:
         self.screen.blit(self.header_frame.surface, (0, 0))
 
     def display_ultra_vision(self) -> None:
-        if self.game.ultra_vision:
-    def display_game(self) -> None:
-        level = self.game.level
+        if not self.game.level.on_crazy_mode and self.game.ultra_vision:
 
-        self.pacman_frame.draw_maze()
-
-        if (
-            not self.game.level.on_crazy_mode and
-            CheatMode.ULTRA_VISION in self.active_cheatmode
-        ):
             for ghost in self.game.level.ghosts:
                 color, sequence = ghost.color, ghost.sequence
                 sequence = list(reversed(sequence))

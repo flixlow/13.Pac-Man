@@ -4,6 +4,9 @@ from ..color_utils import Theme
 from ..utils import Timer, Color, Pos, Size
 
 
+Icon = tuple[pygame.Surface, pygame.Surface, pygame.Surface]
+
+
 class Drawer:
     def __init__(self, size: Size) -> None:
         """
@@ -67,7 +70,7 @@ def print_theme(frame: Drawer, theme: Theme, font: pygame.font.Font,
 
 def print_life(
         frame: Drawer, a: Pos, gap: int,
-        life: int, icons: tuple[pygame.Surface], color: Color) -> None:
+        life: int, icons: Icon, color: Color) -> None:
 
     LIFE = 3
 
