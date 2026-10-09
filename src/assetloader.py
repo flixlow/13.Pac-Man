@@ -18,6 +18,7 @@ class Paths:
     CRAZY = GHOSTS + "crazyman/"
     ALIVE = ICON + "heart.png"
     DEAD = ICON + "dead_heart.png"
+    REFLECT = ICON + "reflect.png"
     UNPRESSED = BUTTON + "button.png"
     PRESSED = BUTTON + "button_pressed.png"
 
@@ -63,8 +64,9 @@ class AssetLoader:
         alive = pygame.image.load(Paths.ALIVE).convert_alpha()
 
         dead = pygame.image.load(Paths.DEAD).convert_alpha()
+        reflect = pygame.image.load(Paths.REFLECT).convert_alpha()
 
-        return dead, alive
+        return dead, alive, reflect
 
     @staticmethod
     def load_fruit() -> list[pygame.Surface]:

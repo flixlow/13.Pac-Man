@@ -21,7 +21,7 @@ class PacManDrawer(MazeDrawer):
         # Assets
         self.ghosts_img_copy = AssetLoader.load_ghosts()
         self.pacman_img_copy: list[pygame.Surface] = AssetLoader.load_pacman()
-        self.dead_copy, self.alive_copy = AssetLoader.load_life()
+        self.dead_copy, self.alive_copy, self.reflect = AssetLoader.load_life()
         self.fruit_copy = AssetLoader.load_fruit()
         self.bg_msg_copy: pygame.Surface = AssetLoader.load_buttons()[0]
 
@@ -50,12 +50,15 @@ class PacManDrawer(MazeDrawer):
         )
 
     def draw_maze(self) -> None:
-        target_color = (150, 150, 150)
+        target_color = self.theme.crazy_maze.background
         elapsed = self.timer.crazy_mode_elapsed_time
 
-        progress = elapsed % 1250 / 1250
-        if progress > 0.5:
-            progress = 1.0 - progress
+        if self.theme.crazy_animation:
+            progress = elapsed % 1250 / 1250
+            if progress > 0.5:
+                progress = 1.0 - progress
+        else:
+            progress = 0
 
         if progress:
             tinted_background: tuple[int, int, int] = (
@@ -64,7 +67,7 @@ class PacManDrawer(MazeDrawer):
                 int(target_color[2] * progress),
             )
             self.fill(tinted_background)
-            bg = (255, 0, 0)
+            bg = (0, 0, 0)
         else:
             self.fill(self.theme.background)
             bg = None
@@ -91,17 +94,19 @@ class PacManDrawer(MazeDrawer):
                 self.fruit[self.chosen_fruit]
             )
         else:
-            nc = (self.timer.total_spend_time) % 2000
-            diff = (1000 - abs(1000 - nc) // 100 - 1000) * 20
-
             xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
-
             r, g, b = self.theme.theme.pacgum
-            color: tuple[int, int, int] = (
-                min(255, max(r + diff, 0)),
-                min(255, max(g + diff, 0)),
-                min(255, max(b + diff, 0)),
-            )
+            if self.theme.pacgum_animation:
+                nc = (self.timer.total_spend_time) % 2000
+                diff = (1000 - abs(1000 - nc) // 100 - 1000) * 20
+
+                color: tuple[int, int, int] = (
+                    min(255, max(r + diff, 0)),
+                    min(255, max(g + diff, 0)),
+                    min(255, max(b + diff, 0)),
+                )
+            else:
+                color: tuple[int, int, int] = (r, g, b)
 
             self.draw_rect(
                 (xc - self.cell_size // 15, yc - self.cell_size // 15),
@@ -261,6 +266,10 @@ class PacManDrawer(MazeDrawer):
 
         self.dead = pygame.transform.scale(
             self.dead_copy, (w // 20, w // 20)
+        )
+
+        self.reflect = pygame.transform.scale(
+            self.reflect, (w // 20, w // 20)
         )
 
         self.fruit = [

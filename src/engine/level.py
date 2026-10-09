@@ -98,6 +98,19 @@ class Level:
                 else:
                     self.player.is_alive = False
 
+    @staticmethod
+    def _render_position(entity: Entity) -> tuple[float, float]:
+        progress = min(
+            entity.animation_elapsed_ms / max(1, entity.movement_interval_ms),
+            1.0,
+        )
+        start_x, start_y = entity.previous_coords
+        end_x, end_y = entity.coords
+        return (
+            start_x + (end_x - start_x) * progress,
+            start_y + (end_y - start_y) * progress,
+        )
+
     def is_pacgum_here(self) -> None:
         if self.player.coords in self.pacgums:
             if self.player.coords in self.maze.corners:
@@ -125,5 +138,7 @@ class Level:
 
         for g in self.ghosts:
             g.moving()
+
+        self.check_collision()
 
         self.is_pacgum_here()

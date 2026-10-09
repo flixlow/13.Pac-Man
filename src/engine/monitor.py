@@ -206,12 +206,18 @@ class Monitor:
                            title_font, self.get_theme().header.title)
         print_theme(self.header_frame, self.get_theme(), font, prev // 3)
 
+        icons = (
+            self.pacman_frame.alive,
+            self.pacman_frame.dead,
+            self.pacman_frame.reflect
+        )
+
         print_life(
             self.header_frame, (0, 0),
             self.pacman_frame.alive.get_width(),
             self.game.lives,
-            self.pacman_frame.alive,
-            self.pacman_frame.dead
+            icons,
+            self.get_theme().header.heart_color
         )
 
         text_size = print_score(
@@ -228,6 +234,15 @@ class Monitor:
 
     def display_ultra_vision(self) -> None:
         if self.game.ultra_vision:
+    def display_game(self) -> None:
+        level = self.game.level
+
+        self.pacman_frame.draw_maze()
+
+        if (
+            not self.game.level.on_crazy_mode and
+            CheatMode.ULTRA_VISION in self.active_cheatmode
+        ):
             for ghost in self.game.level.ghosts:
                 color, sequence = ghost.color, ghost.sequence
                 sequence = list(reversed(sequence))
