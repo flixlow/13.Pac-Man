@@ -7,6 +7,28 @@ Size = tuple[int, int]
 Color = tuple[int, int, int]
 
 
+class Direction(Enum):
+    START = 0
+    NORTH = 1
+    EAST = 2
+    SOUTH = 4
+    WEST = 8
+
+
+OPPOSITE = {
+    Direction.NORTH: Direction.SOUTH,
+    Direction.SOUTH: Direction.NORTH,
+    Direction.EAST: Direction.WEST,
+    Direction.WEST: Direction.EAST
+}
+
+
+class TypeScore(Enum):
+    GHOST = "per_ghost"
+    PACGUM = "per_pacgum"
+    SUPER_PACGUM = "per_super_pacgum"
+
+
 class GameState(Enum):
     START_NEW_GAME = auto()
     IN_GAME = auto()
@@ -19,8 +41,8 @@ class GameState(Enum):
 
 
 class Timer:
-    def __init__(self) -> None:
-        self.time_per_game = 50000  # constant, in ms
+    def __init__(self, time_per_game: int) -> None:
+        self.time_per_game: int = time_per_game
 
         self.game_time: int = 0
         self.elapsed_time: int = 0
@@ -59,14 +81,6 @@ class GhostColor(Enum):
     ORANGE = (255, 127, 0)
     CRAZY = (255, 255, 255)
     SECRET = (0, 0, 0)
-
-
-class Direction(Enum):
-    START = 0
-    NORTH = 1
-    EAST = 2
-    SOUTH = 4
-    WEST = 8
 
 
 class DisplayState(Enum):

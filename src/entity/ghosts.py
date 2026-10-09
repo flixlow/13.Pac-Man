@@ -66,7 +66,7 @@ class Ghost(Entity):
 
         self.sequence = [cell]
 
-    def moving(self) -> None:
+    def move(self) -> None:
         if not self.can_it_move():
             return
 

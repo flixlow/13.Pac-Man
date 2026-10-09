@@ -16,8 +16,8 @@ from ..drawing.basic_drawer import print_score, print_timer, print_theme
 
 class Monitor:
     def __init__(self, config_file: str) -> None:
-        self.timer: Timer = Timer()
         self.config: Config = parsing(config_file)
+        self.timer: Timer = Timer(self.config.level_max_time)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[Maze] = self.config.generate_all_maze()
         self.game: GameEngine = GameEngine(self.config, self.mazes, self.timer)

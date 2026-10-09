@@ -9,6 +9,12 @@ from .errors import GenerationError, ParsingError
 from .engine.maze import Maze
 
 
+class Points(BaseModel):
+    per_pacgum: int = Field(gt=0)
+    per_super_pacgum: int = Field(gt=0)
+    per_ghost: int = Field(gt=0)
+
+
 class LevelSize(BaseModel):
     width: int = Field(gt=6)
     height: int = Field(gt=6)
@@ -18,10 +24,7 @@ class Config(BaseModel):
     highscore_filename: str = Field(min_length=1)
     levels: list[LevelSize]
     lives: int = Field(gt=0)
-    pacgum: int = Field(gt=0)
-    points_per_pacgum: int = Field(gt=0)
-    points_per_super_pacgum: int = Field(gt=0)
-    points_per_ghost: int = Field(gt=0)
+    points: Points
     seed: int
     level_max_time: int = Field(gt=0)
 

@@ -23,13 +23,10 @@ class Player(Entity):
         return bool(cell & direction.value)
 
     def reverse(self, new_direction: Direction) -> None:
-        progress = min(
-            self.animation_elapsed_ms / max(1, self.movement_interval_ms), 1.0
-        )
 
         self.previous_coords, self.coords = self.coords, self.previous_coords
         self.animation_elapsed_ms = int(
-            self.movement_interval_ms * (1 - progress)
+            self.movement_interval_ms * (1 - self.progress)
         )
 
         self.entity_move_elapsed_ms = self.animation_elapsed_ms
@@ -49,7 +46,7 @@ class Player(Entity):
 
         return not self.is_wall_here(self.direction)
 
-    def moving(self) -> None:
+    def move(self) -> None:
         if not self.can_it_move():
             return
         x, y = self.coords
@@ -58,7 +55,7 @@ class Player(Entity):
         self.animation_elapsed_ms = 0
         self.coords = x + dx, y + dy
 
-    def moving_on_noclip(self) -> None:
+    def move_with_noclip(self) -> None:
         if not self.is_alive or not super().can_it_move():
             return
 
