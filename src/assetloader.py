@@ -5,14 +5,21 @@ import pygame
 
 class Paths:
     ASSETS = "assets/"
+    ICON = ASSETS + "icon/"
+    FRUIT = ASSETS + "fruit/"
+    BUTTON = ASSETS + "button/"
     GHOSTS = ASSETS + "ghosts/"
     PACMAN = ASSETS + "pacman/"
-    SECRET = GHOSTS + "secret/"
-    ORANGE = GHOSTS + "orange/"
-    CRAZY = GHOSTS + "crazyman/"
-    PINK = GHOSTS + "pink/"
-    BLUE = GHOSTS + "blue/"
     RED = GHOSTS + "red/"
+    BLUE = GHOSTS + "blue/"
+    PINK = GHOSTS + "pink/"
+    ORANGE = GHOSTS + "orange/"
+    SECRET = GHOSTS + "secret/"
+    CRAZY = GHOSTS + "crazyman/"
+    ALIVE = ICON + "heart.png"
+    DEAD = ICON + "dead_heart.png"
+    UNPRESSED = BUTTON + "button.png"
+    PRESSED = BUTTON + "button_pressed.png"
 
 
 class AssetLoader:
@@ -45,7 +52,7 @@ class AssetLoader:
     @staticmethod
     def load_pacman() -> list[pygame.Surface]:
         pacman_img_copy = [
-            pygame.image.load(f"assets/pacman/{i}.png").convert_alpha()
+            pygame.image.load(f"{Paths.PACMAN}{i}.png").convert_alpha()
             for i in range(5)
         ]
 
@@ -53,11 +60,9 @@ class AssetLoader:
 
     @staticmethod
     def load_life() -> tuple[pygame.Surface, pygame.Surface]:
-        alive = pygame.image.load(
-                    "assets/icon/heart.png").convert_alpha()
+        alive = pygame.image.load(Paths.ALIVE).convert_alpha()
 
-        dead = pygame.image.load(
-            "assets/icon/dead_heart.png").convert_alpha()
+        dead = pygame.image.load(Paths.DEAD).convert_alpha()
 
         return dead, alive
 
@@ -65,7 +70,7 @@ class AssetLoader:
     def load_fruit() -> list[pygame.Surface]:
         fruit = [
             pygame.image.load(
-                f"assets/fruit/{i+1}.png"
+                f"{Paths.FRUIT}{i+1}.png"
             ).convert_alpha() for i in range(3)
         ]
 
@@ -73,7 +78,7 @@ class AssetLoader:
 
     @staticmethod
     def load_buttons() -> tuple[pygame.Surface, pygame.Surface]:
-        normal = pygame.image.load("assets/button/button.png")
-        pressed = pygame.image.load("assets/button/button_pressed.png")
+        normal = pygame.image.load(Paths.UNPRESSED)
+        pressed = pygame.image.load(Paths.PRESSED)
 
         return normal, pressed
