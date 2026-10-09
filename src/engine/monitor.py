@@ -207,12 +207,18 @@ class Monitor:
                            title_font, self.get_theme().header.title)
         print_theme(self.header_frame, self.get_theme(), font, prev // 3)
 
+        icons = (
+            self.pacman_frame.alive,
+            self.pacman_frame.dead,
+            self.pacman_frame.reflect
+        )
+
         print_life(
             self.header_frame, (0, 0),
             self.pacman_frame.alive.get_width(),
             self.game.lives,
-            self.pacman_frame.alive,
-            self.pacman_frame.dead
+            icons,
+            self.get_theme().header.heart_color
         )
 
         text_size = print_score(

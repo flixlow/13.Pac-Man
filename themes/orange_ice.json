@@ -25,7 +25,8 @@
             "title": [255, 255, 255],
             "score": [255, 140, 0],
             "timer": [0, 255, 255],
-            "background": [0, 15, 25]
+            "background": [0, 15, 25],
+            "heart_color": [255, 127, 0]
         },
         "menu": {
             "leaderboard": {

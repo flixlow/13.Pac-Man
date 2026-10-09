@@ -25,7 +25,8 @@
             "title": [202, 240, 248],
             "score": [72, 202, 228],
             "timer": [144, 224, 239],
-            "background": [3, 30, 60]
+            "background": [3, 30, 60],
+            "heart_color": [0, 0, 180]
         },
         "menu": {
             "leaderboard": {

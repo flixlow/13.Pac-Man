@@ -27,6 +27,7 @@ class Header(StrictModel):
     score: Color
     timer: Color
     background: Color
+    heart_color: Color
 
 
 class Leaderboard(StrictModel):

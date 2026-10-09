@@ -67,14 +67,19 @@ def print_theme(frame: Drawer, theme: Theme, font: pygame.font.Font,
 
 def print_life(
         frame: Drawer, a: Pos, gap: int,
-        life: int, alive: pygame.Surface, dead: pygame.Surface) -> None:
+        life: int, icons: tuple[pygame.Surface], color: Color) -> None:
 
     LIFE = 3
+
+    alive, dead, reflect = icons
 
     for i in range(LIFE):
         x, y = a
         if i < life:
-            frame.put_image((x + i * gap, y), alive)
+            tinted = alive.copy()
+            tinted.fill(color, special_flags=pygame.BLEND_RGBA_MULT)
+            frame.put_image((x + i * gap, y), tinted)
+            frame.put_image((x + i * gap, y), reflect)
         else:
             frame.put_image((x + i * gap, y), dead)
 
