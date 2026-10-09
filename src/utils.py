@@ -72,6 +72,12 @@ class Timer:
 class Parameters:
     PLAYER_VELOCITY = 5
     GHOST_VELOCITY = 3
+    RESPAWN_TIME = 5000
+    BLUE_LEN_SEQ = 30
+    RED_LEN_SEQ = 15
+    PINK_LEN_SEQ = 5
+    SECRET_LEN_SEQ_FOR_TP = 15
+
 
 
 class GhostColor(Enum):

@@ -29,8 +29,6 @@ class Player(Entity):
             self.movement_interval_ms * (1 - self.progress)
         )
 
-        self.entity_move_elapsed_ms = self.animation_elapsed_ms
-
         self.direction = new_direction
         self.next_direction = Direction.START
 

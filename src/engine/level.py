@@ -72,6 +72,7 @@ class Level:
 
     def set_crazy_mode(self, status: bool) -> None:
         self.on_crazy_mode = status
+        self.timer.crazy_mode_elapsed_time = 0
 
         for e in self.entities:
             e.crazy_mode = status
@@ -92,7 +93,6 @@ class Level:
         if self.on_crazy_mode is True:
             self.timer.crazy_mode_elapsed_time += self.timer.elapsed_time
             if self.timer.crazy_mode_elapsed_time >= 5000:
-                self.timer.crazy_mode_elapsed_time = 0
                 self.set_crazy_mode(False)
 
     def check_collision(self) -> None:
@@ -109,9 +109,8 @@ class Level:
     def is_pacgum_here(self) -> None:
         if self.player.coords in self.pacgums:
             if self.player.coords in self.maze.corners:
-                self.count_eaten(TypeScore.SUPER_PACGUM)
                 self.set_crazy_mode(True)
-                self.timer.crazy_mode_elapsed_time = 0
+                self.count_eaten(TypeScore.SUPER_PACGUM)
                 self.super_pacgums.remove(self.player.coords)
             else:
                 self.count_eaten(TypeScore.PACGUM)
