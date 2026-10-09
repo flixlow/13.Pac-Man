@@ -74,6 +74,8 @@ class Level:
         if self.player.direction != Direction.START\
                 and OPPOSITE.get(self.player.direction) == new_direction:
             self.player.reverse(new_direction)
+        elif self.player.direction == new_direction:
+            return
         else:
             self.player.next_direction = new_direction
 

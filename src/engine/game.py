@@ -4,10 +4,10 @@ from typing import Iterator
 from .maze import Maze
 from .level import Level
 from ..parsing import Config
-from ..utils import Timer, GameState
+from ..utils import Timer, GameState, CheatMode
 
 
-class PacmanGame:
+class GameEngine:
     def __init__(self, config: Config, mazes: list[Maze], t: Timer) -> None:
         self.config: Config = config
         self.mazes: list[Maze] = mazes
@@ -17,11 +17,10 @@ class PacmanGame:
     def _init_new_game(self) -> None:
         self.lives: int = 3
         self.score: int = 0
+        self.active_cheatmode: set[CheatMode] = set()
         self.state: GameState = GameState.START_NEW_GAME
-        # self.player_state: PlayerState = PlayerState()
         self.maze_interator: Iterator[Maze] = iter(self.mazes)
-        self.level: Level = Level(next(self.maze_interator), self.timer)
-        self.timer.new_game()
+        self.next_level()
 
     def next_level(self) -> None:
         try:
