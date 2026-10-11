@@ -72,7 +72,7 @@ class Ghost(Entity):
 
         if not self.is_alive:
             self.respawn_timer += self.timer.elapsed_time
-            if self.respawn_timer >= 200:
+            if self.respawn_timer >= Parameters.RESPAWN_TIME:
                 self.is_alive = True
             else:
                 return
@@ -99,7 +99,7 @@ class Secret(Ghost):
     def generate_sequence(self) -> None:
         self.pathfinding(self.player.coords, None)
 
-        if len(self.sequence) >= 15:
+        if len(self.sequence) >= Parameters.SECRET_LEN_SEQ_FOR_TP:
             self.teleportate(self.player.coords)
 
 
@@ -110,7 +110,7 @@ class Blue(Ghost):
         current_coords = self.coords
         last_coords: None | tuple[int, int] = None
 
-        for i in range(30):
+        for i in range(Parameters.BLUE_LEN_SEQ):
             available_coords = self.maze.get_available_coords(current_coords)
             if last_coords and len(available_coords) > 1:
                 if last_coords in available_coords:
@@ -127,14 +127,14 @@ class Red(Ghost):
     default_color = GhostColor.RED
 
     def generate_sequence(self) -> None:
-        self.pathfinding(self.player.coords, 15)
+        self.pathfinding(self.player.coords, Parameters.RED_LEN_SEQ)
 
 
 class Pink(Ghost):
     default_color = GhostColor.PINK
 
     def generate_sequence(self) -> None:
-        self.pathfinding(self.player.coords, 5)
+        self.pathfinding(self.player.coords, Parameters.PINK_LEN_SEQ)
 
 
 class Orange(Ghost):

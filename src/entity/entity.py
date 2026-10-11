@@ -14,7 +14,6 @@ class Entity(ABC):
         self.maze: Maze = maze
         self.crazy_mode: bool = False
         self.animation_elapsed_ms: int = 0
-        self.entity_move_elapsed_ms: int = 0
         self.coords: tuple[int, int] = coords
         self.previous_coords: tuple[int, int] = coords
         self.starting_coords: tuple[int, int] = coords
