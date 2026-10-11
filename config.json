@@ -33,5 +33,5 @@
   "per_ghost": 200
   },
   "seed": 42,
-  "level_max_time": 60000
+  "level_max_time": 90000
 }

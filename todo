@@ -36,22 +36,37 @@ draft:
 [X] Asset secret ghost
 [X] prendre levent sur le release pour les boutons
 [X] class Color pour les params # PRESQUE !!!!!!!!!
-[ ] Game over bug at the end of the last level
-[ ] cheat mode
-    [ ] noclip
+[x] bug chelou des fois quand ca change de map et quon peut entrer dans le 42
+[x] Game over bug at the end of the last level
+[x] cheat mode
+    [x] noclip
     [x] vision trajectoire fantomes
-    [ ] godmode
+    [x] godmode
+[x] Enlever crazy mode enre chaque game
+[x] ajout de Paths sur tous les paths ecrits en dur
+[x] Deplacement de Paths dans utils
+[x] ajout d'un s a default themes directory
+[x] changement de theme au debut de chaque niveau au moment ou on appuie sur espace
+[x] supression input T pour le changement de Theme, soit dans le menu ou en changeant de niveau
+[x] deplacement des displayers dans les screens
 
-[ ] bug fin d'animation
-[ ] flag : --own_function for draw rectangle
-[ ] Mieux gerer les collisions 🥶🥶🥶🥶
+[ ] pourquoi un get et un property dans ThemeSelection ?
+[ ] est ce que le FileValidator peut être remplacé par Field(default=1) sachant que le nom de fichier peut-etre des white spaces ?
+[ ] est-ce qu'on a encore besoin du spritesheet
+[ ] can we remove title.ttf ?
+[ ] implementer une statemachine
+
+[ ] Mieux gerer les collisions
+    [ ] bug fin d'animation
     [ ] Les derniers pacgums
     [ ] Les comportements chelou quand un fantome kill mais loin
-[x] bug chelou des fois quand ca change de map et quon peut entrer dans le 42 🥶🥶🥶🥶
+
+[ ] Readme
 [ ] docstring
-[x] Enlever crazy mode enre chaque game
+[ ] config par default si jamais la config est eronée
 
 Forbidden Behavior from pygame:
+[ ] flag : --own_function for draw rectangle
 [ ] Custom font with manipulation of size
 [ ] Image tranformation (scale, rotate)
 [ ] Rescalable Image
