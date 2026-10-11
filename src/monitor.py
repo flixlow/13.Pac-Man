@@ -1,17 +1,17 @@
 import pygame
 
-from .maze import Maze
-from ..menu import Menu
-from ..scorer import Scorer
-from .game import GameEngine
-from ..utils import Timer, GameState
-from ..parsing import parsing, Config
-from ..drawing.player_name import PlayerName
-from ..drawing.pacman_drawer import PacManDrawer
-from ..theme_selection import ThemeSelection, Theme
+from .engine.maze import Maze
+from .menu import Menu
+from .scorer import Scorer
+from .engine.game import GameEngine
+from .utils import Timer, GameState
+from .parsing import parsing, Config
+from .drawing.player_name import PlayerName
+from .drawing.pacman_drawer import PacManDrawer
+from .theme_selection import ThemeSelection, Theme
 from .screens import Screen, GameScreen, MenuScreen, NameScreen
-from ..drawing.basic_drawer import Drawer, print_life, print_title
-from ..drawing.basic_drawer import print_score, print_timer, print_theme
+from .drawing.basic_drawer import Drawer, print_life, print_title
+from .drawing.basic_drawer import print_score, print_timer, print_theme
 
 
 class Monitor:
@@ -151,11 +151,13 @@ class Monitor:
         pygame.display.flip()
 
     def ending_animation(self) -> None:
-        if self.game.state in {
+        if self.game.state not in {
             GameState.HAS_LOSE_A_LIFE,
             GameState.HAS_COMPLETED_LEVEL
         }:
-            self.counter_ending_animation += self.timer.elapsed_time
+            return
+
+        self.counter_ending_animation += self.timer.elapsed_time
 
         if self.counter_ending_animation >= self.timer.elapsed_time:
             self.pacman_frame.update_maze(self.game.level.maze)

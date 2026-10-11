@@ -2,13 +2,13 @@ from abc import ABC, abstractmethod
 from typing import Callable
 import pygame
 
-from ..menu import Menu
-from ..scorer import Scorer
-from .game import GameEngine
-from ..theme_selection import ThemeSelection
-from ..drawing.player_name import PlayerName
-from ..drawing.pacman_drawer import PacManDrawer
-from ..utils import KEY_DIRECTION, CheatMode, GameState, Pos
+from .menu import Menu
+from .scorer import Scorer
+from .engine.game import GameEngine
+from .theme_selection import ThemeSelection
+from .drawing.player_name import PlayerName
+from .drawing.pacman_drawer import PacManDrawer
+from .utils import KEY_DIRECTION, CheatMode, GameState, Pos
 
 
 class Screen(ABC):
