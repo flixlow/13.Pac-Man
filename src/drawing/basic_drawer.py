@@ -1,6 +1,6 @@
 import pygame
 
-from ..color_utils import Theme
+from ..theme_selection import Theme
 from ..utils import Timer, Color, Pos, Size
 
 
@@ -124,7 +124,7 @@ def print_timer(
     padding_x, padding_y = w // 30, h // 20
     _, last_h_text = score_text_size
 
-    time = max_time - timer.game_time
+    time = max_time - timer.level_time
 
     rendered = font.render(
         f"Time: {time // 1000}.{(time % 1000) // 10}", True, color)

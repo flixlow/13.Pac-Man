@@ -126,8 +126,10 @@ class ThemeSelection:
         return self.get_selected()
 
     def load_all_themes(self) -> bool:
-        default_directory = Path("assets/default_theme/")
-        user_directory = Path("themes/")
+        from .utils import Paths
+
+        default_directory = Path(Paths.DEFAULT_THEMES)
+        user_directory = Path(Paths.THEMES)
 
         # default
         for theme in default_directory.glob("*.json"):

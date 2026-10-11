@@ -2,7 +2,7 @@ from typing import Any
 import pygame
 
 from .basic_drawer import Drawer
-from ..utils import Timer
+from ..utils import Timer, Paths
 
 
 class PlayerName:
@@ -51,11 +51,9 @@ class PlayerName:
 
         name_text = "".join(self.name)
         name_size = self._get_font_size(
-            name_text, "assets/font/leaderboard.ttf", box_w, box_h
+            name_text, Paths.LEADERBOARD, box_w, box_h
         )
-        self.name_font = pygame.font.Font(
-            "assets/font/leaderboard.ttf", name_size
-        )
+        self.name_font = pygame.font.Font(Paths.LEADERBOARD, name_size)
 
         # rendered
         self.rendered_title = self.title_font.render(

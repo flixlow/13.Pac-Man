@@ -7,6 +7,38 @@ Size = tuple[int, int]
 Color = tuple[int, int, int]
 
 
+class Paths:
+    ASSETS = "assets/"
+
+    BUTTON = ASSETS + "button/"
+    UNPRESSED = BUTTON + "button.png"
+    PRESSED = BUTTON + "button_pressed.png"
+
+    DEFAULT_THEMES = ASSETS + "default_themes/"
+    THEMES = "themes/"
+
+    FONT = ASSETS + "font/"
+    LEADERBOARD = FONT + "leaderboard.ttf"
+    TITLE = FONT + "title.otf"
+
+    FRUIT = ASSETS + "fruit/"
+
+    ICON = ASSETS + "icon/"
+    ALIVE = ICON + "heart.png"
+    DEAD = ICON + "dead_heart.png"
+    REFLECT = ICON + "reflect.png"
+
+    GHOSTS = ASSETS + "ghosts/"
+    RED = GHOSTS + "red/"
+    BLUE = GHOSTS + "blue/"
+    PINK = GHOSTS + "pink/"
+    ORANGE = GHOSTS + "orange/"
+    SECRET = GHOSTS + "secret/"
+    CRAZY = GHOSTS + "crazyman/"
+
+    PACMAN = ASSETS + "pacman/"
+
+
 class Direction(Enum):
     START = 0
     NORTH = 1
@@ -44,7 +76,7 @@ class Timer:
     def __init__(self, time_per_game: int) -> None:
         self.time_per_game: int = time_per_game
 
-        self.game_time: int = 0
+        self.level_time: int = 0
         self.elapsed_time: int = 0
         self.total_spend_time: int = 0
         self.crazy_mode_elapsed_time: int = 0
@@ -57,16 +89,16 @@ class Timer:
         self.total_spend_time += self.elapsed_time
 
         if state is GameState.IN_GAME:
-            self.game_time = min(
-                self.game_time + self.elapsed_time,
+            self.level_time = min(
+                self.level_time + self.elapsed_time,
                 self.time_per_game
             )
 
-    def new_game(self) -> None:
-        self.game_time = 0
+    def new_level(self) -> None:
+        self.level_time = 0
 
     def is_over(self) -> bool:
-        return self.time_per_game == self.game_time
+        return self.time_per_game == self.level_time
 
 
 class Parameters:
@@ -77,7 +109,6 @@ class Parameters:
     RED_LEN_SEQ = 15
     PINK_LEN_SEQ = 5
     SECRET_LEN_SEQ_FOR_TP = 15
-
 
 
 class GhostColor(Enum):
