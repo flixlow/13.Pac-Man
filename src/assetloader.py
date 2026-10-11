@@ -1,26 +1,6 @@
-from .utils import GhostColor
+from .utils import GhostColor, Paths
 
 import pygame
-
-
-class Paths:
-    ASSETS = "assets/"
-    ICON = ASSETS + "icon/"
-    FRUIT = ASSETS + "fruit/"
-    BUTTON = ASSETS + "button/"
-    GHOSTS = ASSETS + "ghosts/"
-    PACMAN = ASSETS + "pacman/"
-    RED = GHOSTS + "red/"
-    BLUE = GHOSTS + "blue/"
-    PINK = GHOSTS + "pink/"
-    ORANGE = GHOSTS + "orange/"
-    SECRET = GHOSTS + "secret/"
-    CRAZY = GHOSTS + "crazyman/"
-    ALIVE = ICON + "heart.png"
-    DEAD = ICON + "dead_heart.png"
-    REFLECT = ICON + "reflect.png"
-    UNPRESSED = BUTTON + "button.png"
-    PRESSED = BUTTON + "button_pressed.png"
 
 
 class AssetLoader:
@@ -43,8 +23,7 @@ class AssetLoader:
                 f"{Paths.SECRET}{i+1}.png").convert_alpha()
                 for i in range(8)],
             GhostColor.CRAZY: [
-                pygame.image.load(
-                    f"assets/ghosts/crazyman/{i+1}.png").convert_alpha()
+                pygame.image.load(f"{Paths.CRAZY}{i+1}.png").convert_alpha()
                 for i in range(4)]
         }
 
@@ -61,12 +40,11 @@ class AssetLoader:
 
     @staticmethod
     def load_life() -> tuple[pygame.Surface, pygame.Surface, pygame.Surface]:
-        alive = pygame.image.load(Paths.ALIVE).convert_alpha()
-
-        dead = pygame.image.load(Paths.DEAD).convert_alpha()
-        reflect = pygame.image.load(Paths.REFLECT).convert_alpha()
-
-        return dead, alive, reflect
+        return (
+            pygame.image.load(Paths.DEAD).convert_alpha(),
+            pygame.image.load(Paths.ALIVE).convert_alpha(),
+            pygame.image.load(Paths.REFLECT).convert_alpha()
+        )
 
     @staticmethod
     def load_fruit() -> list[pygame.Surface]:

@@ -7,7 +7,7 @@ from ..scorer import Scorer
 from .game import GameEngine
 from ..parsing import parsing, Config
 from ..drawing.player_name import PlayerName
-from ..color_utils import ThemeSelection, Theme
+from ..theme_selection import ThemeSelection, Theme
 from ..drawing.pacman_drawer import PacManDrawer
 from ..utils import Timer, KEY_DIRECTION, CheatMode, GameState
 from ..drawing.basic_drawer import Drawer, print_life, print_title
@@ -62,6 +62,9 @@ class Monitor:
         return self.theme_selection.get_selected()
 
     def space_pressed(self) -> None:
+        if self.game.state is GameState.HAS_COMPLETED_LEVEL:
+            self.theme_selection.cycle()
+
         if self.game.state in {
             GameState.START_NEW_GAME, GameState.HAS_LOSE_A_LIFE,
             GameState.PAUSE, GameState.HAS_COMPLETED_LEVEL
@@ -306,7 +309,8 @@ class Monitor:
 
     def ending_animation(self) -> None:
         if self.game.state in {
-            GameState.HAS_LOSE_A_LIFE, GameState.HAS_COMPLETED_LEVEL
+            GameState.HAS_LOSE_A_LIFE,
+            GameState.HAS_COMPLETED_LEVEL
         }:
             self.counter_ending_animation += self.timer.elapsed_time
 

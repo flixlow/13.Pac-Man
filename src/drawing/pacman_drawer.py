@@ -6,7 +6,7 @@ from ..engine.maze import Maze
 from ..entity import Ghost, Entity
 from .maze_drawer import MazeDrawer
 from ..assetloader import AssetLoader
-from ..color_utils import ThemeSelection
+from ..theme_selection import ThemeSelection
 from ..utils import GhostColor, Parameters, Direction, Timer, Pos, Color, Size
 
 

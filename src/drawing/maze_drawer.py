@@ -1,6 +1,6 @@
 from .basic_drawer import Drawer
 from ..engine.maze import Maze
-from ..color_utils import ThemeSelection, Theme
+from ..theme_selection import ThemeSelection, Theme
 
 
 class MazeDrawer(Drawer):

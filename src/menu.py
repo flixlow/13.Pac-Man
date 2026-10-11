@@ -1,7 +1,8 @@
 from .drawing.basic_drawer import Drawer
-from .color_utils import ThemeSelection, Theme
+from .theme_selection import ThemeSelection, Theme
 from .scorer import Scorer
 from .button import Button
+from .utils import Paths
 
 import pygame
 from typing import Any
@@ -78,8 +79,7 @@ class Menu:
         r = h / (w / 2)
 
         self.scorers_rendered = []
-        self.font_name = pygame.font.Font(
-            "assets/font/leaderboard.ttf", w // 25)
+        self.font_name = pygame.font.Font(Paths.LEADERBOARD, w // 25)
 
         self.max_width_user = 0
         self.max_width_score = 0

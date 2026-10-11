@@ -11,13 +11,13 @@ class GameEngine:
     def __init__(self, config: Config, mazes: list[Maze], t: Timer) -> None:
         self.config: Config = config
         self.mazes: list[Maze] = mazes
-        self.timer = t
+        self.timer: Timer = t
         self._init_new_game()
 
     def _init_new_game(self) -> None:
-        self.lives: int = self.config.lives
         self.score: int = 0
         self.ultra_vision: bool = False
+        self.lives: int = self.config.lives
         self.state: GameState = GameState.START_NEW_GAME
         self.maze_interator: Iterator[Maze] = iter(self.mazes)
         self.next_level()
@@ -28,7 +28,7 @@ class GameEngine:
         except StopIteration:
             self.state = GameState.HAS_BEATEN_THE_GAME
         else:
-            self.timer.new_game()
+            self.timer.new_level()
 
     def bank_score(self) -> None:
         self.score += sum(
