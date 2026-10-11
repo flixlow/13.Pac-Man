@@ -12,9 +12,9 @@ class GameEngine:
         self.config: Config = config
         self.mazes: list[Maze] = mazes
         self.timer: Timer = t
-        self._init_new_game()
+        self.init_new_game()
 
-    def _init_new_game(self) -> None:
+    def init_new_game(self) -> None:
         self.score: int = 0
         self.ultra_vision: bool = False
         self.lives: int = self.config.lives

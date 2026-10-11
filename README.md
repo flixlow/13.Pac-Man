@@ -7,3 +7,6 @@ est-ce qu'on a encore besoin du spritesheet
 can we remove title.ttf ?
 load lives, return with no variable
 changement de theme au debut de chaque niveau au moment ou on appuie sur espace
+j'ai retiré l input T pour le changement de Theme, comme ca on passe soit dans le menu ou en changeant de niveau
+implementer une statemachine
+deplacement des displayers dans les screens
