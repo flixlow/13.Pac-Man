@@ -8,11 +8,12 @@ Pac-Man game.
 import pygame
 
 from .menu import Menu
+from .timer import Timer
 from .scorer import Scorer
+from .utils import GameState
 from .engine.maze import Maze
 from .errors import PacmanError
 from .engine.game import GameEngine
-from .utils import Timer, GameState
 from .parsing import parsing, Config
 from .drawing.player_name import PlayerName
 from .drawing.pacman_drawer import PacManDrawer

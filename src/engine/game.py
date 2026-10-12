@@ -5,7 +5,8 @@ from typing import Iterator
 from .maze import Maze
 from .level import Level
 from ..parsing import Config
-from ..utils import Timer, GameState, CheatMode
+from ..utils import GameState, CheatMode
+from ..timer import Timer
 
 
 class GameEngine:

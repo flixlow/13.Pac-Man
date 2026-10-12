@@ -2,8 +2,9 @@
 
 from abc import ABC, abstractmethod
 
+from ..timer import Timer
+from ..utils import Direction
 from ..engine.maze import Maze
-from ..utils import Direction, Timer
 
 
 class Entity(ABC):

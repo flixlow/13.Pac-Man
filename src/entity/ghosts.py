@@ -3,10 +3,11 @@
 from random import choice
 from abc import abstractmethod
 
+from ..timer import Timer
 from .entity import Entity
 from .player import Player
 from ..engine.maze import Maze
-from ..utils import GhostColor, Parameters, Timer
+from ..utils import GhostColor, Parameters
 
 
 class Ghost(Entity):

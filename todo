@@ -56,11 +56,9 @@ draft:
 [x] est-ce qu'on a encore besoin du spritesheet
 [x] can we remove title.ttf ?
 
-[ ] implementer une statemachine ?
-
-[ ] Mieux gerer les collisions
-    [ ] Les derniers pacgums
-    [ ] bug fin d'animation/Les comportements chelou quand un fantome kill mais loin
+[x] Mieux gerer les collisions
+    [x] Les derniers pacgums
+    [x] bug fin d'animation/Les comportements chelou quand un fantome kill mais loin
 
 
 Forbidden Behavior from pygame:
@@ -81,18 +79,4 @@ https://en.wikipedia.org/wiki/Taxicab_geometry
 [ ] verifier la doc
 [ ] proteger asset loader
 [ ] probleme de display lorsqu'on mange un superpacgum en crazymode
-[ ] changer fonction libre dans le fichier Drawer en une class HeaderDrawer et display_header
-
-    def ending_animation(self) -> None:
-        """Run a short ending animation when a level ends or a life is lost."""
-        if self.game.state not in {
-            GameState.HAS_LOSE_A_LIFE,
-            GameState.HAS_COMPLETED_LEVEL
-        }:
-            return
-
-         self.counter_ending_animation += self.timer.elapsed_time
-         if self.counter_ending_animation >= self.timer.elapsed_time:
-             self.counter_ending_animation = 0
-
-    self.ending_animation()
+[ ] changer fonction libre dans le fichier Drawer en une class HeaderDrawer et display_header du monitor

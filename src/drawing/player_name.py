@@ -3,8 +3,9 @@
 from typing import Any
 import pygame
 
+from ..timer import Timer
+from ..utils import Paths
 from .basic_drawer import Drawer
-from ..utils import Timer, Paths
 
 
 class PlayerName:
