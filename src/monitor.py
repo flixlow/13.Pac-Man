@@ -7,9 +7,9 @@ Pac-Man game.
 
 import pygame
 
-from .engine.maze import Maze
 from .menu import Menu
 from .scorer import Scorer
+from .engine.maze import Maze
 from .errors import PacmanError
 from .engine.game import GameEngine
 from .utils import Timer, GameState
@@ -18,8 +18,8 @@ from .drawing.player_name import PlayerName
 from .drawing.pacman_drawer import PacManDrawer
 from .theme_selection import ThemeSelection, Theme
 from .screens import Screen, GameScreen, MenuScreen, NameScreen
-from .drawing.basic_drawer import Drawer, print_life, print_title
-from .drawing.basic_drawer import print_score, print_timer, print_theme
+from .drawing.basic_drawer import (
+    Drawer, print_life, print_title, print_score, print_timer, print_theme)
 
 
 class Monitor:
@@ -36,19 +36,18 @@ class Monitor:
             config_file: Path to the JSON configuration file used to set up the
                 game.
         """
-        self.config: Config = self._load_config(config_file)
-        self.timer: Timer = Timer(self.config.level_max_time)
-        self.scorer: Scorer = Scorer(self.config.highscore_filename)
-        self.mazes: list[Maze] = self.config.generate_all_maze()
-        self.game: GameEngine = GameEngine(self.config, self.mazes, self.timer)
-
-        self.theme: ThemeSelection = ThemeSelection()
-        if not self.theme.load_all_themes():
-            raise FileNotFoundError("Theme not found !")
-
-        self._init_pygame()
         self.running: bool = True
         self.counter_ending_animation: int = 0
+
+        self.config: Config = self._load_config(config_file)
+        self.mazes: list[Maze] = self.config.generate_all_maze()
+
+        self.theme: ThemeSelection = ThemeSelection()
+        self.timer: Timer = Timer(self.config.level_max_time)
+        self.scorer: Scorer = Scorer(self.config.highscore_filename)
+        self.game: GameEngine = GameEngine(self.config, self.mazes, self.timer)
+
+        self._init_pygame()
         self._init_screens()
 
     def _load_config(self, config_file: str) -> Config:
@@ -56,7 +55,7 @@ class Monitor:
             return parsing(config_file)
         except (PacmanError, Exception, KeyboardInterrupt) as e:
             print(f"[WARNING] {e.__class__.__name__}: {e}")
-            print("default_config: [ON]")
+            print("[ON] default_config.json")
             return parsing("assets/default_config.json")
 
     def _init_pygame(self) -> None:

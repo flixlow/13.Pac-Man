@@ -231,7 +231,12 @@ class NameScreen(Screen):
         name = "".join(self.player_frame.name)
         if not name:
             return
-        self.scorer.save(name, self.game.score)
+
+        try:
+            self.scorer.save(name, self.game.score)
+        except Exception:
+            print("[WARNING]: can't save player_name/score to learderboard.")
+
         self.player_frame.clear()
         self.game.init_new_game()
         self.on_new_game()
