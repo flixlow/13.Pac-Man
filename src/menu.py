@@ -66,7 +66,10 @@ class Menu:
 
     def clear_leaderboard(self) -> None:
         """Clear the score table and redraw the menu."""
-        self.scorer.clear()
+        try:
+            self.scorer.clear()
+        except Exception:
+            print("[WARNING]: can't clear learderboard.")
         self.draw_menu()
 
     def draw_menu(self) -> None:

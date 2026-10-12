@@ -1,0 +1,49 @@
+{
+    "name": "purple_toxic",
+    "maze": {
+        "walls": {
+            "north": [160, 60, 255],
+            "west": [57, 255, 20],
+            "south": [110, 30, 200],
+            "east": [0, 230, 118]
+        },
+        "background": [15, 0, 30],
+        "forty_two_logo": [180, 255, 60]
+    },
+    "crazy_maze": {
+        "walls": {
+            "north": [200, 80, 255],
+            "west": [120, 255, 0],
+            "south": [140, 40, 220],
+            "east": [0, 255, 150]
+        },
+        "background": [25, 0, 40],
+        "forty_two_logo": [255, 255, 255]
+    },
+    "interface": {
+        "header": {
+            "title": [57, 255, 20],
+            "score": [190, 90, 255],
+            "timer": [180, 255, 60],
+            "background": [20, 0, 35],
+            "heart_color": [0, 230, 118]
+        },
+        "menu": {
+            "leaderboard": {
+                "background": [45, 10, 75],
+                "username": [57, 255, 20],
+                "score": [190, 90, 255]
+            },
+            "buttons": {
+                "background": [120, 40, 200],
+                "text": [200, 255, 180]
+            }
+        },
+        "background": [28, 5, 50]
+    },
+    "config": {
+        "crazy_animation": true,
+        "pacgum_animation": true
+    },
+    "pacgum": [57, 255, 20]
+}
