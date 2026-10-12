@@ -10,6 +10,7 @@ import pygame
 from .engine.maze import Maze
 from .menu import Menu
 from .scorer import Scorer
+from .errors import PacmanError
 from .engine.game import GameEngine
 from .utils import Timer, GameState
 from .parsing import parsing, Config
@@ -35,7 +36,7 @@ class Monitor:
             config_file: Path to the JSON configuration file used to set up the
                 game.
         """
-        self.config: Config = parsing(config_file)
+        self.config: Config = self._load_config(config_file)
         self.timer: Timer = Timer(self.config.level_max_time)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
         self.mazes: list[Maze] = self.config.generate_all_maze()
@@ -49,6 +50,14 @@ class Monitor:
         self.running: bool = True
         self.counter_ending_animation: int = 0
         self._init_screens()
+
+    def _load_config(self, config_file: str) -> Config:
+        try:
+            return parsing(config_file)
+        except (PacmanError, Exception, KeyboardInterrupt) as e:
+            print(f"[WARNING] {e.__class__.__name__}: {e}")
+            print("default_config: [ON]")
+            return parsing("assets/default_config.json")
 
     def _init_pygame(self) -> None:
         """Initialize pygame resources and the main display components."""
@@ -131,6 +140,16 @@ class Monitor:
         self.header_frame.update_size((w, self.header))
         self.header_frame.fill(self.get_theme().header.background)
 
+    def check_user_events(self) -> None:
+        """Handle pygame events and forward them to the active screen."""
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.quit()
+            elif event.type == pygame.VIDEORESIZE:
+                self.resize(*event.size)
+
+            self.screens[self.game.state].handle_event(event)
+
     def display_header(self) -> None:
         """Render the header bar with the title, theme, score and timer."""
         self.header_frame.fill(self.get_theme().header.background)
@@ -169,16 +188,6 @@ class Monitor:
 
         self.screen.blit(self.header_frame.surface, (0, 0))
 
-    def check_user_events(self) -> None:
-        """Handle pygame events and forward them to the active screen."""
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.quit()
-            elif event.type == pygame.VIDEORESIZE:
-                self.resize(*event.size)
-
-            self.screens[self.game.state].handle_event(event)
-
     def display(self) -> None:
         """Draw the current screen and the header to the main display."""
         self.display_header()
@@ -186,20 +195,6 @@ class Monitor:
         self.screens[self.game.state].draw(self.screen, (0, self.header))
 
         pygame.display.flip()
-
-    def ending_animation(self) -> None:
-        """Run a short ending animation when a level ends or a life is lost."""
-        if self.game.state not in {
-            GameState.HAS_LOSE_A_LIFE,
-            GameState.HAS_COMPLETED_LEVEL
-        }:
-            return
-
-        self.counter_ending_animation += self.timer.elapsed_time
-
-        if self.counter_ending_animation >= self.timer.elapsed_time:
-            self.pacman_frame.update_maze(self.game.level.maze)
-            self.counter_ending_animation = 0
 
     def main_loop(self) -> None:
         """Run the main application loop."""
@@ -212,7 +207,5 @@ class Monitor:
             self.check_user_events()
 
             self.display()
-
-            self.ending_animation()
 
         pygame.quit()

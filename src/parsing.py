@@ -54,7 +54,7 @@ class Config(BaseModel):
     """
 
     highscore_filename: str = Field(min_length=1)
-    levels: list[LevelSize]
+    levels: list[LevelSize] = Field(min_length=1)
     lives: int = Field(gt=0)
     points: Points
     seed: int

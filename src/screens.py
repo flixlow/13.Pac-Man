@@ -45,9 +45,11 @@ class MenuScreen(Screen):
 
     def __init__(
             self,
-            game: GameEngine, menu: Menu,
+            game: GameEngine,
+            menu: Menu,
             theme_selection: ThemeSelection,
-            on_quit: Callable[[], None]) -> None:
+            on_quit: Callable[[], None]
+            ) -> None:
         """Initialize the menu screen.
 
         Args:
@@ -112,9 +114,12 @@ class GameScreen(Screen):
         pygame.K_F3: CheatMode.NOCLIP,
     }
 
-    def __init__(self, game: GameEngine,
-                 theme: ThemeSelection,
-                 pacman_frame: PacManDrawer) -> None:
+    def __init__(
+            self,
+            game: GameEngine,
+            theme: ThemeSelection,
+            pacman_frame: PacManDrawer
+            ) -> None:
         """Initialize the game screen.
 
         Args:
@@ -131,10 +136,14 @@ class GameScreen(Screen):
         state = self.game.state
 
         if state is GameState.HAS_COMPLETED_LEVEL:
+            self.game.next_level()
+            self.pacman_frame.update_maze(self.game.level.maze)
             self.theme_selection.cycle()
 
         if state in {GameState.HAS_LOSE_A_LIFE, GameState.HAS_COMPLETED_LEVEL}:
             self.game.state = GameState.IN_GAME
+            self.game.level.init_entities()
+
         elif state in {GameState.GAME_OVER, GameState.HAS_BEATEN_THE_GAME}:
             self.game.state = GameState.ENTER_YOUR_NAME
 
@@ -151,13 +160,10 @@ class GameScreen(Screen):
 
         if key == pygame.K_ESCAPE:
             self.game.state = GameState.PAUSE
-
         elif key == pygame.K_SPACE:
             self._space_pressed()
-
         elif key in self.CHEATS:
             self.game.toggle_cheat_mode(self.CHEATS[key])
-
         elif self.game.state is GameState.IN_GAME and key in KEY_DIRECTION:
             self.game.level.change_direction(KEY_DIRECTION[key])
 
@@ -191,7 +197,6 @@ class GameScreen(Screen):
         level = self.game.level
 
         self.pacman_frame.draw_maze()
-
         self.draw_ultra_vision()
 
         self.pacman_frame.draw_multiple_pacgums(level.pacgums, False)
