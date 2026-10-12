@@ -8,6 +8,7 @@ import pygame
 
 from ..theme_selection import Theme
 from ..utils import Timer, Color, Pos, Size
+from ..assetloader import AssetLoader
 
 
 Icon = tuple[pygame.Surface, pygame.Surface, pygame.Surface]
@@ -110,7 +111,7 @@ def print_theme(frame: Drawer, theme: Theme, font: pygame.font.Font,
 
 def print_life(
         frame: Drawer, a: Pos, gap: int,
-        life: int, icons: Icon, color: Color) -> None:
+        life: int, icons: Icon, color: Color) -> int:
     """Draw the life counter using alive/dead/reflect heart sprites.
 
     Args:
@@ -120,6 +121,9 @@ def print_life(
         life: Number of remaining lives.
         icons: Tuple of ``(alive, dead, reflect)`` sprites.
         color: Tint applied to the alive heart.
+
+    Returns:
+        int: the bottom pos of the life icons.
     """
 
     LIFE = 3
@@ -135,6 +139,8 @@ def print_life(
             frame.put_image((x + i * gap, y), reflect)
         else:
             frame.put_image((x + i * gap, y), dead)
+
+    return a[1] + alive.get_height()
 
 
 def print_title(frame: Drawer, font: pygame.font.Font, color: Color) -> int:
@@ -212,3 +218,32 @@ def print_timer(
     frame.surface.blit(
         rendered, (w - w_text - padding_x, padding_y + last_h_text)
     )
+
+
+def print_cheat(
+        frame: Drawer, offset_y: int,
+        godmode: bool, noclip: bool, ultra_vision: bool
+) -> None:
+    """Display which cheats are active.
+
+    Args:
+        frame: Target Surface.
+        offset_y: The bottom left of the lifes
+        godmode: True if this cheat is active.
+        noclip: True if this cheat is active.
+        ultra_vision: True if this cheat is active.
+    """
+    w, _ = frame.size
+    booleans = [godmode, noclip, ultra_vision]
+    icons = AssetLoader.load_cheat()
+
+    icon_size = w // 30
+    x = 0
+
+    for icon, active in zip(icons, booleans):
+        if active:
+            icon = pygame.transform.scale(icon, (icon_size, icon_size))
+            frame.put_image((x, offset_y), icon)
+            x += icon_size
+
+    return None

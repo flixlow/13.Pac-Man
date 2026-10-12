@@ -9,7 +9,7 @@ import json
 from typing import Annotated
 from pydantic import (
     AfterValidator, BaseModel, ConfigDict, StrictInt, ValidationError,
-    field_validator,
+    Field
 )
 
 
@@ -108,31 +108,12 @@ class JSONTheme(StrictModel):
         pacgum: Pac-gum dot color.
     """
 
-    name: str
+    name: str = Field(min_length=1)
     maze: Maze
     crazy_maze: Maze
     interface: Interface
     config: Config
     pacgum: Color
-
-    @field_validator("name")
-    @classmethod
-    def name_must_not_be_blank(cls, name: str) -> str:
-        """Validate that the theme name is not empty after trimming whitespace.
-
-        Args:
-            name: Theme name from the JSON file.
-
-        Returns:
-            Trimmed name.
-
-        Raises:
-            ValueError: If the name is blank.
-        """
-        name = name.strip()
-        if not name:
-            raise ValueError("Theme name must not be empty")
-        return name
 
 
 def load_theme(filename: Path) -> JSONTheme:

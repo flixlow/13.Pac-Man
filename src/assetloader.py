@@ -91,3 +91,16 @@ class AssetLoader:
         pressed = pygame.image.load(Paths.PRESSED)
 
         return normal, pressed
+
+    @staticmethod
+    def load_cheat() -> tuple[pygame.Surface]:
+        """Load the cheat assets.
+
+        Returns:
+            Tuple containing the differents sprite of cheat mode.
+        """
+        godmode = pygame.image.load(Paths.GODMODE)
+        noclip = pygame.image.load(Paths.NOCLIP)
+        ultra_vision = pygame.image.load(Paths.ULTRA_VISION)
+
+        return godmode, noclip, ultra_vision
