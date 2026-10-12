@@ -81,33 +81,34 @@ class PacManDrawer(MazeDrawer):
 
     def draw_maze(self) -> None:
         """Render the maze using the current theme and optional crazy theme."""
-        target_color = self.theme.crazy_maze.background
-        elapsed = self.timer.crazy_mode_elapsed_time
+        base = self.theme.background
+        normal = self.theme.maze.background
+        crazy = self.theme.crazy_maze.background
 
         if self.theme.crazy_animation:
-            progress = elapsed % 1250 / 1250
-            if progress > 0.5:
-                progress = 1.0 - progress
+            t = (self.timer.crazy_mode_elapsed_time % 1250) / 1250
+            t = t * 2 if t <= 0.5 else (1.0 - t) * 2
         else:
-            progress = 0
+            t = 0.0
 
-        if progress:
-            tinted_background: tuple[int, int, int] = (
-                int(target_color[0] * progress),
-                int(target_color[1] * progress),
-                int(target_color[2] * progress),
-            )
-            self.fill(tinted_background)
-            bg = (0, 0, 0)
-        else:
-            self.fill(self.theme.background)
-            bg = None
+        cell_bg = (
+            int(normal[0] + (crazy[0] - normal[0]) * t),
+            int(normal[1] + (crazy[1] - normal[1]) * t),
+            int(normal[2] + (crazy[2] - normal[2]) * t),
+        )
+
+        bg = (
+            int(base[0] + (crazy[0] - base[0]) * t),
+            int(base[1] + (crazy[1] - base[1]) * t),
+            int(base[2] + (crazy[2] - base[2]) * t),
+        )
+
+        self.fill(bg)
 
         for y in range(self.maze_height):
             for x in range(self.maze_width):
                 self.draw_cell(
-                    self.maze[y][x], (x, y), bg, None
-                    if progress == 0 else progress
+                    self.maze[y][x], (x, y), cell_bg, t if t else None,
                 )
 
     def draw_pacgum(self, cell: Pos, super: bool) -> None:
