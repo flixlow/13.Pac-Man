@@ -3,8 +3,6 @@
 This module stores and loads leaderboard entries as JSON.
 """
 
-from typing import Any
-from pathlib import Path
 from json import JSONDecodeError, load, dump
 
 from .errors import ScorerFileError
@@ -24,16 +22,20 @@ class Scorer:
             score_filename: Path to the JSON leaderboard file.
         """
         self.file: str = score_filename
-        self.scores: dict[str, int] = self._load()
-        self.sort()
+        self.scores: dict[str, int] = {}
+        try:
+            self._load()
+        except (Exception) as e:
+            print(f"[WARNING]: can't load from highscore file: {e}")
+        self._sort()
 
-    def sort(self) -> None:
+    def _sort(self) -> None:
         """Sort the scores by descending value."""
         self.scores = dict(
             sorted(self.scores.items(), key=lambda x: x[1], reverse=True)
         )
 
-    def _load(self) -> Any:
+    def _load(self) -> None:
         """Read the leaderboard file from disk.
 
         Returns:
@@ -44,10 +46,9 @@ class Scorer:
                 contains invalid JSON.
         """
         try:
-            if not Path(self.file).exists():
-                return {}
             with open(self.file, encoding="utf-8") as f:
-                return load(f)
+                self.scores = load(f)
+                return
 
         except OSError as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
@@ -56,7 +57,7 @@ class Scorer:
                 f"Error occurs while reading {self.file}."
                 f"(line {e.lineno})."
             )
-        return {}
+        self.scores = {}
 
     def save(self, name: str, score: int) -> None:
         """Save a player's result in the leaderboard.
@@ -71,12 +72,12 @@ class Scorer:
 
         self.scores[entered_name] = max(score, last)
 
-        self.sort()
+        self._sort()
 
         try:
             with open(self.file, 'w') as f:
                 dump(self.scores, f, indent=4)
-        except OSError as e:
+        except (OSError, UnicodeEncodeError) as e:
             raise ScorerFileError(f"{self.file}: {e.__class__.__name__}")
 
     def clear(self) -> None:

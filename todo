@@ -51,10 +51,10 @@ draft:
 [x] Readme
 [x] docstring
 
-[ ] pourquoi un get et un property dans ThemeSelection ?
-[ ] est ce que le FileValidator de theme selection peut être remplacé par Field(default=1) sachant que le nom de fichier peut-etre des white spaces ?
-[ ] est-ce qu'on a encore besoin du spritesheet
-[ ] can we remove title.ttf ?
+[x] pourquoi un get et un property dans ThemeSelection ?
+[x] est ce que le FileValidator de theme selection peut être remplacé par Field(default=1) sachant que le nom de fichier peut-etre des white spaces ?
+[x] est-ce qu'on a encore besoin du spritesheet
+[x] can we remove title.ttf ?
 
 [ ] implementer une statemachine ?
 
@@ -71,23 +71,15 @@ Forbidden Behavior from pygame:
 [ ] FPS cap with pygame.time.Clock.tick(60)
 [ ] draw rect
 
-Pour les couleurs
-
-```
-
-```
-
-![alt text](image.png)
-
 
 https://en.wikipedia.org/wiki/Chebyshev_distance
 https://en.wikipedia.org/wiki/Taxicab_geometry
 
 
 [x] ending animation
-[ ] default config
+[x] default config
 [ ] verifier la doc
-[ ] changer la couleur de fond sur enter your name
+[ ] proteger asset loader
 [ ] probleme de display lorsqu'on mange un superpacgum en crazymode
 [ ] changer fonction libre dans le fichier Drawer en une class HeaderDrawer et display_header
 

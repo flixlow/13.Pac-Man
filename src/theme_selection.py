@@ -167,6 +167,7 @@ class ThemeSelection:
         """Initialize the theme list and selected index."""
         self.themes: list[Theme] = []
         self.selected_index = 0
+        self.load_all_themes()
 
     @property
     def current_theme(self) -> Theme:
