@@ -1,3 +1,4 @@
+"""Player entity logic for Pac-Man."""
 
 from .entity import Entity
 from ..utils import Direction, Parameters
@@ -13,16 +14,35 @@ offsets = {
 
 
 class Player(Entity):
+    """Represent the human-controlled Pac-Man entity.
+
+    The player can move, reverse direction, and optionally ignore wall
+    collisions when noclip is enabled.
+    """
+
     noclip: bool = False
     direction: Direction = Direction.START
     next_direction: Direction = Direction.START
     default_velocity: int = Parameters.PLAYER_VELOCITY
 
     def is_wall_here(self, direction: Direction) -> bool:
+        """Check whether a wall blocks movement in the given direction.
+
+        Args:
+            direction: Direction to inspect.
+
+        Returns:
+            True if a wall is present in that direction.
+        """
         cell = self.maze.get_cell_walls(*self.coords)
         return bool(cell & direction.value)
 
     def reverse(self, new_direction: Direction) -> None:
+        """Reverse direction and keep the movement animation consistent.
+
+        Args:
+            new_direction: New direction chosen by the player.
+        """
 
         self.previous_coords, self.coords = self.coords, self.previous_coords
         self.animation_elapsed_ms = int(
@@ -33,6 +53,11 @@ class Player(Entity):
         self.next_direction = Direction.START
 
     def can_it_move(self) -> bool:
+        """Check whether the player can move in the current state.
+
+        Returns:
+            True if movement is allowed.
+        """
         if not self.is_alive or not super().can_it_move():
             return False
 
@@ -45,6 +70,7 @@ class Player(Entity):
         return not self.is_wall_here(self.direction)
 
     def move(self) -> None:
+        """Move one tile in the current direction when legal."""
         if not self.can_it_move():
             return
         x, y = self.coords
@@ -54,6 +80,7 @@ class Player(Entity):
         self.coords = x + dx, y + dy
 
     def move_with_noclip(self) -> None:
+        """Move through the maze ignoring wall collisions when noclip is on."""
         if not self.is_alive or not super().can_it_move():
             return
 

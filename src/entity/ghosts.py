@@ -1,3 +1,4 @@
+"""Ghost AI and movement implementation."""
 
 from random import choice
 from abc import abstractmethod
@@ -9,11 +10,28 @@ from ..utils import GhostColor, Parameters, Timer
 
 
 class Ghost(Entity):
+    """Base class for all ghosts.
+
+    Args:
+        coords: Initial position of the ghost.
+        maze: Maze used for pathfinding.
+        t: Timer used by the ghost.
+        player: Player entity targeted by ghost logic.
+    """
+
     default_velocity: int = Parameters.GHOST_VELOCITY
     default_color: GhostColor = GhostColor.SECRET
 
     def __init__(self, coords: tuple[int, int],
                  maze: Maze, t: Timer, player: Player) -> None:
+        """Initialize the ghost with its basic AI state.
+
+        Args:
+            coords: Starting coordinates.
+            maze: Maze used for pathfinding.
+            t: Shared timer.
+            player: Player entity to chase or evade.
+        """
         super().__init__(coords, maze, t)
         self.color: GhostColor = type(self).default_color
         self.sequence: list[tuple[int, int]] = []
@@ -22,9 +40,10 @@ class Ghost(Entity):
 
     @abstractmethod
     def generate_sequence(self) -> None:
-        ...
+        """Generate the next movement sequence for the ghost."""
 
     def respawn(self) -> None:
+        """Reset the ghost to its starting position after being eaten."""
         self.sequence = []
         self.is_alive = False
         self.respawn_timer = 0
@@ -33,6 +52,12 @@ class Ghost(Entity):
         self.previous_coords = self.starting_coords
 
     def pathfinding(self, end: tuple[int, int], n: int | None) -> None:
+        """Compute a path to a target position using breadth-first search.
+
+        Args:
+            end: Target tile.
+            n: Optional maximum number of steps to keep in the generated path.
+        """
         queue: list[tuple[int, int]] = [self.coords]
         origin: dict[tuple[int, int], tuple[int, int]] = dict()
         visited: set[tuple[int, int]] = set()
@@ -58,6 +83,7 @@ class Ghost(Entity):
             self.sequence = self.sequence[:n]
 
     def get_direction_away_from(self) -> None:
+        """Choose a neighboring tile as far as possible from the player."""
         x, y = self.player.coords
 
         availables = self.maze.get_available_coords(self.coords)
@@ -67,6 +93,7 @@ class Ghost(Entity):
         self.sequence = [cell]
 
     def move(self) -> None:
+        """Advance the ghost by one step and handle respawn timing."""
         if not self.can_it_move():
             return
 
@@ -89,14 +116,22 @@ class Ghost(Entity):
 
 
 class Secret(Ghost):
+    """Ghost that can teleport randomly while chasing the player."""
+
     default_color = GhostColor.SECRET
 
     def teleportate(self, pos: tuple[int, int]) -> None:
+        """Teleport the ghost to a neighbor cell of the player.
+
+        Args:
+            pos: Target cell near which the ghost teleports.
+        """
         neightbour_cells = self.maze.get_neighbour_cells(pos, 2)
 
         self.sequence = [choice(list(neightbour_cells))]
 
     def generate_sequence(self) -> None:
+        """Generate a path to the player and possibly trigger teleportation."""
         self.pathfinding(self.player.coords, None)
 
         if len(self.sequence) >= Parameters.SECRET_LEN_SEQ_FOR_TP:
@@ -104,9 +139,12 @@ class Secret(Ghost):
 
 
 class Blue(Ghost):
+    """Blue ghost with random wandering behavior."""
+
     default_color = GhostColor.BLUE
 
     def generate_sequence(self) -> None:
+        """Generate a short random walk sequence."""
         current_coords = self.coords
         last_coords: None | tuple[int, int] = None
 
@@ -124,22 +162,31 @@ class Blue(Ghost):
 
 
 class Red(Ghost):
+    """Red ghost that chases the player directly."""
+
     default_color = GhostColor.RED
 
     def generate_sequence(self) -> None:
+        """Generate a short path toward the player's current position."""
         self.pathfinding(self.player.coords, Parameters.RED_LEN_SEQ)
 
 
 class Pink(Ghost):
+    """Pink ghost with a short predictive chase path."""
+
     default_color = GhostColor.PINK
 
     def generate_sequence(self) -> None:
+        """Generate a short chase sequence toward the player."""
         self.pathfinding(self.player.coords, Parameters.PINK_LEN_SEQ)
 
 
 class Orange(Ghost):
+    """Orange ghost that targets a random border tile."""
+
     default_color = GhostColor.ORANGE
 
     def generate_sequence(self) -> None:
+        """Generate a path toward a random border coordinate."""
         cell = choice(list(self.maze.get_border_cells()))
         self.pathfinding(cell, None)

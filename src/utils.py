@@ -1,3 +1,8 @@
+"""Shared utility types and constants.
+
+This module centralizes common coordinate aliases, enums, path constants and
+timing helpers used throughout the project.
+"""
 
 from enum import Enum, auto
 from pygame import K_UP, K_w, K_RIGHT, K_d, K_DOWN, K_s, K_LEFT, K_a, time
@@ -8,6 +13,8 @@ Color = tuple[int, int, int]
 
 
 class Paths:
+    """Common file-system paths used by the game assets and resources."""
+
     ASSETS = "assets/"
 
     BUTTON = ASSETS + "button/"
@@ -40,6 +47,16 @@ class Paths:
 
 
 class Direction(Enum):
+    """Possible movement directions for entities in the maze.
+
+    Attributes:
+        START: Initial state before any direction is chosen.
+        NORTH: Movement upward.
+        EAST: Movement to the right.
+        SOUTH: Movement downward.
+        WEST: Movement to the left.
+    """
+
     START = 0
     NORTH = 1
     EAST = 2
@@ -56,12 +73,22 @@ OPPOSITE = {
 
 
 class TypeScore(Enum):
+    """Type of collectible used when computing score gains.
+
+    Attributes:
+        GHOST: Score for eating a ghost.
+        PACGUM: Score for collecting a regular pacgum.
+        SUPER_PACGUM: Score for collecting a super pacgum.
+    """
+
     GHOST = "per_ghost"
     PACGUM = "per_pacgum"
     SUPER_PACGUM = "per_super_pacgum"
 
 
 class GameState(Enum):
+    """States that describe the flow of a game session."""
+
     START_NEW_GAME = auto()
     IN_GAME = auto()
     PAUSE = auto()
@@ -73,7 +100,22 @@ class GameState(Enum):
 
 
 class Timer:
+    """Utility to track elapsed time and level time for the game loop.
+
+    Attributes:
+        time_per_game: Maximum duration allowed for a level in milliseconds.
+        level_time: Time elapsed in the current level.
+        elapsed_time: Time elapsed during the last tick.
+        total_spend_time: Cumulative time spent since the timer started.
+        crazy_mode_elapsed_time: Time spent in crazy mode.
+    """
+
     def __init__(self, time_per_game: int) -> None:
+        """Initialize the timer.
+
+        Args:
+            time_per_game: Maximum duration allowed per level in milliseconds.
+        """
         self.time_per_game: int = time_per_game
 
         self.level_time: int = 0
@@ -82,9 +124,24 @@ class Timer:
         self.crazy_mode_elapsed_time: int = 0
 
     def set_time_per_game(self, time_per_game: int) -> None:
+        """Update the maximum time allowed for a game level.
+
+        Args:
+            time_per_game: New duration allowed for a level, in milliseconds.
+        """
         self.time_per_game = time_per_game
 
     def tick(self, clock: time.Clock, state: GameState) -> None:
+        """Advance the timer by one game tick.
+
+        Args:
+            clock: The pygame clock used to compute elapsed time.
+            state: The current game state. The level timer only advances while
+                the game is in progress.
+
+        Returns:
+            None: The timer updates its internal counters.
+        """
         self.elapsed_time = clock.tick(60)
         self.total_spend_time += self.elapsed_time
 
@@ -95,13 +152,21 @@ class Timer:
             )
 
     def new_level(self) -> None:
+        """Reset the level timer for the start of a new level."""
         self.level_time = 0
 
     def is_over(self) -> bool:
+        """Check whether the current level time has reached its limit.
+
+        Returns:
+            True if the level time is equal to the maximum allowed duration.
+        """
         return self.time_per_game == self.level_time
 
 
 class Parameters:
+    """Gameplay tuning values used by the game engine."""
+
     PLAYER_VELOCITY = 5
     GHOST_VELOCITY = 3
     RESPAWN_TIME = 5000
@@ -112,6 +177,8 @@ class Parameters:
 
 
 class GhostColor(Enum):
+    """Colors used to render ghosts in their different states."""
+
     RED = (255, 0, 0)
     BLUE = (0, 0, 255)
     PINK = (255, 127, 127)
@@ -121,6 +188,8 @@ class GhostColor(Enum):
 
 
 class DisplayState(Enum):
+    """States used for the user interface display."""
+
     PRESS_SPACE_TO_RESUME = auto()
     ENTER_YOUR_NAME = auto()
     IN_GAME = auto()
@@ -128,6 +197,8 @@ class DisplayState(Enum):
 
 
 class CheatMode(Enum):
+    """Available cheat modes in the game."""
+
     NOCLIP = auto()
     GODMODE = auto()
     ULTRA_VISION = auto()

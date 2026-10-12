@@ -1,3 +1,9 @@
+"""Drawing helpers for pygame surfaces.
+
+This module provides a lightweight `Drawer` abstraction for drawing primitive
+shapes, text and images onto a dedicated pygame surface.
+"""
+
 import pygame
 
 from ..theme_selection import Theme
@@ -8,55 +14,89 @@ Icon = tuple[pygame.Surface, pygame.Surface, pygame.Surface]
 
 
 class Drawer:
+    """Wrap a pygame surface and expose simple drawing primitives.
+
+    Args:
+        size: Dimensions of the backing surface as ``(width, height)``.
+    """
+
     def __init__(self, size: Size) -> None:
-        """
-        Initialise the Frame
+        """Initialize the drawing surface.
 
         Args:
-            size (tuple[int, int]) dimensions of the frame
+            size: Dimensions of the drawing frame in pixels.
         """
         self.size = size
-
         self.surface = pygame.Surface(size)
-
-    # def putpixel(self, a: Pos, color: Color = (0, 0, 0)) -> None:
-
-    #     self.surface.set_at(a, color)
 
     def draw_line(self, a: Pos, b: Pos,
                   width: int = 1, color: Color = (0, 0, 0)) -> None:
+        """Draw a line between two points.
 
+        Args:
+            a: Start point of the line.
+            b: End point of the line.
+            width: Thickness of the line in pixels.
+            color: RGB color of the line.
+        """
         pygame.draw.line(self.surface, color, a, b, width)
 
     def putpixel(self, a: Pos, color: Color = (0, 0, 0)) -> None:
+        """Draw a single pixel at the given position.
+
+        Args:
+            a: Pixel coordinates.
+            color: RGB color of the pixel.
+        """
         self.surface.set_at(a, color)
 
     def draw_rect(self, a: Pos, b: Pos, color: Color = (0, 0, 0)) -> None:
+        """Draw a rectangle defined by two opposite corners.
 
+        Args:
+            a: First corner of the rectangle.
+            b: Opposite corner of the rectangle.
+            color: Fill color of the rectangle.
+        """
         pygame.draw.rect(self.surface, color, (*a, b[0] - a[0], b[1] - a[1]))
 
-        # (x1, y1), (x2, y2) = a, b
-        # sx = 1 if x2 > x1 else -1
-        # sy = 1 if y2 > y1 else -1
-
-        # for y in range(y1, y2, sy):
-        #     for x in range(x1, x2, sx):
-        #         self.putpixel((x, y), color)
-
     def fill(self, color: Color = (0, 0, 0)) -> None:
+        """Fill the whole surface with a color.
+
+        Args:
+            color: RGB color used to fill the surface.
+        """
         self.draw_rect((0, 0), self.size, color=color)
 
     def put_image(self, a: Pos, image: pygame.Surface) -> None:
+        """Blit an image onto the surface at the given position.
+
+        Args:
+            a: Position where the image is drawn.
+            image: Surface to draw.
+        """
         self.surface.blit(image, a)
 
     def update_size(self, new_size: Size) -> None:
-        self.size = new_size
+        """Resize the internal drawing surface.
 
+        Args:
+            new_size: New dimensions in pixels.
+        """
+        self.size = new_size
         self.surface = pygame.Surface(new_size)
 
 
 def print_theme(frame: Drawer, theme: Theme, font: pygame.font.Font,
                 prev_bottom: int) -> None:
+    """Render the current theme name centered in the frame.
+
+    Args:
+        frame: Drawer where the text is rendered.
+        theme: Active theme containing the theme name.
+        font: Font used to render the name.
+        prev_bottom: Vertical offset to position the text under the title.
+    """
     w, h = frame.size
 
     rendered = font.render(theme.name, True, theme.header.title)
@@ -71,6 +111,16 @@ def print_theme(frame: Drawer, theme: Theme, font: pygame.font.Font,
 def print_life(
         frame: Drawer, a: Pos, gap: int,
         life: int, icons: Icon, color: Color) -> None:
+    """Draw the life counter using alive/dead/reflect heart sprites.
+
+    Args:
+        frame: Target surface.
+        a: Top-left position of the first icon.
+        gap: Horizontal spacing between icons.
+        life: Number of remaining lives.
+        icons: Tuple of ``(alive, dead, reflect)`` sprites.
+        color: Tint applied to the alive heart.
+    """
 
     LIFE = 3
 
@@ -88,6 +138,16 @@ def print_life(
 
 
 def print_title(frame: Drawer, font: pygame.font.Font, color: Color) -> int:
+    """Render the game title and return the bottom coordinate.
+
+    Args:
+        frame: Target surface.
+        font: Font used for the title.
+        color: Title color.
+
+    Returns:
+        Bottom coordinate of the rendered title rect.
+    """
     w, h = frame.size
 
     rendered = font.render("PAC-MAN", True, color)
@@ -102,6 +162,17 @@ def print_title(frame: Drawer, font: pygame.font.Font, color: Color) -> int:
 
 def print_score(frame: Drawer, font: pygame.font.Font, score: int,
                 color: Color) -> tuple[int, int]:
+    """Render the score text on the top-right corner.
+
+    Args:
+        frame: Target surface.
+        font: Font used to render the score.
+        score: Current score to display.
+        color: Text color.
+
+    Returns:
+        A tuple of ``(width, height)`` for the rendered score text.
+    """
     w, h = frame.size
     padding_x, padding_y = w // 30, h // 20
 
@@ -119,7 +190,16 @@ def print_timer(
         score_text_size: Size,
         timer: Timer, max_time: int,
         color: Color) -> None:
+    """Render the level timer below the score.
 
+    Args:
+        frame: Target surface.
+        font: Font used to render the timer.
+        score_text_size: Size of the score text to offset the timer.
+        timer: Timer instance containing elapsed level time.
+        max_time: Maximum allowed time for the level in milliseconds.
+        color: Text color.
+    """
     w, h = frame.size
     padding_x, padding_y = w // 30, h // 20
     _, last_h_text = score_text_size

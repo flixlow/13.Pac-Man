@@ -1,3 +1,10 @@
+"""Controller for the main game loop and screen management.
+
+This module initializes the game configuration, loads themes, creates the
+different screens and coordinates rendering and user interaction for the
+Pac-Man game.
+"""
+
 import pygame
 
 from .engine.maze import Maze
@@ -15,7 +22,19 @@ from .drawing.basic_drawer import print_score, print_timer, print_theme
 
 
 class Monitor:
+    """Main runtime controller for the game window and states.
+
+    This class initializes the game configuration, manages the user interface,
+    updates the display and drives the main loop.
+    """
+
     def __init__(self, config_file: str) -> None:
+        """Initialize the monitor with a configuration file.
+
+        Args:
+            config_file: Path to the JSON configuration file used to set up the
+                game.
+        """
         self.config: Config = parsing(config_file)
         self.timer: Timer = Timer(self.config.level_max_time)
         self.scorer: Scorer = Scorer(self.config.highscore_filename)
@@ -32,6 +51,7 @@ class Monitor:
         self._init_screens()
 
     def _init_pygame(self) -> None:
+        """Initialize pygame resources and the main display components."""
         pygame.init()
         self.pygame_info = pygame.display.Info()
         self.screen_size = (
@@ -60,6 +80,7 @@ class Monitor:
         )
 
     def _init_screens(self) -> None:
+        """Create the screen objects used for each game state."""
         menu = MenuScreen(self.game, self.menu, self.theme, self.quit)
         game = GameScreen(self.game, self.theme, self.pacman_frame)
         name = NameScreen(self.game, self.player_frame, self.scorer,
@@ -77,15 +98,28 @@ class Monitor:
         }
 
     def reset_maze(self) -> None:
+        """Refresh the displayed maze after a reset or game state change."""
         self.pacman_frame.update_maze(self.game.level.maze)
 
     def get_theme(self) -> Theme:
+        """Get the currently selected theme.
+
+        Returns:
+            The active theme configuration.
+        """
         return self.theme.get_selected()
 
     def quit(self) -> None:
+        """Stop the main loop and close the application."""
         self.running = False
 
-    def resize(self, w, h) -> None:
+    def resize(self, w: int, h: int) -> None:
+        """Resize the game window and all dependent frames.
+
+        Args:
+            w: New width of the window.
+            h: New height of the window.
+        """
         self.screen_size = (w, h)
         self.header = h // 5
 
@@ -98,6 +132,7 @@ class Monitor:
         self.header_frame.fill(self.get_theme().header.background)
 
     def display_header(self) -> None:
+        """Render the header bar with the title, theme, score and timer."""
         self.header_frame.fill(self.get_theme().header.background)
 
         w, h = self.header_frame.size
@@ -135,6 +170,7 @@ class Monitor:
         self.screen.blit(self.header_frame.surface, (0, 0))
 
     def check_user_events(self) -> None:
+        """Handle pygame events and forward them to the active screen."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit()
@@ -144,6 +180,7 @@ class Monitor:
             self.screens[self.game.state].handle_event(event)
 
     def display(self) -> None:
+        """Draw the current screen and the header to the main display."""
         self.display_header()
 
         self.screens[self.game.state].draw(self.screen, (0, self.header))
@@ -151,6 +188,7 @@ class Monitor:
         pygame.display.flip()
 
     def ending_animation(self) -> None:
+        """Run a short ending animation when a level ends or a life is lost."""
         if self.game.state not in {
             GameState.HAS_LOSE_A_LIFE,
             GameState.HAS_COMPLETED_LEVEL
@@ -164,6 +202,7 @@ class Monitor:
             self.counter_ending_animation = 0
 
     def main_loop(self) -> None:
+        """Run the main application loop."""
         while self.running:
 
             self.timer.tick(self.clock, self.game.state)

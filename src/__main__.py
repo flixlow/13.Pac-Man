@@ -1,3 +1,5 @@
+"""Entry point for the Pac-Man game application."""
+
 from sys import argv
 from pydantic import ValidationError
 
@@ -6,6 +8,11 @@ from .monitor import Monitor
 
 
 def main() -> None:
+    """Run the game using the JSON config file passed as argument.
+
+    Raises:
+        ParsingError: If the arguments are invalid.
+    """
     if len(argv) != 2:
         raise ParsingError(
             "It must take exactly one argument: a configuration file."

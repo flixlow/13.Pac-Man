@@ -1,3 +1,8 @@
+"""Button widget used by the menu screens.
+
+This module defines a clickable button rendered on top of a `Drawer`.
+"""
+
 import pygame
 
 from .drawing.basic_drawer import Drawer
@@ -8,8 +13,29 @@ Color = tuple[int, int, int]
 
 
 class Button:
+    """Represents a menu button with a pressed/unpressed visual state.
+
+    Args:
+        frame: Parent drawer used to display the button.
+        a: Button origin position.
+        i: Index used to compute vertical spacing.
+        size: Relative height multiplier.
+        text: Visible button label.
+        color: Theme colors used by the button.
+    """
+
     def __init__(self, frame: Drawer, a: tuple[int, int],
                  i: int, size: float, text: str, color: Any) -> None:
+        """Initialize the button and build its textures.
+
+        Args:
+            frame: Parent drawer for the menu.
+            a: Initial button coordinates.
+            i: Index used to position the button in the menu.
+            size: Relative height ratio of the button.
+            text: Button label.
+            color: Theme palette used for the button.
+        """
         self.pos = a
         self.frame = frame
         self.screen_origin = (0, 0)
@@ -29,6 +55,11 @@ class Button:
         self.button_pressed_original: pygame.Surface = pressed
 
     def set_new_color(self, new_color: Any) -> None:
+        """Refresh the button colors after a theme change.
+
+        Args:
+            new_color: New theme palette with `background` and `text` fields.
+        """
         self.bg_color = new_color.background
         self.text_color = new_color.text
         self.update_size()
@@ -38,6 +69,7 @@ class Button:
         )
 
     def update_size(self) -> None:
+        """Recompute layout and scale button for the current window size."""
         w, h = self.frame.size
 
         self.font = pygame.font.Font("assets/font/title.otf", w // 30)
@@ -63,6 +95,7 @@ class Button:
         )
 
     def draw(self) -> None:
+        """Draw the button and its label to the parent frame."""
         if self._pressed:
             self.frame.put_image(self.pos, self.button_pressed)
         else:
@@ -78,9 +111,22 @@ class Button:
         self.frame.surface.blit(self.rendered_text, (text_x, text_y))
 
     def set_screen_origin(self, origin: tuple[int, int]) -> None:
+        """Set the screen origin used to convert global positions to local one.
+
+        Args:
+            origin: Top-left offset of the frame on the screen.
+        """
         self.screen_origin = origin
 
     def is_clicked(self, event: Any) -> bool:
+        """Return whether the button was clicked by the user.
+
+        Args:
+            event: pygame event to inspect.
+
+        Returns:
+            True if a click occurred inside the button bounds.
+        """
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             self._pressed = self._contains(event.pos)
             return False
@@ -93,6 +139,14 @@ class Button:
         return clicked
 
     def _contains(self, point: tuple[int, int]) -> bool:
+        """Check whether a point lies inside the button rectangle.
+
+        Args:
+            point: Mouse coordinates in screen space.
+
+        Returns:
+            True if the point is inside the button.
+        """
         mouse_x, mouse_y = point
         origin_x, origin_y = self.screen_origin
         button_rect = pygame.Rect(
