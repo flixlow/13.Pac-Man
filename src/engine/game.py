@@ -84,7 +84,6 @@ class GameEngine:
 
         if self.level.is_completed:
             self.state = GameState.HAS_COMPLETED_LEVEL
-            self.next_level()
             self.level.set_crazy_mode(False)
 
         elif not self.level.player.is_alive:
@@ -92,7 +91,6 @@ class GameEngine:
             self.level.set_crazy_mode(False)
             self.level.player.is_alive = True
             self.lives -= 1
-            self.level._init_entities()
 
         if self.lives < 1:
             self.state = GameState.GAME_OVER

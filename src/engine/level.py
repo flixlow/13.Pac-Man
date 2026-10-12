@@ -34,7 +34,7 @@ class Level:
         self.is_completed: bool = False
         self.on_crazy_mode: bool = False
 
-        self._init_entities()
+        self.init_entities()
         self._init_pacgums()
 
     @staticmethod
@@ -92,7 +92,7 @@ class Level:
 
         self.entities.append(self.player)
 
-    def _init_entities(self) -> None:
+    def init_entities(self) -> None:
         """Create the player and ghost sets for a fresh level state."""
         self.ghosts: list[Ghost] = []
         self.entities: list[Entity] = []
@@ -172,6 +172,8 @@ class Level:
         """Advance one tick of the level simulation."""
         self.check_crazy_mode()
 
+        self.is_pacgum_here()
+
         if self.player.noclip:
             self.player.move_with_noclip()
         else:
@@ -183,5 +185,3 @@ class Level:
             g.move()
 
         self.check_collision()
-
-        self.is_pacgum_here()

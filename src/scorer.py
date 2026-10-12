@@ -56,6 +56,7 @@ class Scorer:
                 f"Error occurs while reading {self.file}."
                 f"(line {e.lineno})."
             )
+        return {}
 
     def save(self, name: str, score: int) -> None:
         """Save a player's result in the leaderboard.
