@@ -43,6 +43,11 @@ class Paths:
     SECRET = GHOSTS + "secret/"
     CRAZY = GHOSTS + "crazyman/"
 
+    CHEAT_ICONS = ASSETS + "cheat_icons/"
+    GODMODE = CHEAT_ICONS + "godmode.png"
+    NOCLIP = CHEAT_ICONS + "noclip.png"
+    ULTRA_VISION = CHEAT_ICONS + "ultra_vision.png"
+
     PACMAN = ASSETS + "pacman/"
 
 

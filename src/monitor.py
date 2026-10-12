@@ -18,7 +18,7 @@ from .drawing.player_name import PlayerName
 from .drawing.pacman_drawer import PacManDrawer
 from .theme_selection import ThemeSelection, Theme
 from .screens import Screen, GameScreen, MenuScreen, NameScreen
-from .drawing.basic_drawer import Drawer, print_life, print_title
+from .drawing.basic_drawer import Drawer, print_life, print_title, print_cheat
 from .drawing.basic_drawer import print_score, print_timer, print_theme
 
 
@@ -168,12 +168,17 @@ class Monitor:
             self.pacman_frame.reflect
         )
 
-        print_life(
+        offset_y = print_life(
             self.header_frame, (0, 0),
             self.pacman_frame.alive.get_width(),
             self.game.lives,
             icons,
             self.get_theme().header.heart_color
+        )
+
+        print_cheat(
+            self.header_frame, offset_y, self.game.level.on_godmode,
+            self.game.level.player.noclip, self.game.ultra_vision
         )
 
         text_size = print_score(

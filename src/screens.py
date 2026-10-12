@@ -197,6 +197,7 @@ class GameScreen(Screen):
         level = self.game.level
 
         self.pacman_frame.draw_maze()
+
         self.draw_ultra_vision()
 
         self.pacman_frame.draw_multiple_pacgums(level.pacgums, False)
