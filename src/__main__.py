@@ -8,19 +8,12 @@ from .monitor import Monitor
 
 
 def main() -> None:
-    """Run the game using the JSON config file passed as argument.
-
-    Raises:
-        ParsingError: If the arguments are invalid.
-    """
+    """Run the game using the JSON config file passed as argument."""
     if len(argv) != 2:
-        raise ParsingError(
-            "It must take exactly one argument: a configuration file."
-        )
-    try:
+        Monitor("assets/default_config.json").main_loop()
+        print(ParsingError("It must take exactly one argument."))
+    else:
         Monitor(argv[1]).main_loop()
-    except FileNotFoundError:
-        print("Theme not found !")
 
 
 if __name__ == "__main__":

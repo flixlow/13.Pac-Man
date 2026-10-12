@@ -133,19 +133,20 @@ class GameScreen(Screen):
 
     def _space_pressed(self) -> None:
         """Handle the space key depending on the current game state."""
-        state = self.game.state
+        match self.game.state:
+            case GameState.HAS_COMPLETED_LEVEL:
+                self.game.state = GameState.IN_GAME
+                self.game.next_level()
+                self.pacman_frame.update_maze(self.game.level.maze)
+                self.game.level.init_entities()
+                self.theme_selection.cycle()
 
-        if state is GameState.HAS_COMPLETED_LEVEL:
-            self.game.next_level()
-            self.pacman_frame.update_maze(self.game.level.maze)
-            self.theme_selection.cycle()
+            case GameState.HAS_LOSE_A_LIFE:
+                self.game.state = GameState.IN_GAME
+                self.game.level.init_entities()
 
-        if state in {GameState.HAS_LOSE_A_LIFE, GameState.HAS_COMPLETED_LEVEL}:
-            self.game.state = GameState.IN_GAME
-            self.game.level.init_entities()
-
-        elif state in {GameState.GAME_OVER, GameState.HAS_BEATEN_THE_GAME}:
-            self.game.state = GameState.ENTER_YOUR_NAME
+            case GameState.GAME_OVER | GameState.HAS_BEATEN_THE_GAME:
+                self.game.state = GameState.ENTER_YOUR_NAME
 
     def handle_event(self, event: pygame.event.Event) -> None:
         """Handle key input for the gameplay screen.
@@ -232,7 +233,12 @@ class NameScreen(Screen):
         name = "".join(self.player_frame.name)
         if not name:
             return
-        self.scorer.save(name, self.game.score)
+
+        try:
+            self.scorer.save(name, self.game.score)
+        except Exception:
+            print("[WARNING]: can't save player_name/score to learderboard.")
+
         self.player_frame.clear()
         self.game.init_new_game()
         self.on_new_game()
