@@ -1,3 +1,5 @@
+"""Player name prompt rendering for leaderboard input."""
+
 from typing import Any
 import pygame
 
@@ -6,7 +8,20 @@ from ..utils import Timer, Paths
 
 
 class PlayerName:
+    """Handle rendering and editing of the player-name input field.
+
+    Args:
+        size: Dimensions of the input frame.
+        timer: Global timer used for blinking cursor animation.
+    """
+
     def __init__(self, size: tuple[int, int], timer: Timer) -> None:
+        """Initialize the input field.
+
+        Args:
+            size: Dimensions of the screen area for the name prompt.
+            timer: Shared timer used for blinking effects.
+        """
         w, _ = size
 
         self.frame = Drawer(size)
@@ -23,12 +38,25 @@ class PlayerName:
         self.render()
 
     def clear(self) -> None:
+        """Clear the current name and reset the text cursor."""
         self.cursor = 0
         self.name = []
 
     def _get_font_size(self, text: str, font_path: str,
                        max_width: int, max_height: int,
                        ref_size: int = 100) -> int:
+        """Compute a font size that fits in the available box.
+
+        Args:
+            text: Text to measure.
+            font_path: Path to the font file.
+            max_width: Maximum allowed width.
+            max_height: Maximum allowed height.
+            ref_size: Initial reference size for scaling.
+
+        Returns:
+            Suitable font size for the text.
+        """
         if not text:
             return ref_size
 
@@ -39,6 +67,7 @@ class PlayerName:
         return max(1, int(ref_size * scale))
 
     def render(self) -> None:
+        """Refresh the frame content and redraw the name prompt."""
         w, h = self.frame.size
 
         self.padding_x, self.padding_y = w // 10, h // 10
@@ -94,6 +123,11 @@ class PlayerName:
             self.display_cursor()
 
     def handle_player_name_input(self, event: Any) -> None:
+        """Process keyboard input to modify the current player name.
+
+        Args:
+            event: pygame key event.
+        """
         if event.key == pygame.K_UP:
             self.cursor = 0
         elif event.key == pygame.K_DOWN:
@@ -114,6 +148,7 @@ class PlayerName:
         self.render()
 
     def display_cursor(self) -> None:
+        """Render the text cursor at the current insertion position."""
         w, h = self.frame.size
         wt, ht = self.rendered_name.get_size()
 
@@ -134,4 +169,9 @@ class PlayerName:
         )
 
     def get_frame(self) -> Drawer:
+        """Return the underlying drawer used to display the prompt.
+
+        Returns:
+            The surface wrapper containing the drawn prompt.
+        """
         return self.frame

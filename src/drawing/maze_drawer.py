@@ -1,9 +1,23 @@
+"""Maze rendering logic for the game board.
+
+This module contains the `MazeDrawer`, which computes tile sizes, wall offsets
+and draws the maze cells using the active theme.
+"""
+
 from .basic_drawer import Drawer
 from ..engine.maze import Maze
 from ..theme_selection import ThemeSelection, Theme
 
 
 class MazeDrawer(Drawer):
+    """Render the maze using the selected theme and a set of wall flags.
+
+    Args:
+        size: Dimensions of the drawing surface.
+        maze: Maze configuration to render.
+        theme_selection: Theme manager used to resolve active colors.
+    """
+
     def __init__(self, size: tuple[int, int],
                  maze: Maze, theme_selection: ThemeSelection) -> None:
         super().__init__(size)
@@ -19,21 +33,43 @@ class MazeDrawer(Drawer):
 
     @staticmethod
     def _as_rgb(color: tuple[int, ...]) -> tuple[int, int, int]:
+        """Convert a color tuple to a valid RGB triplet.
+
+        Args:
+            color: A color-like tuple.
+
+        Returns:
+            A normalized ``(r, g, b)`` tuple.
+
+        Raises:
+            ValueError: If the tuple does not contain exactly three channels.
+        """
         if len(color) != 3:
             raise ValueError(f"Expected RGB color, got {color!r}")
         return color[0], color[1], color[2]
 
     @property
     def theme(self) -> Theme:
+        """Return the currently active theme."""
         return self.theme_selection.current_theme
 
     def update_maze(self, maze: Maze) -> None:
+        """Refresh the underlying maze data and recompute layout metrics.
+
+        Args:
+            maze: New maze instance.
+        """
         self.maze = maze.maze_map
         self.maze_height = maze.h
         self.maze_width = maze.w
         self.update_size(self.size)
 
     def update_size(self, new_size: tuple[int, int]) -> None:
+        """Update the drawing area and recompute cell-related metrics.
+
+        Args:
+            new_size: New surface dimensions in pixels.
+        """
         super().update_size(new_size)
 
         self.cell_size = min(
@@ -49,9 +85,7 @@ class MazeDrawer(Drawer):
         self.offset_y = (self.size[1] - maze_height_px) // 2
 
     def draw_maze(self) -> None:
-        """
-        Render the full maze grid, including start and end cells.
-        """
+        """Render the full maze grid, including start and end cells."""
 
         self.fill(self.theme.maze.background)
 
@@ -66,6 +100,14 @@ class MazeDrawer(Drawer):
                   bg: tuple[int, int, int] | None = None,
                   progress: float | None = None,
                   ) -> None:
+        """Render a single maze cell and its walls.
+
+        Args:
+            value: Bitmask describing the walls around the cell.
+            cell: Tile coordinates in the maze grid.
+            bg: Optional background color override for the cell.
+            progress: Optional animation progress used in crazy mode.
+        """
 
         x, y = cell
 

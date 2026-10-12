@@ -6,7 +6,6 @@ draft:
 [x] ajouter les pacgums
 [x] ajouter les super pacgums
 [x] deplacement des fantomes a implementer, random au debut puispathfinding
-
 [x] implent velocity in simulation
 [x] generate sequences of coords for movement
 [x] stocker les changements de direction queue
@@ -20,7 +19,6 @@ draft:
 [x] bug new game si jamais le next level n'a plus de level
 [X] demander le nom du joueur en fin de partie
 [x] bug vies lorsque le niveau change et la taille aussi
-
 [X] AssetLoader
 [X] displayer le score et le timer
 [X] {'badge': 'felix'} : highscore can take only alphanumeric
@@ -49,12 +47,15 @@ draft:
 [x] changement de theme au debut de chaque niveau au moment ou on appuie sur espace
 [x] supression input T pour le changement de Theme, soit dans le menu ou en changeant de niveau
 [x] deplacement des displayers dans les screens
+[x] fix lorsque le highscore file est manquant
 
 [ ] pourquoi un get et un property dans ThemeSelection ?
-[ ] est ce que le FileValidator peut être remplacé par Field(default=1) sachant que le nom de fichier peut-etre des white spaces ?
+[ ] est ce que le FileValidator de theme selection peut être remplacé par Field(default=1) sachant que le nom de fichier peut-etre des white spaces ?
 [ ] est-ce qu'on a encore besoin du spritesheet
 [ ] can we remove title.ttf ?
-[ ] implementer une statemachine
+[ ] passer les fonctions de BasicDrawer dans un HeaderDrawer
+
+[ ] implementer une statemachine ?
 
 [ ] Mieux gerer les collisions
     [ ] bug fin d'animation
@@ -72,7 +73,6 @@ Forbidden Behavior from pygame:
 [ ] Rescalable Image
 [ ] FPS cap with pygame.time.Clock.tick(60)
 [ ] draw rect
-
 
 Pour les couleurs
 

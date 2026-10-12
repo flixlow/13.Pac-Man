@@ -1,3 +1,7 @@
+"""Pac-Man renderer and animation helpers.
+
+This module draws the maze, ghosts, Pac-Man, pacgums and UI overlays.
+"""
 
 import pygame
 from random import randint
@@ -11,8 +15,25 @@ from ..utils import GhostColor, Parameters, Direction, Timer, Pos, Color, Size
 
 
 class PacManDrawer(MazeDrawer):
+    """Render Pac-Man, ghosts and collectibles for the active maze.
+
+    Args:
+        size: Dimensions of the drawing surface.
+        maze: Current maze instance.
+        t: Shared timer used for animations.
+        theme_selection: Theme manager.
+    """
+
     def __init__(self, size: Size, maze: Maze,
                  t: Timer, theme_selection: ThemeSelection) -> None:
+        """Initialize the renderer and load all sprite resources.
+
+        Args:
+            size: Dimensions of the drawing surface.
+            maze: Maze instance to render.
+            t: Shared timer of the game.
+            theme_selection: Current theme configuration.
+        """
         super().__init__(size, maze, theme_selection)
 
         self.timer = t
@@ -37,6 +58,15 @@ class PacManDrawer(MazeDrawer):
 
     @staticmethod
     def render_coords(elapsed: int, entity: Entity) -> tuple[float, float]:
+        """Compute the interpolated coordinates of an entity between frames.
+
+        Args:
+            elapsed: Elapsed time since last frame.
+            entity: Entity whose position is being interpolated.
+
+        Returns:
+            A tuple ``(x, y)`` with fractional coordinates.
+        """
         animation_progress = getattr(entity, "animation_elapsed_ms", elapsed)
         progress = min(
             animation_progress / max(1, entity.movement_interval_ms),
@@ -50,6 +80,7 @@ class PacManDrawer(MazeDrawer):
         )
 
     def draw_maze(self) -> None:
+        """Render the maze using the current theme and optional crazy theme."""
         target_color = self.theme.crazy_maze.background
         elapsed = self.timer.crazy_mode_elapsed_time
 
@@ -80,6 +111,12 @@ class PacManDrawer(MazeDrawer):
                 )
 
     def draw_pacgum(self, cell: Pos, super: bool) -> None:
+        """Draw one pacgum or super-pacgum at the given grid position.
+
+        Args:
+            cell: Maze cell coordinates.
+            super: If True, render a super-pacgum.
+        """
         x, y = cell
 
         px = x * self.cell_size + self.offset_x
@@ -115,10 +152,21 @@ class PacManDrawer(MazeDrawer):
             )
 
     def draw_multiple_pacgums(self, pacgums: set[Pos], super: bool) -> None:
+        """Draw every pacgum in the provided set.
+
+        Args:
+            pacgums: Collection of maze positions.
+            super: Boolean indicating whether they are super-pacgums.
+        """
         for pacgum in pacgums:
             self.draw_pacgum(pacgum, super=super)
 
     def draw_entities(self, entities: list[Entity]) -> None:
+        """Draw all entities after interpolating their animation movement.
+
+        Args:
+            entities: Entities to render.
+        """
         elapsed = self.timer.elapsed_time
 
         for e in entities:
@@ -142,6 +190,7 @@ class PacManDrawer(MazeDrawer):
                 )
 
     def update_animation(self) -> None:
+        """Advance the local animation timer for the current frame."""
         self.animation_elapsed_ms = min(
             self.animation_elapsed_ms + self.timer.elapsed_time,
             self.movement_interval_ms,
@@ -149,6 +198,13 @@ class PacManDrawer(MazeDrawer):
 
     def draw_ghost(self, cell: tuple[float, float],
                    color: GhostColor, direction: Direction) -> None:
+        """Render a ghost sprite on the maze.
+
+        Args:
+            cell: Interpolated ghost position.
+            color: Ghost color.
+            direction: Heading direction used for sprite selection.
+        """
         x, y = cell
 
         px = int(x * self.cell_size + self.offset_x)
@@ -198,6 +254,12 @@ class PacManDrawer(MazeDrawer):
 
     def draw_pacman(self, cell: tuple[float, float],
                     direction: Direction) -> None:
+        """Render Pac-Man with rotation based on movement direction.
+
+        Args:
+            cell: Pac-Man interpolated position.
+            direction: Current direction for orientation.
+        """
         x, y = cell
 
         px = int(x * self.cell_size + self.offset_x + 0.05 * self.cell_size)
@@ -227,9 +289,17 @@ class PacManDrawer(MazeDrawer):
 
         self.put_image((x1, y1), self.pacman_img[n])
 
-    def _rotate_and_scale(
-            self, img_set: list[pygame.Surface],
-            n: int) -> list[pygame.Surface]:
+    def _rotate_and_scale(self, img_set: list[pygame.Surface],
+                          n: int) -> list[pygame.Surface]:
+        """Rotate and scale a sprite set for a given direction.
+
+        Args:
+            img_set: Source animation frames.
+            n: Rotation index.
+
+        Returns:
+            New list of rotated/scaled surfaces.
+        """
         return [
             pygame.transform.scale(
                 rotated,
@@ -240,6 +310,11 @@ class PacManDrawer(MazeDrawer):
         ]
 
     def update_size(self, new_size: Size) -> None:
+        """Scale all sprite assets to match the current window size.
+
+        Args:
+            new_size: New drawing surface dimensions.
+        """
         super().update_size(new_size)
         w, h = new_size
 
@@ -279,6 +354,11 @@ class PacManDrawer(MazeDrawer):
         ]
 
     def press_space(self, msg: str) -> None:
+        """Display a centered status message with a translucent background.
+
+        Args:
+            msg: Message to render on screen.
+        """
         w, h = self.size
 
         self.font_press = pygame.font.Font("assets/font/title.otf", w // 25)
@@ -302,6 +382,12 @@ class PacManDrawer(MazeDrawer):
         )
 
     def draw_ghost_path(self, color: GhostColor, path: list[Pos]) -> None:
+        """Render a ghost path as a fading trail.
+
+        Args:
+            color: Path color.
+            path: Sequence of coordinates to draw.
+        """
 
         if not path:
             return

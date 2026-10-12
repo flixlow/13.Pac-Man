@@ -1,11 +1,20 @@
+"""Asset loading helpers for sprites and UI resources."""
+
 from .utils import GhostColor, Paths
 
 import pygame
 
 
 class AssetLoader:
+    """Load all static sprite resources used by the game."""
+
     @staticmethod
     def load_ghosts() -> dict[GhostColor, list[pygame.Surface]]:
+        """Load all ghost sprite sheets.
+
+        Returns:
+            Mapping of ghost colors to lists of surfaces.
+        """
         ghosts_img = {
             GhostColor.RED: [pygame.image.load(
                 f"{Paths.RED}{i+1}.png").convert_alpha()
@@ -31,6 +40,11 @@ class AssetLoader:
 
     @staticmethod
     def load_pacman() -> list[pygame.Surface]:
+        """Load Pac-Man animation frames.
+
+        Returns:
+            List of Pac-Man sprite surfaces.
+        """
         pacman_img_copy = [
             pygame.image.load(f"{Paths.PACMAN}{i}.png").convert_alpha()
             for i in range(5)
@@ -40,6 +54,11 @@ class AssetLoader:
 
     @staticmethod
     def load_life() -> tuple[pygame.Surface, pygame.Surface, pygame.Surface]:
+        """Load the life-counter sprites.
+
+        Returns:
+            Tuple containing ``(dead, alive, reflect)`` surfaces.
+        """
         return (
             pygame.image.load(Paths.DEAD).convert_alpha(),
             pygame.image.load(Paths.ALIVE).convert_alpha(),
@@ -48,6 +67,11 @@ class AssetLoader:
 
     @staticmethod
     def load_fruit() -> list[pygame.Surface]:
+        """Load all fruit sprites.
+
+        Returns:
+            List of fruit images.
+        """
         fruit = [
             pygame.image.load(
                 f"{Paths.FRUIT}{i+1}.png"
@@ -58,6 +82,11 @@ class AssetLoader:
 
     @staticmethod
     def load_buttons() -> tuple[pygame.Surface, pygame.Surface]:
+        """Load the menu button sprites.
+
+        Returns:
+            Tuple containing normal and pressed button surfaces.
+        """
         normal = pygame.image.load(Paths.UNPRESSED)
         pressed = pygame.image.load(Paths.PRESSED)
 

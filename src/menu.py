@@ -1,3 +1,5 @@
+"""Menu rendering and leaderboard UI."""
+
 from .drawing.basic_drawer import Drawer
 from .theme_selection import ThemeSelection, Theme
 from .scorer import Scorer
@@ -10,8 +12,23 @@ from pygame import Surface
 
 
 class Menu:
+    """Render the main menu with leaderboard data and action buttons.
+
+    Args:
+        size: Dimensions of the menu surface.
+        scorer: Leaderboard store.
+        theme_selection: Theme manager.
+    """
+
     def __init__(self, size: tuple[int, int], scorer: Scorer,
                  theme_selection: ThemeSelection) -> None:
+        """Initialize the menu and create all buttons.
+
+        Args:
+            size: Dimensions of the menu surface.
+            scorer: Score store to render in the leaderboard.
+            theme_selection: Active theme selector.
+        """
         self.frame = Drawer(size)
 
         w, h = self.frame.size
@@ -44,13 +61,16 @@ class Menu:
 
     @property
     def theme(self) -> Theme:
+        """Return the currently selected theme."""
         return self.theme_selection.current_theme
 
     def clear_leaderboard(self) -> None:
+        """Clear the score table and redraw the menu."""
         self.scorer.clear()
         self.draw_menu()
 
     def draw_menu(self) -> None:
+        """Re-render the menu background, leaderboard and buttons."""
         for button in self.buttons:
             button.set_new_color(self.theme.buttons)
 
@@ -60,6 +80,7 @@ class Menu:
         self.print_buttons()
 
     def update_size(self) -> None:
+        """Resize the menu and update all button positions."""
         w, h = self.frame.size
         self.padding_x, self.padding_y = w // 20, h // 10
 
@@ -67,14 +88,21 @@ class Menu:
             button.update_size()
 
     def print_buttons(self) -> None:
+        """Draw all menu buttons on the frame."""
         for button in self.buttons:
             button.draw()
 
     def set_screen_origin(self, origin: tuple[int, int]) -> None:
+        """Set the global origin used for click coordinates.
+
+        Args:
+            origin: (x, y) offset of the menu on the screen.
+        """
         for button in self.buttons:
             button.set_screen_origin(origin)
 
     def render_leaderboard(self) -> None:
+        """Prepare rendered leaderboard surfaces for display."""
         w, h = self.frame.size
         r = h / (w / 2)
 
@@ -106,12 +134,21 @@ class Menu:
             self.scorers_rendered.append((value, user, score))
 
     def check_buttons(self, event: Any) -> list[int]:
+        """Return the indexes of buttons clicked by the user.
+
+        Args:
+            event: pygame event.
+
+        Returns:
+            List of activated button indexes.
+        """
         return [
             idx for idx, button
             in enumerate(self.buttons) if button.is_clicked(event)
         ]
 
     def print_leaderboard(self) -> None:
+        """Draw the leaderboard panel and text on the menu frame."""
         w, h = self.frame.size
         self.frame.draw_rect(
             (0, 0), (w // 2, h), self.theme.leaderboard.background

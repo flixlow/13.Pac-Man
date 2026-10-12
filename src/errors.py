@@ -1,14 +1,17 @@
+"""Custom exceptions for parsing, generation and scoring errors."""
+
+
 class PacmanError(Exception):
-    pass
+    """Base exception for all Pac-Man project errors."""
 
 
 class ParsingError(PacmanError):
-    pass
+    """Raised when parsing a configuration file fails."""
 
 
 class GenerationError(PacmanError):
-    pass
+    """Raised when a maze or asset generation step fails."""
 
 
 class ScorerFileError(PacmanError):
-    pass
+    """Raised when the leaderboard file cannot be read or written."""

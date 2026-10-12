@@ -1,3 +1,5 @@
+"""Public entity exports for the game engine."""
+
 from .entity import Entity
 from .player import Player
 from .ghosts import Ghost, Red, Blue, Orange, Pink, Secret
