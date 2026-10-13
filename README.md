@@ -46,11 +46,19 @@ Useful commands: `make debug`, `make lint`, `make lint-strict`, and `make clean`
 
 ## Linux package
 
-Build a self-contained Linux archive from the repository root with
-`bash package-linux.sh`. The script synchronizes the locked development
-environment, builds the PyInstaller bundle from `Pac-Man.spec`, and writes
-`dist/Pac-Man-linux-<architecture>.tar.gz`. Extract the archive and launch
-`Pac-Man/Pac-Man`.
+Build the standalone Linux package locally:
+
+```bash
+make build
+./dist/Pac-Man/Pac-Man
+```
+
+The build also creates `dist/Pac-Man.zip`. Alternatively, download the packaged zip from [itch.io](https://flalafe.itch.io/42-pacman), then extract and run it:
+
+```bash
+unzip ~/Downloads/Pac-Man.zip -d ~/Downloads
+~/Downloads/Pac-Man/Pac-Man
+```
 
 ## Configuration
 
