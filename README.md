@@ -2,7 +2,7 @@
 
 # Pac-Man
 
-![Logo du projet](./logo.png)
+![preview](./image.png)
 
 ## Description
 
