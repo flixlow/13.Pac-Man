@@ -158,7 +158,11 @@ class GameScreen(Screen):
 
         key = event.key
 
-        if key == pygame.K_ESCAPE:
+        if key == pygame.K_ESCAPE and self.game.state not in [
+                        GameState.HAS_LOSE_A_LIFE,
+                        GameState.GAME_OVER,
+                        GameState.HAS_BEATEN_THE_GAME,
+                    ]:
             self.game.state = GameState.PAUSE
         elif key == pygame.K_SPACE:
             self._space_pressed()
