@@ -109,6 +109,7 @@ class Monitor:
     def on_new_game(self) -> None:
         """Refresh the displayed maze after a reset or game state change."""
         self.game.init_new_game()
+        self.theme.selected_index = 0
         self.pacman_frame.update_maze(self.game.level.maze)
 
     def get_theme(self) -> Theme:
