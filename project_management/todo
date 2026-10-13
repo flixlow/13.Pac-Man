@@ -62,12 +62,12 @@ draft:
 
 
 Forbidden Behavior from pygame:
-[ ] flag : --own_function for draw rectangle
-[ ] Custom font with manipulation of size
-[ ] Image tranformation (scale, rotate)
-[ ] Rescalable Image
-[ ] FPS cap with pygame.time.Clock.tick(60)
-[ ] draw rect
+[X] flag : --own_function for draw rectangle
+[X] Custom font with manipulation of size
+[X] Image tranformation (scale, rotate)
+[X] Rescalable Image
+[X] FPS cap with pygame.time.Clock.tick(60)
+[X] draw rect
 
 
 https://en.wikipedia.org/wiki/Chebyshev_distance
@@ -76,10 +76,10 @@ https://en.wikipedia.org/wiki/Taxicab_geometry
 
 [x] ending animation
 [x] default config
-[ ] verifier la doc
-[ ] proteger asset loader
-[ ] probleme de display lorsqu'on mange un superpacgum en crazymode
-[ ] changer fonction libre dans le fichier Drawer en une class HeaderDrawer et display_header du monitor
+[X] verifier la doc
+[X] proteger asset loader
+[X] probleme de display lorsqu'on mange un superpacgum en crazymode
+[X] changer fonction libre dans le fichier Drawer en une class HeaderDrawer et display_header du monitor
 
 
         self._music()
