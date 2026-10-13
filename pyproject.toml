@@ -12,6 +12,11 @@ dependencies = [
     "mypy"
 ]
 
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.0"
+]
+
 [tool.uv.sources]
 mazegenerator = { path = "mazegenerator-2.1.0-py3-none-any.whl" }
 
