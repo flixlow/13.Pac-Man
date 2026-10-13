@@ -6,12 +6,13 @@ This module draws the maze, ghosts, Pac-Man, pacgums and UI overlays.
 import pygame
 from random import randint
 
+from ..timer import Timer
 from ..engine.maze import Maze
 from ..entity import Ghost, Entity
 from .maze_drawer import MazeDrawer
 from ..assetloader import AssetLoader
 from ..theme_selection import ThemeSelection
-from ..utils import GhostColor, Parameters, Direction, Timer, Pos, Color, Size
+from ..utils import GhostColor, Parameters, Direction, Pos, Color, Size
 
 
 class PacManDrawer(MazeDrawer):
@@ -42,7 +43,7 @@ class PacManDrawer(MazeDrawer):
         # Assets
         self.ghosts_img_copy = AssetLoader.load_ghosts()
         self.pacman_img_copy: list[pygame.Surface] = AssetLoader.load_pacman()
-        self.dead_copy, self.alive_copy, self.reflect = AssetLoader.load_life()
+        self.dead_copy, self.alive_copy, self.reflect_copy = AssetLoader.load_life()
         self.fruit_copy = AssetLoader.load_fruit()
         self.bg_msg_copy: pygame.Surface = AssetLoader.load_buttons()[0]
 
@@ -345,7 +346,7 @@ class PacManDrawer(MazeDrawer):
         )
 
         self.reflect = pygame.transform.scale(
-            self.reflect, (w // 20, w // 20)
+            self.reflect_copy, (w // 20, w // 20)
         )
 
         self.fruit = [

@@ -6,8 +6,9 @@ shapes, text and images onto a dedicated pygame surface.
 
 import pygame
 
+from ..timer import Timer
 from ..theme_selection import Theme
-from ..utils import Timer, Color, Pos, Size
+from ..utils import Color, Pos, Size
 from ..assetloader import AssetLoader
 
 

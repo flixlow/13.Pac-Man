@@ -5,7 +5,8 @@ from typing import Iterator
 from .maze import Maze
 from .level import Level
 from ..parsing import Config
-from ..utils import Timer, GameState, CheatMode
+from ..utils import GameState, CheatMode
+from ..timer import Timer
 
 
 class GameEngine:
@@ -71,6 +72,10 @@ class GameEngine:
 
             case CheatMode.GODMODE:
                 self.level.on_godmode = not self.level.on_godmode
+
+            case CheatMode.NEXT:
+                if self.state is not GameState.HAS_BEATEN_THE_GAME:
+                    self.next_level()
 
     def update_game_state(self) -> None:
         """Update the current game state after a tick.

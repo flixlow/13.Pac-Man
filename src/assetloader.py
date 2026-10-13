@@ -93,7 +93,7 @@ class AssetLoader:
         return normal, pressed
 
     @staticmethod
-    def load_cheat() -> tuple[pygame.Surface]:
+    def load_cheat() -> tuple[pygame.Surface, pygame.Surface, pygame.Surface]:
         """Load the cheat assets.
 
         Returns:
