@@ -8,6 +8,8 @@ from .basic_drawer import Drawer
 from ..engine.maze import Maze
 from ..theme_selection import ThemeSelection, Theme
 
+Color = tuple[int, int, int]
+
 
 class MazeDrawer(Drawer):
     """Render the maze using the selected theme and a set of wall flags.
@@ -102,10 +104,17 @@ class MazeDrawer(Drawer):
                     self.maze[y][x], (x, y)
                 )
 
-    def draw_cell(self, value: int,
-                  cell: tuple[int, int],
-                  bg: tuple[int, int, int] | None = None,
-                  progress: float | None = None,
+    @staticmethod
+    def _lerp(c1: Color, c2: Color, t: float) -> Color:
+        """Linear interpolation between two RGB colors."""
+        return (
+            int(c1[0] + (c2[0] - c1[0]) * t),
+            int(c1[1] + (c2[1] - c1[1]) * t),
+            int(c1[2] + (c2[2] - c1[2]) * t),
+        )
+
+    def draw_cell(self, value: int, cell: tuple[int, int],
+                  bg: Color | None = None, progress: float | None = None
                   ) -> None:
         """Render a single maze cell and its walls.
 
@@ -113,9 +122,8 @@ class MazeDrawer(Drawer):
             value: Bitmask describing the walls around the cell.
             cell: Tile coordinates in the maze grid.
             bg: Optional background color override for the cell.
-            progress: Optional animation progress used in crazy mode.
+            progress: Optional crazy-mode blend, 0 = normal, 1 = crazy.
         """
-
         x, y = cell
 
         px = x * self.cell_size + self.offset_x
@@ -124,83 +132,35 @@ class MazeDrawer(Drawer):
         x1, y1 = px, py
         x2, y2 = px + self.cell_size, py + self.cell_size
 
-        colors = (
-            [self.theme.maze.walls.north, self.theme.crazy_maze.walls.north],
-            [self.theme.maze.walls.west, self.theme.crazy_maze.walls.west],
-            [self.theme.maze.walls.south, self.theme.crazy_maze.walls.south],
-            [self.theme.maze.walls.east, self.theme.crazy_maze.walls.east]
-        )
+        t = progress if progress is not None else 0.0
+        normal = self.theme.maze
+        crazy = self.theme.crazy_maze
+        lerp = MazeDrawer._lerp
 
-        top, left, bottom, right = (
-            color[0] if progress is None
-            else tuple(int(c * progress) for c in color[1])
-            for color in colors
-        )
+        top = lerp(normal.walls.north, crazy.walls.north, t)
+        left = lerp(normal.walls.west, crazy.walls.west, t)
+        bottom = lerp(normal.walls.south, crazy.walls.south, t)
+        right = lerp(normal.walls.east, crazy.walls.east, t)
 
-        top = MazeDrawer._as_rgb(top)
-        left = MazeDrawer._as_rgb(left)
-        bottom = MazeDrawer._as_rgb(bottom)
-        right = MazeDrawer._as_rgb(right)
+        if bg is None:
+            bg = lerp(normal.background, crazy.background, t)
 
-        if progress is not None:
-            progress = 1.0 - progress
-            r, g, b = self.theme.crazy_maze.background
-            bg = (
-                int(r * progress),
-                int(g * progress),
-                int(b * progress),
-            )
+        logo_color = lerp(normal.forty_two_logo, crazy.forty_two_logo, t)
 
-        if bg is not None:
-            self.draw_rect(
-                (x1, y1),
-                (x2, y2),
-                bg
-            )
-        else:
-            self.draw_rect(
-                (x1, y1),
-                (x2, y2),
-                self.theme.maze.background
-            )
-
-        if progress is None:
-            logo_color = self.theme.maze.forty_two_logo
-        else:
-            logo_color = self.theme.crazy_maze.forty_two_logo
+        self.draw_rect((x1, y1), (x2, y2), bg)
 
         if value == 15:
-            self.draw_rect(
-                (x1, y1),
-                (x2, y2),
-                logo_color
-            )
+            self.draw_rect((x1, y1), (x2, y2), logo_color)
             return
 
         if value & 1:
-            self.draw_rect(
-                (x1, y1),
-                (x2, y1 + self.wall_width),
-                top
-            )
+            self.draw_rect((x1, y1), (x2, y1 + self.wall_width), top)
 
         if value & 2:
-            self.draw_rect(
-                (x2 - self.wall_width, y1),
-                (x2, y2),
-                left
-            )
+            self.draw_rect((x2 - self.wall_width, y1), (x2, y2), left)
 
         if value & 4:
-            self.draw_rect(
-                (x1, y2 - self.wall_width),
-                (x2, y2),
-                bottom
-            )
+            self.draw_rect((x1, y2 - self.wall_width), (x2, y2), bottom)
 
         if value & 8:
-            self.draw_rect(
-                (x1, y1),
-                (x1 + self.wall_width, y2),
-                right
-            )
+            self.draw_rect((x1, y1), (x1 + self.wall_width, y2), right)
