@@ -13,6 +13,7 @@ debug:
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
+	rm -rf "build" "dist/Pac-Man"
 	rm -rf .venv
 	uv clean
 
@@ -21,5 +22,9 @@ lint:
 
 lint-strict:
 	uv run -m flake8 src && uv run -m mypy --strict src
+
+build: clean
+	uv run --locked pyinstaller --noconfirm --clean "Pac-Man.spec"
+	rm -rf build
 
 .PHONY: install run debug clean lint lint-strict

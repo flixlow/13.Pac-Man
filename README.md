@@ -48,10 +48,10 @@ install: Makefile mazegenerator-2.1.0-py3-none-any.whl
         @echo "\033[0;32m\n[OK] installation completed ✔\n\033[0m"
 
 run:
-        @PYGAME_HIDE_SUPPORT_PROMPT=1 uv run -m src config.json
+        @PYGAME_HIDE_SUPPORT_PROMPT=1 uv run -m src config.jsonc
 
 debug:
-        uv run -m pdb -m src config.json
+        uv run -m pdb -m src config.jsonc
 ```
 
 Use:
@@ -64,7 +64,7 @@ make run
 or launch directly with:
 
 ```bash
-uv run -m src config.json
+uv run -m src config.jsonc
 ```
 
 The project also supports:
@@ -76,9 +76,17 @@ make lint-strict
 make clean
 ```
 
+## Linux package
+
+Build a self-contained Linux archive from the repository root with
+`bash package-linux.sh`. The script synchronizes the locked development
+environment, builds the PyInstaller bundle from `Pac-Man.spec`, and writes
+`dist/Pac-Man-linux-<architecture>.tar.gz`. Extract the archive and launch
+`Pac-Man/Pac-Man`.
+
 ## Configuration
 
-The runtime configuration is loaded from config.json by `parsing()` in parsing.py. The parser strips comment lines beginning with `#` before `json.loads()`, validates the structure using Pydantic models, and raises `ParsingError` on malformed input.
+The runtime configuration is loaded from config.jsonc by `parsing()` in parsing.py. The parser strips comment lines beginning with `#` before `json.loads()`, validates the structure using Pydantic models, and raises `ParsingError` on malformed input.
 
 The default configuration file present in the repository is:
 
@@ -113,7 +121,7 @@ This is enforced by the `Config` model in parsing.py:
 - `seed: int`
 - `level_max_time: int` with `gt=0`
 
-`LevelSize` also validates `width` and `height` with `gt=6`, so generated maze sizes are always greater than 6 in either axis. The default values in the shipped config.json are therefore:
+`LevelSize` also validates `width` and `height` with `gt=6`, so generated maze sizes are always greater than 6 in either axis. The default values in the shipped config.jsonc are therefore:
 
 - `lives = 3`
 - `seed = 42`
@@ -162,7 +170,7 @@ maze = Maze(
 
 This means:
 
-- each level is generated with a size based on config.json
+- each level is generated with a size based on config.jsonc
 - a deterministic seed is used for the generation
 - a new `Maze` object is created for each level
 - the generator uses a hashed seed progression for subsequent levels:
@@ -296,7 +304,7 @@ The project is organized as follows:
   - menu.py, screens.py, monitor.py, button.py: UI and game flow
 - assets: artist and game resources: pacman sprites, ghosts, fruit, icons, fonts, buttons, and default themes
 - themes: user theme definitions and sample theme files
-- config.json: runtime configuration
+- config.jsonc: runtime configuration
 - Makefile: developer automation
 - pyproject.toml: dependency and project metadata
 - todo: project task log and historical implementation notes
@@ -328,26 +336,26 @@ make clean
 Direct execution:
 
 ```bash
-uv run -m src config.json
+uv run -m src config.jsonc
 ```
 
 or, if the user wants to run the entry point directly with standard Python:
 
 ```bash
-python -m src config.json
+python -m src config.jsonc
 ```
 
 The repository already ships the config file:
 
 ```bash
-python -m src config.json
+python -m src config.jsonc
 ```
 
 This is consistent with the Makefile target:
 
 ```make
 run:
-        @PYGAME_HIDE_SUPPORT_PROMPT=1 uv run -m src config.json
+        @PYGAME_HIDE_SUPPORT_PROMPT=1 uv run -m src config.jsonc
 ```
 
 ## Project management
@@ -401,7 +409,7 @@ Some information is inferred from code, not explicitly stated in a dedicated doc
 
 - the startup loop runs through `Monitor` and starts the game from the config file (__main__.py)
 - `Config` performs JSON validation and strict checks on level sizes and score values (parsing.py)
-- the game stores leaderboard data under `highscores.json` because config.json sets that value and the `Scorer` subsystem is the logical persistence point for this file
+- the game stores leaderboard data under `highscores.json` because config.jsonc sets that value and the `Scorer` subsystem is the logical persistence point for this file
 - the structure of files and directories (assets, themes, src) comes directly from the repository state
 
 This README has been written to match only the behaviors and defaults visible in the repository itself, without adding assumptions beyond the code and project metadata.
