@@ -27,6 +27,15 @@ class Scorer:
             self._load()
         except (Exception) as e:
             print(f"[WARNING]: can't load from highscore file: {e}")
+        else:
+            if (
+                not isinstance(self.scores, dict)
+                or not all(
+                    isinstance(k, str) and isinstance(v, int)
+                    for k, v in self.scores.items())
+            ):
+                print("[WARNING] ValueError in the highscore file")
+                self.scores = dict()
         self._sort()
 
     def _sort(self) -> None:

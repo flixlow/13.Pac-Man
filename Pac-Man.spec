@@ -1,4 +1,4 @@
-# PyInstaller onedir specification for the Linux game bundle.
+
 from pathlib import Path
 
 PROJECT_ROOT = Path(SPECPATH).resolve()

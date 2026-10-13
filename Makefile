@@ -28,5 +28,6 @@ build: clean
 	@test -f highscores.json || printf '{}\n' > highscores.json
 	uv run --locked pyinstaller --noconfirm --clean "Pac-Man.spec"
 	cd dist && zip -qr "Pac-Man.zip" Pac-Man
+	rm -rf build
 
 .PHONY: install run debug clean lint lint-strict build

@@ -43,7 +43,8 @@ class PacManDrawer(MazeDrawer):
         # Assets
         self.ghosts_img_copy = AssetLoader.load_ghosts()
         self.pacman_img_copy: list[pygame.Surface] = AssetLoader.load_pacman()
-        self.dead_copy, self.alive_copy, self.reflect_copy = AssetLoader.load_life()
+        icon = AssetLoader.load_life()
+        self.dead_copy, self.alive_copy, self.reflect_copy = icon
         self.fruit_copy = AssetLoader.load_fruit()
         self.bg_msg_copy: pygame.Surface = AssetLoader.load_buttons()[0]
 
