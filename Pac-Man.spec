@@ -9,6 +9,7 @@ data_files = [
     for path in root.rglob("*")
     if path.is_file()
 ]
+data_files.append((str(PROJECT_ROOT / "highscores.json"), "."))
 
 a = Analysis(
     [str(PROJECT_ROOT / "src" / "__main__.py")],
