@@ -135,8 +135,8 @@ def parsing(file_name: str) -> Config:
     """
 
     file: Path = Path(file_name)
-    if file.suffix != ".json":
-        raise ParsingError("The config file must be a json.")
+    if file.suffix != ".jsonc":
+        raise ParsingError("The config file must be a jsonc.")
     try:
         with open(file, encoding="utf-8") as f:
             lines = [ln for ln in f if not ln.lstrip().startswith('#')]

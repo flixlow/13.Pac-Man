@@ -80,3 +80,11 @@ https://en.wikipedia.org/wiki/Taxicab_geometry
 [ ] proteger asset loader
 [ ] probleme de display lorsqu'on mange un superpacgum en crazymode
 [ ] changer fonction libre dans le fichier Drawer en une class HeaderDrawer et display_header du monitor
+
+
+        self._music()
+
+    def _music(self) -> None:
+        pygame.mixer.init()
+        pygame.mixer.music.load("assets/music/music.mp3")
+        pygame.mixer.music.play(loops=-1)

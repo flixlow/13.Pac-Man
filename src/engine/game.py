@@ -73,6 +73,10 @@ class GameEngine:
             case CheatMode.GODMODE:
                 self.level.on_godmode = not self.level.on_godmode
 
+            case CheatMode.NEXT:
+                if self.state is not GameState.HAS_BEATEN_THE_GAME:
+                    self.next_level()
+
     def update_game_state(self) -> None:
         """Update the current game state after a tick.
 

@@ -9,7 +9,6 @@ from typing import Callable
 import pygame
 
 from .menu import Menu
-from .scorer import Scorer
 from .engine.game import GameEngine
 from .theme_selection import ThemeSelection
 from .drawing.player_name import PlayerName
@@ -45,22 +44,22 @@ class MenuScreen(Screen):
 
     def __init__(
             self,
-            game: GameEngine,
             menu: Menu,
             theme_selection: ThemeSelection,
+            change_state: Callable[[GameState], None],
             on_quit: Callable[[], None]
             ) -> None:
         """Initialize the menu screen.
 
         Args:
-            game: Active game engine.
             menu: Menu object rendering the UI.
             theme_selection: Theme selection manager.
+            change_state: Callback that change game.state.
             on_quit: Callback executed when the user quits.
         """
-        self.game = game
         self.menu = menu
         self.theme_selection = theme_selection
+        self.change_state = change_state
         self.on_quit = on_quit
 
     def button_actions(self, pressed: list[int]) -> None:
@@ -70,7 +69,7 @@ class MenuScreen(Screen):
             pressed: List of button indexes that were activated.
         """
         if 0 in pressed:
-            self.game.state = GameState.IN_GAME
+            self.change_state(GameState.IN_GAME)
         if 1 in pressed:
             self.menu.clear_leaderboard()
         if 2 in pressed:
@@ -89,7 +88,7 @@ class MenuScreen(Screen):
                 self.on_quit()
 
             elif event.key == pygame.K_SPACE:
-                self.game.state = GameState.IN_GAME
+                self.change_state(GameState.IN_GAME)
 
         self.button_actions(self.menu.check_buttons(event))
 
@@ -112,6 +111,7 @@ class GameScreen(Screen):
         pygame.K_F1: CheatMode.ULTRA_VISION,
         pygame.K_F2: CheatMode.GODMODE,
         pygame.K_F3: CheatMode.NOCLIP,
+        pygame.K_F4: CheatMode.NEXT
     }
 
     def __init__(
@@ -159,12 +159,20 @@ class GameScreen(Screen):
 
         key = event.key
 
-        if key == pygame.K_ESCAPE:
+        if key == pygame.K_ESCAPE and self.game.state not in [
+                        GameState.HAS_LOSE_A_LIFE,
+                        GameState.GAME_OVER,
+                        GameState.HAS_BEATEN_THE_GAME,
+                    ]:
             self.game.state = GameState.PAUSE
         elif key == pygame.K_SPACE:
             self._space_pressed()
         elif key in self.CHEATS:
             self.game.toggle_cheat_mode(self.CHEATS[key])
+            if self.CHEATS[key] == CheatMode.NEXT and\
+                    self.game.state is not GameState.HAS_BEATEN_THE_GAME:
+                self.theme_selection.cycle()
+                self.pacman_frame.update_maze(self.game.level.maze)
         elif self.game.state is GameState.IN_GAME and key in KEY_DIRECTION:
             self.game.level.change_direction(KEY_DIRECTION[key])
 
@@ -213,19 +221,19 @@ class GameScreen(Screen):
 class NameScreen(Screen):
     """Screen used to enter the player's name after a game session."""
 
-    def __init__(self, game: GameEngine, player_frame: PlayerName,
-                 scorer: Scorer, on_new_game: Callable[[], None]) -> None:
+    def __init__(
+            self,
+            player_frame: PlayerName,
+            on_new_game: Callable[[str | None], None]
+            ) -> None:
         """Initialize the name-entry screen.
 
         Args:
-            game: game engine instance.
             player_frame: name entry renderer.
             scorer: leaderboard persistence object.
             on_new_game: callback used when a new game starts.
         """
-        self.game = game
         self.player_frame = player_frame
-        self.scorer = scorer
         self.on_new_game = on_new_game
 
     def _validate(self) -> None:
@@ -234,14 +242,8 @@ class NameScreen(Screen):
         if not name:
             return
 
-        try:
-            self.scorer.save(name, self.game.score)
-        except Exception:
-            print("[WARNING]: can't save player_name/score to learderboard.")
-
         self.player_frame.clear()
-        self.game.init_new_game()
-        self.on_new_game()
+        self.on_new_game(name)
 
     def handle_event(self, event: pygame.event.Event) -> None:
         """Handle input while the player enters their name.
@@ -256,8 +258,8 @@ class NameScreen(Screen):
         char = event.unicode
 
         if key == pygame.K_ESCAPE:
-            self.game.init_new_game()
-            self.on_new_game()
+            self.player_frame.clear()
+            self.on_new_game(None)
 
         elif key == pygame.K_RETURN:
             self._validate()

@@ -186,7 +186,7 @@ class ThemeSelection:
         user_directory = Path(Paths.THEMES)
 
         # default
-        for theme in default_directory.glob("*.json"):
+        for theme in sorted(default_directory.glob("*.json")):
             try:
                 raw = load_theme(theme)
             except (OSError, json.JSONDecodeError, ValidationError):
@@ -196,7 +196,7 @@ class ThemeSelection:
                 self.themes.append(clean)
 
         # user
-        for theme in user_directory.glob("*.json"):
+        for theme in sorted(user_directory.glob("*.json")):
             try:
                 raw = load_theme(theme)
             except (OSError, json.JSONDecodeError, ValidationError):
