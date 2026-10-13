@@ -7,18 +7,18 @@
             "south": [70, 150, 255],
             "east": [0, 40, 160]
         },
-        "background": [6, 12, 35],
+        "background": [4, 10, 32],
         "forty_two_logo": [70, 150, 255]
     },
     "crazy_maze": {
         "walls": {
-            "north": [0, 90, 255],
-            "west": [100, 175, 255],
-            "south": [20, 50, 210],
-            "east": [0, 130, 255]
+            "north": [20, 90, 200],
+            "west": [90, 200, 255],
+            "south": [20, 90, 160],
+            "east": [50, 150, 255]
         },
-        "background": [8, 18, 55],
-        "forty_two_logo": [100, 175, 255]
+        "background": [0, 0, 0],
+        "forty_two_logo": [230, 250, 255]
     },
     "interface": {
         "header": {
@@ -39,7 +39,7 @@
                 "text": [235, 244, 255]
             }
         },
-        "background": [8, 16, 45]
+        "background": [10, 22, 58]
     },
     "config": {
         "crazy_animation": true,

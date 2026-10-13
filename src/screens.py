@@ -73,7 +73,7 @@ class MenuScreen(Screen):
         if 1 in pressed:
             self.menu.clear_leaderboard()
         if 2 in pressed:
-            self.theme_selection.cycle()
+            self.menu.show_rules = not self.menu.show_rules
         if 3 in pressed:
             self.on_quit()
 
@@ -100,7 +100,6 @@ class MenuScreen(Screen):
             pos: Position of the menu frame.
         """
         self.menu.draw_menu()
-
         screen.blit(self.menu.frame.surface, pos)
 
 

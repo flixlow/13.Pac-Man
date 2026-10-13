@@ -2,48 +2,48 @@
     "name": "black_and_white",
     "maze": {
         "walls": {
-            "north": [255, 255, 255],
-            "west": [255, 255, 255],
+            "north": [230, 230, 230],
+            "west": [170, 170, 170],
             "south": [255, 255, 255],
-            "east": [255, 255, 255]
+            "east": [120, 120, 120]
         },
-        "background": [0, 0, 0],
-        "forty_two_logo": [0, 0, 0]
+        "background": [220, 220, 220],
+        "forty_two_logo": [230, 230, 230]
     },
     "crazy_maze": {
         "walls": {
-            "north": [127, 127, 127],
-            "west": [127, 127, 127],
-            "south": [127, 127, 127],
-            "east": [127, 127, 127]
+            "north": [245, 245, 245],
+            "west": [200, 200, 200],
+            "south": [255, 255, 255],
+            "east": [150, 150, 150]
         },
-        "background": [255, 255, 255],
-        "forty_two_logo": [127, 127, 127]
+        "background": [70, 70, 70],
+        "forty_two_logo": [255, 255, 255]
     },
     "interface": {
         "header": {
             "title": [255, 255, 255],
-            "score": [255, 255, 255],
-            "timer": [255, 255, 255],
-            "background": [0, 0, 0],
-            "heart_color": [127, 127, 127]
+            "score": [220, 220, 220],
+            "timer": [180, 180, 180],
+            "background": [20, 20, 20],
+            "heart_color": [255, 255, 255]
         },
         "menu": {
             "leaderboard": {
-                "background": [127, 127, 127],
-                "username": [0, 0, 0],
-                "score": [0, 0, 0]
+                "background": [35, 35, 35],
+                "username": [255, 255, 255],
+                "score": [170, 170, 170]
             },
             "buttons": {
                 "background": [255, 255, 255],
                 "text": [0, 0, 0]
             }
         },
-        "background": [255, 255, 255]
+        "background": [18, 18, 18]
     },
     "config": {
         "crazy_animation": false,
         "pacgum_animation": false
     },
-    "pacgum": [127, 127, 127]
+    "pacgum": [255, 255, 255]
 }

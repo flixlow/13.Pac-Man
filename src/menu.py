@@ -46,7 +46,7 @@ class Menu:
             self.frame, pos, 3, 1.5, "Clear Leaderboard", self.theme.buttons
         )
         self.change_theme = Button(
-            self.frame, pos, 5, 1.5, "Change Theme", self.theme.buttons
+            self.frame, pos, 5, 1.5, "Rules", self.theme.buttons
         )
         self.exit = Button(
             self.frame, pos, 7, 1.5, "Exit", self.theme.buttons
@@ -55,6 +55,7 @@ class Menu:
         self.buttons = [
             self.play_button, self.clear_lb, self.change_theme, self.exit
         ]
+        self.show_rules = False
 
         self.update_size()
         self.draw_menu()
@@ -78,9 +79,32 @@ class Menu:
             button.set_new_color(self.theme.buttons)
 
         self.frame.fill(self.theme.buttons.background)
-        self.render_leaderboard()
-        self.print_leaderboard()
+        if self.show_rules:
+            self.print_rules()
+        else:
+            self.render_leaderboard()
+            self.print_leaderboard()
         self.print_buttons()
+
+    def print_rules(self) -> None:
+        """Show the game rules in place of the leaderboard."""
+        w, h = self.frame.size
+        self.frame.draw_rect(
+            (0, 0), (w // 2, h),
+            self.theme.leaderboard.background)
+        font = pygame.font.Font(Paths.LEADERBOARD, h // 15)
+        lines = [
+            "INSTRUCTIONS",
+            "===CONTROLS===", "wasd / arrow Keys",
+            "===RULES===", "eat all dots to advance.",
+            "===SCORE===", "dots: 10 points", "power pellets: 50 points",
+            "eat ghosts: 200 points", "touching a ghost costs one life."
+        ]
+        y = h // 10
+        for line in lines:
+            text = font.render(line, True, self.theme.leaderboard.username)
+            self.frame.surface.blit(text, (w // 4 - text.get_width() // 2, y))
+            y += text.get_height() + 12
 
     def update_size(self) -> None:
         """Resize the menu and update all button positions."""
