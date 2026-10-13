@@ -98,7 +98,7 @@ class Monitor:
 
     def _init_screens(self) -> None:
         """Create the screen objects used for each game state."""
-        menu = MenuScreen(self.menu, self.theme, self.change_state, self.quit)
+        menu = MenuScreen(self.menu, self.theme, self.set_state, self.quit)
         game = GameScreen(self.game, self.theme, self.pacman_frame)
         name = NameScreen(self.player_frame, self.on_new_game)
 
@@ -113,7 +113,7 @@ class Monitor:
             GameState.ENTER_YOUR_NAME: name,
         }
 
-    def change_state(self, state: GameState) -> None:
+    def set_state(self, state: GameState) -> None:
         """Update the active game state.
 
         Args:

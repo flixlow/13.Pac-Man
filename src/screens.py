@@ -111,6 +111,7 @@ class GameScreen(Screen):
         pygame.K_F1: CheatMode.ULTRA_VISION,
         pygame.K_F2: CheatMode.GODMODE,
         pygame.K_F3: CheatMode.NOCLIP,
+        pygame.K_F4: CheatMode.NEXT
     }
 
     def __init__(
@@ -168,6 +169,10 @@ class GameScreen(Screen):
             self._space_pressed()
         elif key in self.CHEATS:
             self.game.toggle_cheat_mode(self.CHEATS[key])
+            if self.CHEATS[key] == CheatMode.NEXT and\
+                    self.game.state is not GameState.HAS_BEATEN_THE_GAME:
+                self.theme_selection.cycle()
+                self.pacman_frame.update_maze(self.game.level.maze)
         elif self.game.state is GameState.IN_GAME and key in KEY_DIRECTION:
             self.game.level.change_direction(KEY_DIRECTION[key])
 

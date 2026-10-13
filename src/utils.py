@@ -128,6 +128,7 @@ class CheatMode(Enum):
     NOCLIP = auto()
     GODMODE = auto()
     ULTRA_VISION = auto()
+    NEXT = auto()
 
 
 KEY_DIRECTION: dict[int, Direction] = {
