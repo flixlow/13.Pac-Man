@@ -88,8 +88,8 @@ class Level:
 
     def _init_player(self) -> None:
         """Instantiate the player entity at the level start position."""
-        x = (self.maze.w // 2 - 1)
-        y = (self.maze.h // 2 - 1)
+        x = (self.maze.w // 2 - (not self.maze.w % 2))
+        y = (self.maze.h // 2 - (not self.maze.h % 2))
 
         if self.maze.get_cell_walls(x, y) == 15:
             x += 1
@@ -143,7 +143,7 @@ class Level:
         """Advance crazy mode timer and disable it when duration expires."""
         if self.on_crazy_mode is True:
             self.timer.crazy_mode_elapsed_time += self.timer.elapsed_time
-            if self.timer.crazy_mode_elapsed_time >= 5000:
+            if self.timer.crazy_mode_elapsed_time >= Parameters.RESPAWN_TIME:
                 self.set_crazy_mode(False)
 
     def check_collision(self) -> None:

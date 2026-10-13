@@ -1,46 +1,46 @@
 {
   "highscore_filename": "highscores.json",
-    "levels": [
-      {
+  "levels": [
+    {
       "width": 14,
       "height": 14
-      },
-      {
-        "width": 15,
-        "height": 15
-      },
-      {
-        "width": 25,
-        "height": 14
-      },
-      {
-        "width": 14,
-        "height": 30
-      },
-      {
-        "width": 22,
-        "height": 14
-      },
-      {
-        "width": 14,
-        "height": 14
-      },
-      {
-        "width": 15,
-        "height": 15
-      },
-      {
-        "width": 21,
-        "height": 21
-      },
-      {
-        "width": 50,
-        "height": 50
-      },
-      {
-        "width": 17,
-        "height": 22
-      }
+    },
+    {
+      "width": 15,
+      "height": 18
+    },
+    {
+      "width": 25,
+      "height": 14
+    },
+    {
+      "width": 14,
+      "height": 30
+    },
+    {
+      "width": 22,
+      "height": 14
+    },
+    {
+      "width": 14,
+      "height": 14
+    },
+    {
+      "width": 15,
+      "height": 15
+    },
+    {
+      "width": 21,
+      "height": 21
+    },
+    {
+      "width": 50,
+      "height": 50
+    },
+    {
+      "width": 17,
+      "height": 22
+    }
   ],
   "lives": 3,
   "points": {
