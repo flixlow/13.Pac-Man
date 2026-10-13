@@ -42,8 +42,8 @@
         "background": [18, 18, 18]
     },
     "config": {
-        "crazy_animation": true,
-        "pacgum_animation": true
+        "crazy_animation": false,
+        "pacgum_animation": false
     },
     "pacgum": [255, 255, 255]
 }

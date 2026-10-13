@@ -7,7 +7,8 @@ collectibles, collisions and level progression.
 from random import shuffle, random
 
 from .maze import Maze
-from ..utils import Direction, Timer, TypeScore, OPPOSITE
+from ..timer import Timer
+from ..utils import Direction, TypeScore, Parameters, OPPOSITE
 from ..entity import Entity, Ghost, Player, Blue, Red, Pink, Orange, Secret
 
 
@@ -77,7 +78,7 @@ class Level:
 
         shuffle(ghost_classes)
 
-        if random() < 0.5:
+        if random() < Parameters.SECRET_SPAWN_CHANCE:
             ghost_classes[0] = Secret
 
         for ghost_class, coords in zip(ghost_classes, self.maze.corners):
@@ -87,9 +88,13 @@ class Level:
 
     def _init_player(self) -> None:
         """Instantiate the player entity at the level start position."""
-        start_pos = ((self.maze.w // 2 - 1), (self.maze.h // 2 - 1))
-        self.player = Player(start_pos, self.maze, self.timer)
+        x = (self.maze.w // 2 - 1)
+        y = (self.maze.h // 2 - 1)
 
+        if self.maze.get_cell_walls(x, y) == 15:
+            x += 1
+
+        self.player = Player((x, y), self.maze, self.timer)
         self.entities.append(self.player)
 
     def init_entities(self) -> None:

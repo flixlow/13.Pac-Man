@@ -1,0 +1,49 @@
+{
+    "name": "neon_arcade",
+    "maze": {
+        "walls": {
+            "north": [255, 0, 255],
+            "west": [0, 255, 255],
+            "south": [0, 170, 255],
+            "east": [190, 60, 255]
+        },
+        "background": [10, 0, 30],
+        "forty_two_logo": [255, 255, 0]
+    },
+    "crazy_maze": {
+        "walls": {
+            "north": [255, 60, 120],
+            "west": [255, 140, 0],
+            "south": [180, 80, 255],
+            "east": [0, 220, 255]
+        },
+        "background": [20, 0, 45],
+        "forty_two_logo": [255, 255, 255]
+    },
+    "interface": {
+        "header": {
+            "title": [0, 255, 255],
+            "score": [255, 0, 255],
+            "timer": [255, 255, 0],
+            "background": [15, 0, 40],
+            "heart_color": [255, 60, 120]
+        },
+        "menu": {
+            "leaderboard": {
+                "background": [40, 10, 80],
+                "username": [0, 255, 255],
+                "score": [255, 255, 0]
+            },
+            "buttons": {
+                "background": [255, 0, 255],
+                "text": [255, 255, 255]
+            }
+        },
+        "background": [25, 5, 55]
+    },
+    "config": {
+        "crazy_animation": true,
+        "pacgum_animation": true
+    },
+    "pacgum": [255, 255, 0]
+}

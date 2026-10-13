@@ -5,17 +5,16 @@ install: Makefile mazegenerator-2.1.0-py3-none-any.whl
 	@echo "\033[0;32m\n[OK] installation completed ✔\n\033[0m"
 
 run:
-	@PYGAME_HIDE_SUPPORT_PROMPT=1 uv run -m src config.json
+	@PYGAME_HIDE_SUPPORT_PROMPT=1 uv run -m src config.jsonc
 
 debug:
-	uv run -m pdb -m src config.json
+	uv run -m pdb -m src config.jsonc
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
 	rm -rf .venv
 	uv clean
-# 	rm -rf highscores.json
 
 lint:
 	uv run -m flake8 src && uv run -m mypy $(LINT_FLAG) src
