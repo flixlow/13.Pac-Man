@@ -52,6 +52,14 @@ class Monitor:
         self._init_screens()
 
     def _load_config(self, config_file: str) -> Config:
+        """Load the game configuration or fall back to the default one.
+
+        Args:
+            config_file: Path to the JSON or JSONC configuration file to load.
+
+        Returns:
+            The parsed game configuration.
+        """
         try:
             return parsing(config_file)
         except (PacmanError, Exception, KeyboardInterrupt) as e:
@@ -90,10 +98,9 @@ class Monitor:
 
     def _init_screens(self) -> None:
         """Create the screen objects used for each game state."""
-        menu = MenuScreen(self.game, self.menu, self.theme, self.quit)
+        menu = MenuScreen(self.menu, self.theme, self.change_state, self.quit)
         game = GameScreen(self.game, self.theme, self.pacman_frame)
-        name = NameScreen(self.game, self.player_frame, self.scorer,
-                          self.on_new_game)
+        name = NameScreen(self.player_frame, self.on_new_game)
 
         self.screens: dict[GameState, Screen] = {
             GameState.START_NEW_GAME: menu,
@@ -106,8 +113,22 @@ class Monitor:
             GameState.ENTER_YOUR_NAME: name,
         }
 
-    def on_new_game(self) -> None:
+    def change_state(self, state: GameState) -> None:
+        """Update the active game state.
+
+        Args:
+            state: The new state to apply to the game engine.
+        """
+        self.game.state = state
+
+    def on_new_game(self, name: str | None) -> None:
         """Refresh the displayed maze after a reset or game state change."""
+        if name:
+            try:
+                self.scorer.save(name, self.game.score)
+            except Exception:
+                print("[WARNING]: can't save name/score to learderboard.")
+
         self.game.init_new_game()
         self.theme.selected_index = 0
         self.pacman_frame.update_maze(self.game.level.maze)

@@ -20,6 +20,13 @@ class MazeDrawer(Drawer):
 
     def __init__(self, size: tuple[int, int],
                  maze: Maze, theme_selection: ThemeSelection) -> None:
+        """Initialize the maze drawer with a surface size and maze data.
+
+        Args:
+            size: Width and height of the drawing surface in pixels.
+            maze: Maze object containing the map and layout metadata.
+            theme_selection: Theme manager that provides the active colors.
+        """
         super().__init__(size)
 
         self.maze = maze.maze_map
