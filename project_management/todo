@@ -88,3 +88,10 @@ https://en.wikipedia.org/wiki/Taxicab_geometry
         pygame.mixer.init()
         pygame.mixer.music.load("assets/music/music.mp3")
         pygame.mixer.music.play(loops=-1)
+
+
+[ ] A complete game that can be installed and launched from a public platform (e.g.,Steam or Itch.io) as a free but unlisted/private build.
+[ ] The packaged game must be fully functional.
+[ ] Provide minimal in-package instructions(controls, options, configuration).
+[ ] Your Git repository must contain the full source and the packaging script/spec at the root.
+[ ] You may be asked to regenerate the package during the peer review.

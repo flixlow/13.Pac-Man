@@ -44,6 +44,14 @@ Useful commands: `make debug`, `make lint`, `make lint-strict`, and `make clean`
 - **Escape**: pause during play; exit from the menu.
 - **F1–F4**: toggle the built-in cheat modes (ultra vision, god mode, no clip, and next level).
 
+## Linux package
+
+Build a self-contained Linux archive from the repository root with
+`bash package-linux.sh`. The script synchronizes the locked development
+environment, builds the PyInstaller bundle from `Pac-Man.spec`, and writes
+`dist/Pac-Man-linux-<architecture>.tar.gz`. Extract the archive and launch
+`Pac-Man/Pac-Man`.
+
 ## Configuration
 
 Configuration files use JSON syntax with the `.jsonc` extension. Lines beginning with `#` are ignored. The supplied example is [`assets/default_config.jsonc`](assets/default_config.jsonc).
