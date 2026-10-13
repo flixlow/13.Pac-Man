@@ -190,7 +190,7 @@ class ThemeSelection:
             try:
                 raw = load_theme(theme)
             except (OSError, json.JSONDecodeError, ValidationError):
-                print(f"warning! {theme} is not valid")
+                print(f"[WARNING] {theme} is not valid")
             else:
                 clean = Theme(raw)
                 self.themes.append(clean)
@@ -200,7 +200,7 @@ class ThemeSelection:
             try:
                 raw = load_theme(theme)
             except (OSError, json.JSONDecodeError, ValidationError):
-                print(f"warning! {theme} is not valid")
+                print(f"[WARNING] {theme} is not valid")
             else:
                 clean = Theme(raw)
                 self.themes.append(clean)
