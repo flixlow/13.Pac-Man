@@ -17,6 +17,8 @@ class Paths:
 
     ASSETS = "assets/"
 
+    DEFAULT_CONFIG = ASSETS + "default_config.jsonc"
+
     BUTTON = ASSETS + "button/"
     UNPRESSED = BUTTON + "button.png"
     PRESSED = BUTTON + "button_pressed.png"

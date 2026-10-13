@@ -1,5 +1,5 @@
 {
-    "name": "epileptic_nightmare",
+    "name": "colorful_nightmare",
     "maze": {
         "walls": {
             "north": [255, 0, 0],

@@ -10,9 +10,9 @@ import pygame
 from .menu import Menu
 from .timer import Timer
 from .scorer import Scorer
-from .utils import GameState
 from .engine.maze import Maze
 from .errors import PacmanError
+from .utils import GameState, Paths
 from .engine.game import GameEngine
 from .parsing import parsing, Config
 from .drawing.player_name import PlayerName
@@ -56,8 +56,8 @@ class Monitor:
             return parsing(config_file)
         except (PacmanError, Exception, KeyboardInterrupt) as e:
             print(f"[WARNING] {e.__class__.__name__}: {e}")
-            print("[ON] default_config.json")
-            return parsing("assets/default_config.json")
+            print("[ON] default config file.")
+            return parsing(Paths.DEFAULT_CONFIG)
 
     def _init_pygame(self) -> None:
         """Initialize pygame resources and the main display components."""
@@ -93,7 +93,7 @@ class Monitor:
         menu = MenuScreen(self.game, self.menu, self.theme, self.quit)
         game = GameScreen(self.game, self.theme, self.pacman_frame)
         name = NameScreen(self.game, self.player_frame, self.scorer,
-                          self.reset_maze)
+                          self.on_new_game)
 
         self.screens: dict[GameState, Screen] = {
             GameState.START_NEW_GAME: menu,
@@ -106,8 +106,9 @@ class Monitor:
             GameState.ENTER_YOUR_NAME: name,
         }
 
-    def reset_maze(self) -> None:
+    def on_new_game(self) -> None:
         """Refresh the displayed maze after a reset or game state change."""
+        self.game.init_new_game()
         self.pacman_frame.update_maze(self.game.level.maze)
 
     def get_theme(self) -> Theme:

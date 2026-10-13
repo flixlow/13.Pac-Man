@@ -240,7 +240,6 @@ class NameScreen(Screen):
             print("[WARNING]: can't save player_name/score to learderboard.")
 
         self.player_frame.clear()
-        self.game.init_new_game()
         self.on_new_game()
 
     def handle_event(self, event: pygame.event.Event) -> None:
@@ -256,7 +255,7 @@ class NameScreen(Screen):
         char = event.unicode
 
         if key == pygame.K_ESCAPE:
-            self.game.init_new_game()
+            self.player_frame.clear()
             self.on_new_game()
 
         elif key == pygame.K_RETURN:
