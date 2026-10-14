@@ -112,7 +112,7 @@ def print_theme(frame: Drawer, theme: Theme, font: pygame.font.Font,
 
 def print_life(
         frame: Drawer, a: Pos, gap: int,
-        life: int, icons: Icon, color: Color) -> int:
+        life: int, max_life: int, icons: Icon, color: Color) -> int:
     """Draw the life counter using alive/dead/reflect heart sprites.
 
     Args:
@@ -120,6 +120,7 @@ def print_life(
         a: Top-left position of the first icon.
         gap: Horizontal spacing between icons.
         life: Number of remaining lives.
+        max_life: Number of max lives.
         icons: Tuple of ``(alive, dead, reflect)`` sprites.
         color: Tint applied to the alive heart.
 
@@ -127,11 +128,13 @@ def print_life(
         int: the bottom pos of the life icons.
     """
 
-    LIFE = 3
+    max_life = min(10, max_life)
+
+    gap = int(50 - max_life * 1.25)
 
     alive, dead, reflect = icons
 
-    for i in range(LIFE):
+    for i in range(max_life):
         x, y = a
         if i < life:
             tinted = alive.copy()

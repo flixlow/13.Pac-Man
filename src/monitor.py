@@ -195,6 +195,7 @@ class Monitor:
             self.header_frame, (0, 0),
             self.pacman_frame.alive.get_width(),
             self.game.lives,
+            self.config.lives,
             icons,
             self.get_theme().header.heart_color
         )
