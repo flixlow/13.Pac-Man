@@ -4,9 +4,10 @@ import os
 import sys
 from pathlib import Path
 from sys import argv
+from pydantic import ValidationError
 
 from src.monitor import Monitor
-from src.errors import ParsingError
+from src.errors import ParsingError, PacmanError
 
 
 def _prepare_bundle() -> None:
@@ -25,13 +26,10 @@ def main() -> None:
 
         Monitor(argv[1]).main_loop()
 
-    except (PacmanError, ValidationError, KeyboardInterrupt, Exception) as e:
+    except (PacmanError, ValidationError, BaseException) as e:
         print(f"[ERROR]: {e}")
 
 
 if __name__ == "__main__":
     _prepare_bundle()
-    try:
-        main()
-    except (BaseException) as e:
-        print(f"[ERROR]: {e}")
+    main()
