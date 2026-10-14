@@ -4,6 +4,8 @@ This module provides a lightweight `Drawer` abstraction for drawing primitive
 shapes, text and images onto a dedicated pygame surface.
 """
 
+import sys
+
 import pygame
 
 from ..timer import Timer
@@ -60,7 +62,33 @@ class Drawer:
             b: Opposite corner of the rectangle.
             color: Fill color of the rectangle.
         """
-        pygame.draw.rect(self.surface, color, (*a, b[0] - a[0], b[1] - a[1]))
+
+        # pygame.draw.rect(self.surface, color, (*a, b[0] - a[0], b[1] - a[1]))
+        x1 = max(0, a[0])
+        y1 = max(0, a[1])
+        x2 = min(self.surface.get_width(), b[0])
+        y2 = min(self.surface.get_height(), b[1])
+        if x1 >= x2 or y1 >= y2:
+            return
+
+        pixel_bytes = self.surface.map_rgb(color).to_bytes(
+            self.surface.get_bytesize(), sys.byteorder
+        )
+        bytes_per_pixel = self.surface.get_bytesize()
+        pitch = self.surface.get_pitch()
+
+        self.surface.lock()
+        try:
+            buffer = memoryview(self.surface.get_buffer())
+            try:
+                row_pixels = pixel_bytes * (x2 - x1)
+                for y in range(y1, y2):
+                    offset = y * pitch + x1 * bytes_per_pixel
+                    buffer[offset:offset + len(row_pixels)] = row_pixels
+            finally:
+                buffer.release()
+        finally:
+            self.surface.unlock()
 
     def fill(self, color: Color = (0, 0, 0)) -> None:
         """Fill the whole surface with a color.
