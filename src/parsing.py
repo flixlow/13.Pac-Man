@@ -139,7 +139,7 @@ def parsing(file_name: str) -> Config:
         raise ParsingError("The config file must be a jsonc.")
     try:
         with open(file, encoding="utf-8") as f:
-            lines = [ln for ln in f if not ln.lstrip().startswith('#')]
+            lines = [ln for ln in f if not ln.lstrip().startswith(('#', '//'))]
             content = loads("".join(lines))
         return Config(**content)
     except OSError as e:

@@ -1,5 +1,5 @@
 LINT_FLAG := --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
-CONFIG := assets/default_config.jsonc
+CONFIG := config.jsonc
 
 install: Makefile mazegenerator-2.1.0-py3-none-any.whl
 	uv sync
