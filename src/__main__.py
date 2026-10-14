@@ -20,16 +20,16 @@ def _prepare_bundle() -> None:
 
 def main() -> None:
     """Run the game using the JSON config file passed as argument."""
+    try:
+        if len(argv) != 2:
+            raise ParsingError("It must take exactly one argument.")
 
-    if len(argv) != 2:
-        raise ParsingError("It must take exactly one argument.")
+        Monitor(argv[1]).main_loop()
 
-    Monitor(argv[1]).main_loop()
+    except (PacmanError, ValidationError, KeyboardInterrupt, Exception) as e:
+        print(f"[ERROR]: {e}")
 
 
 if __name__ == "__main__":
     _prepare_bundle()
-    try:
-        main()
-    except (PacmanError, ValidationError, KeyboardInterrupt) as e:
-        print(f"[ERROR]: {e}")
+    main()
